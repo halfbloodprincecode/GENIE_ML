@@ -4,6 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pandas = "*"
+altair = "*"
+spacy = "*"
+gputil = "*"
+jinja2 = "*"
+orm-sqlite = "*"
+pretty-errors = "*"
 
 [dev-packages]
 

@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/
 lib64/
 parts/
 sdist/
@@ -60,7 +60,7 @@ target/
 .env
 
 # Database
-*.db
+# *.db
 *.rdb
 
 # Pycharm
@@ -87,3 +87,6 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# Custom
+# articles
