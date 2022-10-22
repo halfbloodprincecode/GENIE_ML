@@ -57,7 +57,7 @@ docs/_build/
 target/
 
 # DotEnv configuration
-.env
+# .env
 
 # Database
 # *.db
@@ -89,4 +89,5 @@ target/
 .mypy_cache/
 
 # Custom
-# articles
+articles
+projects

@@ -11,6 +11,8 @@ gputil = "*"
 jinja2 = "*"
 orm-sqlite = "*"
 pretty-errors = "*"
+fightingcv-attention = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

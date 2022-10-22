@@ -1,14 +1,16 @@
-import pretty_errors
-
-from articles.Attention_is_All_You_Need.index import main as atn_main, metrics as atn_metrics
-
+from loader import *
 
 def main():
+    # print(CONFIG, getenv('NAME'))
+    # d, nc = 64, 300
+    # X = torch.randint(1,9, (8, d, 32, 32), dtype=torch.float32)
+    # C = torch.randint(1,9, (nc, d), dtype=torch.float32)
+    # X.requires_grad = True
+    # C.requires_grad = True
+    # Q, Qp, Xp = veqQuantizerImg(X, C)
+    # L = vqvae_loss(Xp, Q)
+    # print(L)
     pass
-    # print(atn_metrics.select('select * from metric'))
-    # atn_main()
     
-
-
 if __name__ == '__main__':
     main()

@@ -1,7 +1,9 @@
 from .loader import *
-from utils.pyArch import clones, \
+from .pyArch import clones, \
     Transformer_LayerNorm as LayerNorm, \
-    ResidualConnection as SublayerConnection
+    ResidualConnection as SublayerConnection, \
+    subsequent_mask
+from utils.plot import colorMap
 
 
 class EncoderDecoder(nn.Module):
@@ -78,6 +80,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.layers = clones(layer, N)
         self.norm = LayerNorm(layer.size)
+        print('@@@@@@@@@@2 decoder part:', layer.size)
 
     def forward(self, x, memory, src_mask, tgt_mask):
         for layer in self.layers:
@@ -104,10 +107,20 @@ class DecoderLayer(nn.Module):
         return self.sublayer[2](x, self.feed_forward)
 
 
-def subsequent_mask(size):
-    "Mask out subsequent positions."
-    attn_shape = (1, size, size)
-    subsequent_mask = torch.triu(torch.ones(attn_shape), diagonal=1).type(
-        torch.uint8
+def example_mask():
+    size = 20
+    subsequent_masked = subsequent_mask(size)[0]
+    df = pd.concat(
+        [
+            pd.DataFrame(
+                {
+                    'Subsequent Mask': subsequent_masked[x, y].flatten(),
+                    'Window': y,
+                    'Masking': x,
+                }
+            )
+            for y in range(size)
+                for x in range(size)
+        ]
     )
-    return subsequent_mask == 0
+    return colorMap(df, x='Window:O', y='Masking:O', color='Subsequent Mask:Q')
