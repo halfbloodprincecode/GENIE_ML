@@ -2,14 +2,18 @@ from argparse import ArgumentParser, Namespace
 
 class Args():
     __ns = []
-    def __init__(self, argClass):
+    def __init__(self, argClass, strmap=str.upper):
+        """
+        *use strmap like below if you want:
+            strmap=lambda s: s
+        """
         super(Args, self).__init__()
         self._argClass = argClass
         sp = '-' if self._argClass else ''
-        self._f = lambda key: '--' + self._argClass + sp + key
+        self._f = lambda key: strmap('--' + self._argClass + sp + key)
         self._args = ArgumentParser()
 
-    def add_argument(self, key, **kwargs):
+    def add_argument(self, key: str, **kwargs):
         return self._args.add_argument(self._f(key), **kwargs)
     
     def parser(self, parse_known_args=True):

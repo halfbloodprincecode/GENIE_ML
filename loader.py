@@ -1,7 +1,7 @@
 import os
 import pretty_errors
 from os import getenv
-from settings import CONFIG
+from settings import CONFIG, metrics
 from libs.dyimport import Import
 
 # from articles.Attention_is_All_You_Need.index import main as atn_main, metrics as atn_metrics

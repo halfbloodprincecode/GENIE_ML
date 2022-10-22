@@ -1,11 +1,12 @@
 import os
+import time
 import sqlite3
 import orm_sqlite
 import pandas as pd
 
-#######################################################################
 class Metrics():
-    def __init__(self, db, fname, items: list):
+    def __init__(self, db, fname: str, tableName: str, items: list):
+        self.tableName = tableName.lower().strip().replace(' ', '_')
         db_path = os.path.join(
             os.path.dirname(os.path.realpath(db.__file__)),
             f'{fname}.db'
@@ -14,11 +15,12 @@ class Metrics():
         self.DB = orm_sqlite.Database(db_path)
         
         Metric = type(
-            'Metric',
+            self.tableName, #'Metric',
             (orm_sqlite.Model,),
             {
                 'step': orm_sqlite.IntegerField(primary_key=True),
-                **{item: orm_sqlite.FloatField() for item in items}
+                **{item: orm_sqlite.FloatField() for item in items},
+                'timestamp': orm_sqlite.StringField()
             },
         )
 
@@ -27,6 +29,7 @@ class Metrics():
 
     def add(self, spec):
         assert 'step' in spec, 'metric record does not have "step" key.'
+        spec['timestamp'] = str(time.time())
         statuscode = self.Model(spec).save()
         if statuscode == -1:
             pk = spec.get('step', None)
@@ -39,7 +42,7 @@ class Metrics():
     
     def delete(self, where='true'):
         where = f'step >= {where}' if isinstance(where, int) else where
-        return self.DB.execute(f'delete from metric where {where}', *[], autocommit=True)
+        return self.DB.execute(f'delete from {self.tableName} where {where}', *[], autocommit=True)
     
     def select(self, sql: str):
         "Returns query results, a list of sqlite3.Row objects."
@@ -49,7 +52,8 @@ class Metrics():
         "Executes an SQL statement and returns rows affected."
         return self.DB.execute(sql, *[], autocommit=True)
 
-    def to_csv(self, sql='SELECT * FROM metric', dist=None):
+    def to_csv(self, sql=None, dist=None):
+        sql = sql if sql else f'SELECT * FROM {self.tableName}'
         dist = self.db_path.replace('.db', '.csv') if dist is None else dist
         conn = sqlite3.connect(self.db_path, isolation_level=None, detect_types=sqlite3.PARSE_COLNAMES)
         db_df = pd.read_sql_query(sql, conn)
@@ -72,4 +76,3 @@ Example:
     metrics.to_csv()
     metrics.to_csv(dist='/home/test.csv', sql='select step, loss from metric where step > 0')
 """
-#######################################################################
