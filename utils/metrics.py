@@ -1,33 +1,43 @@
-import os
 import time
 import sqlite3
 import orm_sqlite
 import pandas as pd
+from os.path import join
+from libs.basicIO import pathBIO
 
 class Metrics():
-    def __init__(self, db, fname: str, tableName: str, items: list):
-        self.tableName = tableName.lower().strip().replace(' ', '_')
-        db_path = os.path.join(
-            os.path.dirname(os.path.realpath(db.__file__)),
-            f'{fname}.db'
-        )
-        self.db_path = db_path
-        self.DB = orm_sqlite.Database(db_path)
+    def __init__(self, db_path_dir: str, fname: str, tableName: str =None, items: list = None):
+        self._real_items_NOT_USED = items
+        self._processed_items = [str(item).lower().replace(' ', '_').replace('-', '_') for item in items] 
+        self.tableName = tableName.lower().strip().replace(' ', '_').replace('-', '_')
+        self.db_path = join(pathBIO(db_path_dir), f'{fname}.db')
+        self.DB = orm_sqlite.Database(self.db_path)
         
         Metric = type(
-            self.tableName, #'Metric',
+            self.tableName,
             (orm_sqlite.Model,),
             {
                 'step': orm_sqlite.IntegerField(primary_key=True),
-                **{item: orm_sqlite.FloatField() for item in items},
+                **{p_item: orm_sqlite.FloatField() for p_item in self._processed_items},
                 'timestamp': orm_sqlite.StringField()
             },
         )
 
+        self.orderedFields = [
+            'step',
+            *[p_item for p_item in self._processed_items],
+            # 'timestamp'
+        ]
+
         Metric.objects.backend = self.DB
         self.Model = Metric
 
-    def add(self, spec):
+    def add(self, _spec):
+        _spec_keys_map = {str(sk).lower().replace(' ', '_').replace('-', '_'): sk for sk in list(_spec.keys())}
+        spec = {}
+        for of in self.orderedFields:
+            spec[of] = _spec[_spec_keys_map[of]]
+
         assert 'step' in spec, 'metric record does not have "step" key.'
         spec['timestamp'] = str(time.time())
         statuscode = self.Model(spec).save()
@@ -70,6 +80,12 @@ Example:
             'loss': m[0],
             'val_loss': m[1]
         })
+    metrics.add({
+        'FID': 66, # 'FiD': 66 # 'fid': 66 # all of this is ok.
+        'step': 6,
+        'loss': 36,
+        'val_loss': 37
+    })
     print(metrics.select('select * from metric'))
     print(metrics.delete())
     print(metrics.db_path)

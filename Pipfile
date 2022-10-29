@@ -13,6 +13,11 @@ orm-sqlite = "*"
 pretty-errors = "*"
 fightingcv-attention = "*"
 python-dotenv = "*"
+pyyaml = "*"
+loguru = "*"
+attrdict = "*"
+pytorch-lightning = "*"
+torchvision = "*"
 
 [dev-packages]
 
