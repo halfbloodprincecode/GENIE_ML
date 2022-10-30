@@ -21,24 +21,25 @@ def readBIO(fpath: str, **kwargs):
     """
     fpath = pathBIO(fpath)
     ext = fpath.split('.')[-1].lower()
+    dotdictFlag = kwargs.get('dotdictFlag', None)
 
     if ext == 'yaml':
         try:
             with open(fpath, 'r') as f:
-                return dotdict(yaml.safe_load(f))
+                return dotdict(yaml.safe_load(f), flag=dotdictFlag)
         except Exception as e:
             EHR(e)
     
     if ext == 'json':
         try:
             with open(fpath) as f:
-                return dotdict(json.load(f))
+                return dotdict(json.load(f), flag=dotdictFlag)
         except Exception as e:
             EHR(e)
 
 def check_logdir(fpath: str, **kwargs):
     fpath = pathBIO(fpath)
-    if not exists(fpath):
+    if not exists(fpath): # TODO AND fpath INSIDE LOG DIR.
         pass 
 
 def ls(_dir, _pattern: str, full_path=False):

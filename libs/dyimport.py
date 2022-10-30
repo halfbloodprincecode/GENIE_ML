@@ -5,7 +5,7 @@ from libs.basicIO import pathBIO
 
 def Import(fpath, reload=False, partialFlag=True):
     if partialFlag: # e.g. fpath="articles.taming_transformers.taming.models.vqgan.VQModel"
-        _module, _cls = fpath.rsplit(".", 1)
+        _module, _cls = fpath.rsplit('.', 1)
         if reload:
             module_imp = importlib.import_module(_module)
             importlib.reload(module_imp)

@@ -18,6 +18,7 @@ loguru = "*"
 attrdict = "*"
 pytorch-lightning = "*"
 torchvision = "*"
+omegaconf = "*"
 
 [dev-packages]
 
