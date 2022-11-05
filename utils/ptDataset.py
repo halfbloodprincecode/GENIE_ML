@@ -3,10 +3,10 @@ import pytorch_lightning as pl
 from libs.dyimport import Import
 from torch.utils.data import random_split, DataLoader, Dataset
 
-def instantiate_from_config(config):
-    if not 'target' in config:
-        raise KeyError('Expected key `target` to instantiate.')
-    return Import(config['target'])(**config.get('params', dict()))
+# def instantiate_from_config(config):
+#     if not 'target' in config:
+#         raise KeyError('Expected key `target` to instantiate.')
+#     return Import(config['target'])(**config.get('params', dict()))
 
 class WrappedDatasetBase(Dataset):
     """Wraps an arbitrary object with __len__ and __getitem__ into a pytorch dataset"""
@@ -20,7 +20,7 @@ class WrappedDatasetBase(Dataset):
         return self.data[idx]
 
 class DataModuleFromConfigBase(pl.LightningDataModule):
-    def __init__(self, batch_size, train=None, validation=None, test=None, wrap=False, num_workers=None):
+    def __init__(self, batch_size, train=None, validation=None, test=None, wrap=False, num_workers=None, instantiate_from_config=None, custom_collate=None):
         super().__init__()
         self.batch_size = batch_size
         self.dataset_configs = dict()
@@ -34,29 +34,31 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         if test is not None:
             self.dataset_configs['test'] = test
             self.test_dataloader = self._test_dataloader
+        self.instantiate_from_config = instantiate_from_config
+        self.custom_collate = custom_collate
         self.wrap = wrap
         self.wrap_cls = WrappedDatasetBase
 
     def _train_dataloader(self):
         return DataLoader(self.datasets['train'], batch_size=self.batch_size,
-                          num_workers=self.num_workers, shuffle=True, collate_fn=custom_collate)
+                          num_workers=self.num_workers, shuffle=True, collate_fn=self.custom_collate)
 
     def _val_dataloader(self):
         return DataLoader(self.datasets['validation'],
                           batch_size=self.batch_size,
-                          num_workers=self.num_workers, collate_fn=custom_collate)
+                          num_workers=self.num_workers, collate_fn=self.custom_collate)
 
     def _test_dataloader(self):
         return DataLoader(self.datasets['test'], batch_size=self.batch_size,
-                          num_workers=self.num_workers, collate_fn=custom_collate)
+                          num_workers=self.num_workers, collate_fn=self.custom_collate)
 
     def prepare_data(self):
         for data_cfg in self.dataset_configs.values():
-            instantiate_from_config(data_cfg)
+            self.instantiate_from_config(data_cfg)
 
     def setup(self, stage=None):
         self.datasets = dict(
-            (k, instantiate_from_config(self.dataset_configs[k]))
+            (k, self.instantiate_from_config(self.dataset_configs[k]))
             for k in self.dataset_configs)
         if self.wrap:
             for k in self.datasets:

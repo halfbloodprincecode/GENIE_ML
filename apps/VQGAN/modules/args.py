@@ -1,7 +1,12 @@
-from pytorch_lightning.trainer import Trainer
+import os
+from libs.basicIO import ls
+from omegaconf import OmegaConf
+from libs.args import ParserBasic
+from pytorch_lightning import seed_everything
+from os.path import join, exists, isfile, isdir
 from argparse import ArgumentParser, ArgumentTypeError
 
-def get_parser(**parser_kwargs):
+def _get_parser_(**parser_kwargs):
     def str2bool(v):
         if isinstance(v, bool):
             return v
@@ -81,18 +86,73 @@ def get_parser(**parser_kwargs):
         default='',
         help='post-postfix for default name',
     )
+    parser.add_argument(
+        '-l',
+        '--logger_ml',
+        type=str,
+        default='testtube',
+        help='default_logger_cfgs key name',
+    )
 
     return parser
 
-def parser():
-    parser = get_parser()
-    parser = Trainer.add_argparse_args(parser)
-    opt, unknown = parser.parse_known_args()
-    return opt, unknown
+def _ctl_parser_(opt, unknown, **kwargs):
+    now = kwargs['now']
+    if opt.name and opt.resume:
+        raise ValueError(
+            '-n/--name and -r/--resume cannot be specified both.'
+            'If you want to resume training in a new log folder, '
+            'use -n/--name in combination with --resume_from_checkpoint'
+        )
+    if opt.resume:
+        if not exists(opt.resume):
+            raise ValueError('Cannot find {}'.format(opt.resume))
+        if isfile(opt.resume): # ckpt address
+            paths = opt.resume.split('/')
+            idx = len(paths)-paths[::-1].index('logs')+1
+            logdir = '/'.join(paths[:idx])
+            ckpt = opt.resume
+        else: # logdir address
+            assert isdir(opt.resume), opt.resume
+            logdir = opt.resume.rstrip('/')
+            ckpt = join(logdir, 'checkpoints', 'last.ckpt')
 
-def nondefault_trainer_args(opt):
-    parser = ArgumentParser()
-    parser = Trainer.add_argparse_args(parser)
-    args = parser.parse_args([])
-    return sorted(k for k in vars(args) if getattr(opt, k) != getattr(args, k))
+        opt.resume_from_checkpoint = ckpt
+        base_configs = sorted(
+            ls(logdir, 'configs/*.yaml', full_path=True)
+        )
+        print('*'*30)
+        print('base_configs', base_configs)
+        input()
 
+        opt.base = base_configs + opt.base
+        _tmp = logdir.split('/')
+        nowname = _tmp[_tmp.index('logs')+1]
+    else:
+        if opt.name:
+            name = '_' + opt.name
+        elif opt.base:
+            cfg_fname = os.path.split(opt.base[0])[-1]
+            cfg_name = os.path.splitext(cfg_fname)[0]
+            name = '_' + cfg_name
+        else:
+            name = ''
+        nowname = now + name + opt.postfix
+        logdir = join('logs', nowname)
+
+    ckptdir = join(logdir, 'checkpoints')
+    cfgdir = join(logdir, 'configs')
+    seed_everything(opt.seed)
+    return ckptdir, cfgdir, logdir, nowname
+
+class Parser(ParserBasic):
+    @classmethod
+    def get_parser(cls, **kwargs):
+        super().get_parser(**kwargs)
+        parser_kwargs = kwargs.get('parser_kwargs', dict())
+        return _get_parser_(**parser_kwargs)
+    
+    @classmethod
+    def ctl_parser(cls, opt, unknown, **kwargs):
+        super().ctl_parser(opt, unknown, **kwargs)
+        return _ctl_parser_(opt, unknown, **kwargs)

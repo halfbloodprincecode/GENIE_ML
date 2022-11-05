@@ -5,5 +5,5 @@ class WrappedDataset(WrappedDatasetBase):
 
 class DataModuleFromConfig(DataModuleFromConfigBase):
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.wrap_cls = WrappedDataset

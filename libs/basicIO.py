@@ -52,6 +52,8 @@ def ls(_dir, _pattern: str, full_path=False):
     if isinstance(_dir, dict):
         return list(_dir.keys()) # _dir contains multi directory informations.
     assert isinstance(_dir, str), '_dir is must be str (path directory)'
+    
+    _dir = pathBIO(_dir)
 
     if full_path:
         return glob.glob(join(_dir, _pattern))

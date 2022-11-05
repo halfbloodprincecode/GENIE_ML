@@ -19,6 +19,7 @@ attrdict = "*"
 pytorch-lightning = "*"
 torchvision = "*"
 omegaconf = "*"
+pudb = "*"
 
 [dev-packages]
 
