@@ -22,6 +22,10 @@ def main():
 if __name__ == '__main__':
     main()
 
+# python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
+
+
+
 # from omegaconf import OmegaConf
 
 # a = OmegaConf.create({'name': 'mmd', 'age': 13})

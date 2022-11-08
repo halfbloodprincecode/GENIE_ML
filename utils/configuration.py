@@ -27,17 +27,19 @@ class ConfigBase:
         nowname = kwargs['nowname']
         nondefault_trainer_args = kwargs['nondefault_trainer_args']
 
+        # configure model&trainer ##########################################
         # init and save configs
         configs = [OmegaConf.load(cfg) for cfg in opt.base]
         cli = OmegaConf.from_dotlist(unknown)
         config = OmegaConf.merge(*configs, cli)
         lightning_config = config.pop('lightning', OmegaConf.create())
         
-        print('='*60)
-        print(lightning_config)
-        print('='*60)
-        input()
-        return
+        # print(config)
+        # print('='*60)
+        # print(lightning_config)
+        # print('='*60)
+        # input()
+        # return
         
         # merge trainer cli with config
         trainer_config = lightning_config.get('trainer', OmegaConf.create())

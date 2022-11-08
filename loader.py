@@ -1,14 +1,12 @@
-# import os
 import pretty_errors
-# from os import getenv
+from os import getenv
 # from loguru import logger
-from settings import CONFIG, metrics
+import settings
 # from libs.basicIO import readBIO, ls
 from libs.dyimport import Import
 
-app = Import(f'apps.{CONFIG.logs.app.name}.app.main', embedParams={
-    'CONFIG': CONFIG
-})
+
+app = Import(f'apps.{getenv("GENIE_ML_APP")}.app.main', embedParams={})
 
 # from articles.Attention_is_All_You_Need.index import main as atn_main, metrics as atn_metrics
 # from utils.quantizer import veqQuantizerImg

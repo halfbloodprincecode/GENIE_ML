@@ -15,9 +15,30 @@ class ParserBasic(ABC):
         return sorted(k for k in vars(args) if getattr(opt, k) != getattr(args, k))
 
     @classmethod
+    def predefined_args(cls, parser):
+        parser.add_argument(
+            '--logger_ml',
+            type=str,
+            default='testtube',
+            help='default_logger_cfgs key name',
+        )
+        parser.add_argument(
+            '--metrics_tbl',
+            type=str,
+            const=True,
+            default=None,
+            nargs='?',
+            help='metrics table name',
+        )
+        return parser
+
+    @classmethod
     def parser(cls, **kwargs):
         ctlFlag = kwargs.get('ctlFlag', True)
+        predefFlag = kwargs.get('predefFlag', True)
         parser = cls.get_parser(**kwargs)
+        if predefFlag:
+            parser = cls.predefined_args(parser)
         parser = Trainer.add_argparse_args(parser)
         opt, unknown = parser.parse_known_args()
         

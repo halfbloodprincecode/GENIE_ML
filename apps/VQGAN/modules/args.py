@@ -1,5 +1,5 @@
 import os
-from libs.basicIO import ls
+from libs.basicIO import ls, pathBIO
 from omegaconf import OmegaConf
 from libs.args import ParserBasic
 from pytorch_lightning import seed_everything
@@ -86,13 +86,6 @@ def _get_parser_(**parser_kwargs):
         default='',
         help='post-postfix for default name',
     )
-    parser.add_argument(
-        '-l',
-        '--logger_ml',
-        type=str,
-        default='testtube',
-        help='default_logger_cfgs key name',
-    )
 
     return parser
 
@@ -109,7 +102,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
             raise ValueError('Cannot find {}'.format(opt.resume))
         if isfile(opt.resume): # ckpt address
             paths = opt.resume.split('/')
-            idx = len(paths)-paths[::-1].index('logs')+1
+            idx = len(paths)-paths[::-1].index('logs')+1 # this can produce error if `logs` is not in list.
             logdir = '/'.join(paths[:idx])
             ckpt = opt.resume
         else: # logdir address
@@ -121,8 +114,13 @@ def _ctl_parser_(opt, unknown, **kwargs):
         base_configs = sorted(
             ls(logdir, 'configs/*.yaml', full_path=True)
         )
+
+
+        aa = ls(logdir, 'configs/*.yaml', full_path=True)
+        bb = sorted(aa)
         print('*'*30)
-        print('base_configs', base_configs)
+        print('aa', aa)
+        print('bb', bb)
         input()
 
         opt.base = base_configs + opt.base
@@ -138,7 +136,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
         else:
             name = ''
         nowname = now + name + opt.postfix
-        logdir = join('logs', nowname)
+        logdir = join(pathBIO('//logs'), nowname)
 
     ckptdir = join(logdir, 'checkpoints')
     cfgdir = join(logdir, 'configs')
