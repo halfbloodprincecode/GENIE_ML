@@ -48,7 +48,7 @@ class SetupCallbackBase(Callback):
                     pass
 
 # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-class ImageLogger(Callback):
+class ImageLoggerBase(Callback):
     def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True):
         super().__init__()
         self.batch_freq = batch_frequency
