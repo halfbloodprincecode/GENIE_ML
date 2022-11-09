@@ -1,5 +1,6 @@
 import os
 import torch
+import torchvision
 import numpy as np
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
@@ -55,7 +56,8 @@ class ImageLoggerBase(Callback):
         self.max_images = max_images
         self.logger_log_images = {
             pl.loggers.WandbLogger: self._wandb,
-            pl.loggers.TestTubeLogger: self._testtube,
+            # pl.loggers.TestTubeLogger: self._testtube,
+            pl.loggers.TensorBoardLogger: self._tb
         }
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
         if not increase_log_steps:
@@ -81,6 +83,17 @@ class ImageLoggerBase(Callback):
             pl_module.logger.experiment.add_image(
                 tag, grid,
                 global_step=pl_module.global_step)
+
+    @rank_zero_only
+    def _tb(self, pl_module, images, batch_idx, split):
+        for k in images:
+            grid = torchvision.utils.make_grid(images[k])
+            grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
+
+            tag = f'{split}/{k}'
+            # pl_module.logger.experiment.add_image(
+            #     tag, grid,
+            #     global_step=pl_module.global_step)
 
     @rank_zero_only
     def log_local(self, save_dir, split, images,
