@@ -95,7 +95,7 @@ class ConfigBase:
             },
         }
         default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'testtube'
-        logger_cfg = lightning_config.logger or OmegaConf.create() # lightning_config.get('logger', OmegaConf.create())
+        logger_cfg = lightning_config.get('logger', OmegaConf.create()) # lightning_config.logger or OmegaConf.create()
         logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
         trainer_kwargs['logger'] = cls.instantiate_from_config(logger_cfg)
         
@@ -117,7 +117,7 @@ class ConfigBase:
             default_modelckpt_cfg['params']['monitor'] = model.monitor
             default_modelckpt_cfg['params']['save_top_k'] = 3
 
-        modelckpt_cfg = lightning_config.modelcheckpoint or OmegaConf.create() # lightning_config.get('modelcheckpoint', OmegaConf.create())
+        modelckpt_cfg = lightning_config.get('modelcheckpoint', OmegaConf.create()) # lightning_config.modelcheckpoint or OmegaConf.create()
         modelckpt_cfg = OmegaConf.merge(default_modelckpt_cfg, modelckpt_cfg)
         trainer_kwargs['checkpoint_callback'] = cls.instantiate_from_config(modelckpt_cfg)
 
@@ -153,7 +153,7 @@ class ConfigBase:
                 }
             },
         }
-        callbacks_cfg = lightning_config.callbacks or OmegaConf.create() # lightning_config.get('callbacks', OmegaConf.create())
+        callbacks_cfg = lightning_config.get('callbacks', OmegaConf.create()) # lightning_config.callbacks or OmegaConf.create()
         callbacks_cfg = OmegaConf.merge(default_callbacks_cfg, callbacks_cfg)
         trainer_kwargs['callbacks'] = [cls.instantiate_from_config(callbacks_cfg[k]) for k in callbacks_cfg]
 
