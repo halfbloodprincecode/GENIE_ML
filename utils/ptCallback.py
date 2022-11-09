@@ -3,7 +3,8 @@ import torch
 import numpy as np
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
-from pytorch_lightning.utilities.distributed import rank_zero_only
+from pytorch_lightning.utilities.rank_zero import rank_zero_only 
+# from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
 
 class SetupCallbackBase(Callback):
