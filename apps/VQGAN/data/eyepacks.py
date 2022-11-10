@@ -133,6 +133,7 @@ class ImageNetTrain(ImageNetBase):
         147897477120,
     ]
     def __init__(self, config=None):
+        print('&&&&&&&&&&&&&&&&&&&&&&&&&~~')
         super().__init__(config)
 
     def _prepare(self):
