@@ -40,6 +40,8 @@ def str_to_indices(string):
 
 class ImageNetBase(Dataset):
     def __init__(self, config=None):
+        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+
         self.config = config or OmegaConf.create()
         if not type(self.config)==dict:
             self.config = OmegaConf.to_container(self.config)
