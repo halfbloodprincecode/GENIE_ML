@@ -22,6 +22,9 @@ class WrappedDatasetBase(Dataset):
 class DataModuleFromConfigBase(pl.LightningDataModule):
     def __init__(self, batch_size, train=None, validation=None, test=None, wrap=False, num_workers=None, instantiate_from_config=None, custom_collate=None):
         super().__init__()
+        print('@@@@@@@@@@@ train @@@@@@@@@@@', train)
+
+
         self.batch_size = batch_size
         self.dataset_configs = dict()
         self.num_workers = num_workers if num_workers is not None else batch_size*2

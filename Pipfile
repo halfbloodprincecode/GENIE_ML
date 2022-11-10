@@ -21,6 +21,7 @@ torchvision = "*"
 omegaconf = "*"
 pudb = "*"
 einops = "*"
+albumentations = "*"
 
 [dev-packages]
 
