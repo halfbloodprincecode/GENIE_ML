@@ -132,6 +132,8 @@ class ImageNetTrain(ImageNetBase):
     SIZES = [
         147897477120,
     ]
+    def __init__(self, config=None):
+        super().__init__(config)
 
     def _prepare(self):
         self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
