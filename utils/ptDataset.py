@@ -57,6 +57,7 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
 
     def prepare_data(self):
         for data_cfg in self.dataset_configs.values():
+            print('@@@@@@@@@@@@2', data_cfg)
             self.instantiate_from_config(data_cfg)
 
     def setup(self, stage=None):
