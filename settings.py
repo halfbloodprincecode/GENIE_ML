@@ -46,7 +46,7 @@ environ['GENIE_ML_APP'] = opt.app
 
 import kaggle # need to import here(after env variables had defined)
 makedirs(environ['KAGGLE_PATH'], exist_ok=True)
-kaggle.api.CONFIG_NAME_PATH = environ['KAGGLE_PATH']
+kaggle.api.CONFIG_NAME_PATH = 'KAGGLE_PATH'
 print('####################3', environ['KAGGLE_PATH'])
 kaggle.api.authenticate()
 
