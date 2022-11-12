@@ -44,11 +44,8 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 
-try:
-    import kaggle # need to import here(after env variables had defined)
-    kaggle.api.authenticate()
-except Exception as e:
-    logger.error(e)
+import kaggle # need to import here(after env variables had defined)
+kaggle.api.authenticate()
 
 #database handler
 # metrics = Metrics(
