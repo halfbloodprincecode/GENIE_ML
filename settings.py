@@ -47,9 +47,7 @@ environ['GENIE_ML_APP'] = opt.app
 import kaggle # need to import here(after env variables had defined)
 makedirs(environ['KAGGLE_PATH'], exist_ok=True)
 _get_config_value = kaggle.api.get_config_value
-kaggle.api.get_config_value = lambda self, name: dict(
-    path=environ['KAGGLE_PATH']
-).get(name, _get_config_value(name))
+kaggle.api.get_default_download_dir = lambda self, *subdirs: environ['KAGGLE_PATH']
 kaggle.api.authenticate()
 
 #database handler
