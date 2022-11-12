@@ -45,7 +45,7 @@ opt, unknown = parser.parse_known_args()
 environ['GENIE_ML_APP'] = opt.app
 
 import kaggle # need to import here(after env variables had defined)
-# makedirs(environ['KAGGLE_PATH'], exist_ok=True)
+
 
 #database handler
 # metrics = Metrics(

@@ -30,7 +30,7 @@ import os
 
 print(os.environ)
 
-os.system('kaggle competitions download -c diabetic-retinopathy-detection -f test.zip.007')
+os.system(f'kaggle competitions download -p {os.getenv("KAGGLE_PATH")} -c diabetic-retinopathy-detection -f test.zip.007')
 
 
 # kaggle.api.dataset_download_files('diabetic-retinopathy-detection/data?select=train.zip.001', 
