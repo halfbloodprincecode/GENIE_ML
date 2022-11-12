@@ -14,31 +14,24 @@
 # print(a)
 
 
-from loader import *
+# from loader import *
 
-def main():
-    pass
-    # app()
+# def main():
+#     pass
+#     # app()
     
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
 
 
+class A:
+    name = 'mmd'
 
+    def test(self):
+        print('!!!!!!!!!!!!', self.name)
 
-import os
-
-print(os.environ)
-
-os.system('kaggle competitions download -p {} -c {} -f {}'.format(
-    os.getenv('KAGGLE_PATH'),
-    'diabetic-retinopathy-detection',
-    'test.zip.007'
-))
-    
-
-# kaggle.api.dataset_download_files('diabetic-retinopathy-detection/data?select=train.zip.001', 
-#         path=pathBIO(f'//data/external/kaggle'), unzip=True)
+A().test()
+        
 
 # python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
 

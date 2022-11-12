@@ -125,16 +125,22 @@ class ImageNetBase(Dataset):
 
 
 class ImageNetTrain(ImageNetBase):
-    NAME = 'eyepacks_train' #"ILSVRC2012_train"
-    # URL = "http://www.image-net.org/challenges/LSVRC/2012/"
-    # AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2"
+    NAME = 'eyepacs_train' #"ILSVRC2012_train"
+    # URL = "https://www.kaggle.com/competitions/diabetic-retinopathy-detection"
+    # AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2" # only for torren
     # # FILES and SIZES are a corspanding list.
-    # FILES = [
-    #     "ILSVRC2012_img_train.tar",
-    # ]
+    FILES = [
+        'train.zip.001',
+        'train.zip.002',
+        'train.zip.003',
+        'train.zip.004',
+        'train.zip.005',
+        'trainLabels.csv.zip'
+    ]
     # SIZES = [
     #     147897477120,
     # ]
+
     def _prepare(self):
         self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
                                     default=True)
@@ -152,7 +158,11 @@ class ImageNetTrain(ImageNetBase):
             datadir = self.datadir
             if not os.path.exists(datadir):
                 os.makedirs(datadir, exist_ok=True)
-                
+                os.system('kaggle competitions download -p {} -c {} -f {}'.format(
+                    os.getenv('KAGGLE_PATH'),
+                    'diabetic-retinopathy-detection',
+                    'test.zip.007'
+                ))
 
             filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
             filelist = [os.path.relpath(p, start=datadir) for p in filelist]
@@ -211,18 +221,27 @@ class ImageNetTrain(ImageNetBase):
 
 
 class ImageNetValidation(ImageNetBase):
-    NAME = "ILSVRC2012_validation"
-    URL = "http://www.image-net.org/challenges/LSVRC/2012/"
-    AT_HASH = "5d6d0df7ed81efd49ca99ea4737e0ae5e3a5f2e5"
-    VS_URL = "https://heibox.uni-heidelberg.de/f/3e0f6e9c624e45f2bd73/?dl=1"
+    NAME = 'eyepacs_validation'
+    # URL = "https://www.kaggle.com/competitions/diabetic-retinopathy-detection"
+    # AT_HASH = "5d6d0df7ed81efd49ca99ea4737e0ae5e3a5f2e5"
+    # VS_URL = "https://heibox.uni-heidelberg.de/f/3e0f6e9c624e45f2bd73/?dl=1"
     FILES = [
-        "ILSVRC2012_img_val.tar",
-        "validation_synset.txt",
+        'sampleSubmission.csv.zip',
+        'sample.zip',
+        'test.zip.001',
+        'test.zip.002',
+        'test.zip.003',
+        'test.zip.004',
+        'test.zip.005',
+        'test.zip.006',
+        'test.zip.007',
+        # "ILSVRC2012_img_val.tar",
+        # "validation_synset.txt",
     ]
-    SIZES = [
-        6744924160,
-        1950000,
-    ]
+    # SIZES = [
+    #     6744924160,
+    #     1950000,
+    # ]
 
     def _prepare(self):
         self.random_crop = retrieve(self.config, "ImageNetValidation/random_crop",

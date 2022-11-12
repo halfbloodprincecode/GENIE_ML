@@ -44,11 +44,13 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 
+# https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
     system('chmod {} {}'.format(
         str(getenv('KAGGLE_CHMOD')),
         join(str(getenv('KAGGLE_CONFIG_DIR')), 'kaggle.json')
     ))
+
 import kaggle # need to import here(after env variables had defined)
 
 
