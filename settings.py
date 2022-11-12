@@ -48,6 +48,8 @@ from kaggle import KaggleApi, ApiClient # need to import here(after env variable
 makedirs(environ['KAGGLE_PATH'], exist_ok=True)
 KaggleApi.CONFIG_NAME_PATH = 'KAGGLE_PATH'.lower()
 api = KaggleApi(ApiClient())
+print('################3', KaggleApi.config)
+print('################3', KaggleApi.config_values)
 api.authenticate()
 
 # kaggle_api.get_default_download_dir = lambda self, *subdirs: environ['KAGGLE_PATH']
