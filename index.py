@@ -22,8 +22,13 @@ def main():
 if __name__ == '__main__':
     main()
 
+
 # python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
 
+# import glob, os
+
+# r = glob.glob(os.path.join('/home/alihejrati/Desktop/untitled folder', "**", f"*.txt"))
+# print(r)
 
 # from omegaconf import OmegaConf
 

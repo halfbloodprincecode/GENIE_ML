@@ -41,8 +41,12 @@ def str_to_indices(string):
 class ImageNetBase(Dataset):
     def __init__(self, config=None):
         self.config = config or OmegaConf.create()
+        
+        print('******************', type(self.config))
         if not type(self.config)==dict:
             self.config = OmegaConf.to_container(self.config)
+        else:
+            print('******************************')
         self._prepare()
         self._prepare_synset_to_human()
         self._prepare_idx_to_synset()
@@ -164,8 +168,9 @@ class ImageNetTrain(ImageNetBase):
                     with tarfile.open(subpath, "r:") as tar:
                         tar.extractall(path=subdir)
 
-
-            filelist = glob.glob(os.path.join(datadir, "**", "*.JPEG"))
+            print('###########################3', self.config)
+            print('###########3', self.config.ext)
+            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config.ext}"))
             filelist = [os.path.relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = "\n".join(filelist)+"\n"

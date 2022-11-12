@@ -66,6 +66,12 @@ def retrieve(
     callable nodes if necessary and :attr:`expand` is ``True``. The expansion
     is done in-place.
 
+    Example:
+        t = retrieve({'size': 256, 'ImageNetTrain': {'random_crop': 'ok'}, 'hoo': ['ali', {'random_crop': 'sasan'}]}, "hoo/1/random_crop",
+                                    default=True)
+
+        print('t', t)
+
     Parameters
     ----------
         list_or_dict : list or dict

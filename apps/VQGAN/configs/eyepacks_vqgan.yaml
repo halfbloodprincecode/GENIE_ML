@@ -34,6 +34,7 @@ data:
       target: apps.VQGAN.data.eyepacks.ImageNetTrain
       params:
         config:
+          ext: JPEG
           size: 256
     validation:
       target: apps.VQGAN.data.eyepacks.ImageNetValidation
