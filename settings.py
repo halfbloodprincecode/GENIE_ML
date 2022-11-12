@@ -44,9 +44,12 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 
-from kaggle import api as kaggle_api # need to import here(after env variables had defined)
+from kaggle import KaggleApi, ApiClient # need to import here(after env variables had defined)
 makedirs(environ['KAGGLE_PATH'], exist_ok=True)
-kaggle_api.CONFIG_NAME_PATH = 'KAGGLE_PATH'.lower()
+KaggleApi.CONFIG_NAME_PATH = 'KAGGLE_PATH'.lower()
+api = KaggleApi(ApiClient())
+api.authenticate()
+
 # kaggle_api.get_default_download_dir = lambda self, *subdirs: environ['KAGGLE_PATH']
 # kaggle.api.authenticate()
 
