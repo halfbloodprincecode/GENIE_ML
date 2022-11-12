@@ -45,6 +45,7 @@ opt, unknown = parser.parse_known_args()
 environ['GENIE_ML_APP'] = opt.app
 
 import kaggle # need to import here(after env variables had defined)
+kaggle.api.CONFIG_NAME_PATH = environ['KAGGLE_PATH']
 kaggle.api.authenticate()
 
 #database handler
