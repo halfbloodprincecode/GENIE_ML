@@ -143,6 +143,11 @@ class ImageNetTrain(ImageNetBase):
         self.datadir = os.path.join(self.root, "data")
         self.txt_filelist = os.path.join(self.root, "filelist.txt")
         self.expected_length = 1281167
+
+        print('###########################3', self.config)
+        print('###########3', self.config.ext)
+        print('###########3', self.datadir)
+
         if not bdu.is_prepared(self.root):
             # prep
             print("Preparing dataset {} in {}".format(self.NAME, self.root))
@@ -168,8 +173,7 @@ class ImageNetTrain(ImageNetBase):
                     with tarfile.open(subpath, "r:") as tar:
                         tar.extractall(path=subdir)
 
-            print('###########################3', self.config)
-            print('###########3', self.config.ext)
+            
             filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config.ext}"))
             filelist = [os.path.relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
