@@ -1,5 +1,5 @@
 from loguru import logger
-from os import getenv, environ
+from os import getenv, environ, makedirs
 from dotenv import load_dotenv
 from libs.basicDS import dotdict
 from utils.metrics import Metrics
@@ -45,7 +45,9 @@ opt, unknown = parser.parse_known_args()
 environ['GENIE_ML_APP'] = opt.app
 
 import kaggle # need to import here(after env variables had defined)
+makedirs(environ['KAGGLE_PATH'], exist_ok=True)
 kaggle.api.CONFIG_NAME_PATH = environ['KAGGLE_PATH']
+print('####################3', environ['KAGGLE_PATH'])
 kaggle.api.authenticate()
 
 #database handler
