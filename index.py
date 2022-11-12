@@ -28,6 +28,8 @@ if __name__ == '__main__':
 
 import os
 
+print(os.environ)
+
 os.system('kaggle competitions download -c diabetic-retinopathy-detection')
 
 
