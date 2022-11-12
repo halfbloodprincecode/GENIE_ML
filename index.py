@@ -26,10 +26,7 @@ if __name__ == '__main__':
 
 
 
-from libs.basicIO import pathBIO
-import kaggle, os
-
-kaggle.api.authenticate()
+import os
 
 os.system('kaggle competitions download -c diabetic-retinopathy-detection')
 

@@ -1,3 +1,5 @@
+import kaggle
+from loguru import logger
 from os import getenv, environ
 from dotenv import load_dotenv
 from libs.basicDS import dotdict
@@ -42,6 +44,11 @@ parser.add_argument(
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
+
+try:
+    kaggle.api.authenticate()
+except Exception as e:
+    logger.error(e)
 
 #database handler
 # metrics = Metrics(
