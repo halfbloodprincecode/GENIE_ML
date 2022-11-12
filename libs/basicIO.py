@@ -51,11 +51,17 @@ def ls(_dir, _pattern: str, full_path=False):
     """
     if isinstance(_dir, dict):
         return list(_dir.keys()) # _dir contains multi directory informations.
-    assert isinstance(_dir, str), '_dir is must be str (path directory)'
+    assert isinstance(_dir, str), f'_dir is must be str (path directory). but now is {type(_dir)}'
     
     _dir = pathBIO(_dir)
 
     if full_path:
         return glob.glob(join(_dir, _pattern))
     else:
-        return glob.glob1(_dir, _pattern)
+        return glob.glob1(_dir, _pattern) # Notic: glob1 does not support (**) (match child dirs)
+
+def is_prepared(adr):
+    return pathlib.Path(adr).joinpath('.ready').exists()
+
+def mark_prepared(adr):
+    pathlib.Path(adr).joinpath('.ready').touch()

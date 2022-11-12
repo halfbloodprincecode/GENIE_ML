@@ -17,18 +17,25 @@
 from loader import *
 
 def main():
-    app()
+    pass
+    # app()
     
 if __name__ == '__main__':
     main()
 
 
+
+
+from libs.basicIO import pathBIO
+import kaggle
+
+kaggle.api.authenticate()
+
+kaggle.api.dataset_download_files('diabetic-retinopathy-detection/data?select=train.zip.001', 
+        path=pathBIO(f'//data/external/kaggle'), unzip=True)
+
 # python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
 
-# import glob, os
-
-# r = glob.glob(os.path.join('/home/alihejrati/Desktop/untitled folder', "**", f"*.txt"))
-# print(r)
 
 # from omegaconf import OmegaConf
 

@@ -125,16 +125,16 @@ class ImageNetBase(Dataset):
 
 
 class ImageNetTrain(ImageNetBase):
-    NAME = "ILSVRC2012_train"
-    URL = "http://www.image-net.org/challenges/LSVRC/2012/"
-    AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2"
-    FILES = [
-        "ILSVRC2012_img_train.tar",
-    ]
-    SIZES = [
-        147897477120,
-    ]
-
+    NAME = 'eyepacks_train' #"ILSVRC2012_train"
+    # URL = "http://www.image-net.org/challenges/LSVRC/2012/"
+    # AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2"
+    # # FILES and SIZES are a corspanding list.
+    # FILES = [
+    #     "ILSVRC2012_img_train.tar",
+    # ]
+    # SIZES = [
+    #     147897477120,
+    # ]
     def _prepare(self):
         self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
                                     default=True)
@@ -142,11 +142,37 @@ class ImageNetTrain(ImageNetBase):
         self.root = os.path.join(cachedir, "autoencoders/data", self.NAME)
         self.datadir = os.path.join(self.root, "data")
         self.txt_filelist = os.path.join(self.root, "filelist.txt")
-        self.expected_length = 1281167
-
+        # self.expected_length = 1281167
         print('###########################3', self.config)
         print('###########3', self.config["ext"], f"*.{self.config['ext']}")
         print('###########3', self.datadir)
+
+        if not bdu.is_prepared(self.root):
+            print("Preparing dataset {} in {}".format(self.NAME, self.root))
+            datadir = self.datadir
+            if not os.path.exists(datadir):
+                os.makedirs(datadir, exist_ok=True)
+                
+
+            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
+            filelist = [os.path.relpath(p, start=datadir) for p in filelist]
+            filelist = sorted(filelist)
+            filelist = "\n".join(filelist)+"\n"
+            with open(self.txt_filelist, "w") as f:
+                f.write(filelist)
+
+            bdu.mark_prepared(self.root)
+
+
+
+    def __prepare(self):
+        self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
+                                    default=True)
+        cachedir = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
+        self.root = os.path.join(cachedir, "autoencoders/data", self.NAME)
+        self.datadir = os.path.join(self.root, "data")
+        self.txt_filelist = os.path.join(self.root, "filelist.txt")
+        self.expected_length = 1281167
 
         if not bdu.is_prepared(self.root):
             # prep
@@ -177,7 +203,7 @@ class ImageNetTrain(ImageNetBase):
             filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
             filelist = [os.path.relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
-            filelist = "\n".join(filelist)+"\n"
+            filelist = "\n".join(filelist) + "\n"
             with open(self.txt_filelist, "w") as f:
                 f.write(filelist)
 

@@ -22,6 +22,8 @@ omegaconf = "*"
 pudb = "*"
 einops = "*"
 albumentations = "*"
+academictorrents = "*"
+kaggle = "*"
 
 [dev-packages]
 
