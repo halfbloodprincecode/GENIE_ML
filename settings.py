@@ -49,6 +49,7 @@ makedirs(environ['KAGGLE_PATH'], exist_ok=True)
 kaggle.api.CONFIG_NAME_PATH = 'KAGGLE_PATH'
 print('####################3', environ['KAGGLE_PATH'])
 kaggle.api.authenticate()
+print(kaggle.api.CONFIG_NAME_PATH)
 
 #database handler
 # metrics = Metrics(
