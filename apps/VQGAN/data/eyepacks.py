@@ -145,7 +145,7 @@ class ImageNetTrain(ImageNetBase):
         self.expected_length = 1281167
 
         print('###########################3', self.config)
-        print('###########3', self.config.ext)
+        print('###########3', self.config["ext"], f"*.{self.config['ext']}")
         print('###########3', self.datadir)
 
         if not bdu.is_prepared(self.root):
@@ -174,7 +174,7 @@ class ImageNetTrain(ImageNetBase):
                         tar.extractall(path=subdir)
 
             
-            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config.ext}"))
+            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
             filelist = [os.path.relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = "\n".join(filelist)+"\n"
