@@ -1,5 +1,5 @@
 from loguru import logger
-from os import getenv, environ, makedirs
+from os import getenv, environ, makedirs, system
 from dotenv import load_dotenv
 from libs.basicDS import dotdict
 from utils.metrics import Metrics
@@ -44,6 +44,11 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 
+if getenv('KAGGLE_CHMOD'):
+    system('chmod {} {}'.format(
+        str(getenv('KAGGLE_CHMOD')),
+        join(str(getenv('KAGGLE_CONFIG_DIR')), 'kaggle.json')
+    ))
 import kaggle # need to import here(after env variables had defined)
 
 
