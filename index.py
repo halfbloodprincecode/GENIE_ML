@@ -27,12 +27,15 @@ if __name__ == '__main__':
 
 
 from libs.basicIO import pathBIO
-import kaggle
+import kaggle, os
 
 kaggle.api.authenticate()
 
-kaggle.api.dataset_download_files('diabetic-retinopathy-detection/data?select=train.zip.001', 
-        path=pathBIO(f'//data/external/kaggle'), unzip=True)
+os.system('kaggle competitions download -c diabetic-retinopathy-detection')
+
+
+# kaggle.api.dataset_download_files('diabetic-retinopathy-detection/data?select=train.zip.001', 
+#         path=pathBIO(f'//data/external/kaggle'), unzip=True)
 
 # python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
 
