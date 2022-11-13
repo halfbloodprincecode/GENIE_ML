@@ -17,8 +17,7 @@
 from loader import *
 
 def main():
-    pass
-    # app()
+    app()
     
 if __name__ == '__main__':
     main()
