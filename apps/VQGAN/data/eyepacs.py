@@ -6,6 +6,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 import albumentations
+from loguru import logger
 from omegaconf import OmegaConf
 from torch.utils.data import Dataset
 from libs.basicIO import extractor
@@ -146,12 +147,9 @@ class ImageNetTrain(ImageNetBase):
         self.root = join(cachedir, 'autoencoders/data', self.NAME)
         self.datadir = join(self.root, 'data')
         self.txt_filelist = join(self.root, 'filelist.txt')
-        print('###########################3', self.config)
-        print('###########3', self.config["ext"], f"*.{self.config['ext']}")
-        print('###########3', self.datadir)
 
         if not bdu.is_prepared(self.root):
-            print('Preparing dataset {} in {}'.format(self.NAME, self.root))
+            logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
             datadir = self.datadir
             if not exists(datadir):
                 makedirs(datadir, exist_ok=True)
