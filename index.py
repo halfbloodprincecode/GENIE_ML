@@ -14,23 +14,23 @@
 # print(a)
 
 
-# from loader import *
+from loader import *
 
-# def main():
-#     pass
-#     # app()
+def main():
+    pass
+    # app()
     
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
 
 
-class A:
-    name = 'mmd'
+# class A:
+#     name = 'mmd'
 
-    def test(self):
-        print('!!!!!!!!!!!!', self.name)
+#     def test(self):
+#         print('!!!!!!!!!!!!', self.name)
 
-A().test()
+# A().test()
         
 
 # python main.py --base apps/VQGAN/configs/eyepacks_vqgan.yaml -t True --gpus 0,
