@@ -1,3 +1,4 @@
-import os
+from os import environ
+from os.path import expanduser
 
-cachedir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
+cacheDir = lambda: environ.get('XDG_CACHE_HOME', expanduser('~/.cache'))

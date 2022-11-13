@@ -65,3 +65,14 @@ def is_prepared(adr):
 
 def mark_prepared(adr):
     pathlib.Path(adr).joinpath('.ready').touch()
+
+def extractor(src_file, dst_dir, mode='tar'):
+    if mode == 'tar':
+        import tarfile
+        with tarfile.open(src_file, 'r:') as tar:
+            tar.extractall(path=dst_dir)
+    
+    if mode == 'zip':
+        import zipfile
+        with zipfile.ZipFile(src_file, 'r') as zip_ref:
+            zip_ref.extractall(dst_dir)

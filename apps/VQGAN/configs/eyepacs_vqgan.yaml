@@ -40,4 +40,5 @@ data:
       target: apps.VQGAN.data.eyepacs.ImageNetValidation
       params:
         config:
+          ext: JPEG
           size: 256

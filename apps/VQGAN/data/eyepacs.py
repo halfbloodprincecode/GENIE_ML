@@ -1,4 +1,6 @@
 import os, tarfile, glob, shutil
+from os import makedirs, system, environ, getenv, symlink
+from os.path import join, exists, relpath
 import yaml
 import numpy as np
 from tqdm import tqdm
@@ -6,7 +8,8 @@ from PIL import Image
 import albumentations
 from omegaconf import OmegaConf
 from torch.utils.data import Dataset
-
+from libs.basicIO import extractor
+from libs.basicAR import cacheDir
 from apps.VQGAN.data.base import ImagePaths
 from apps.VQGAN.util import download, retrieve
 import apps.VQGAN.data.utils as bdu
@@ -128,7 +131,6 @@ class ImageNetTrain(ImageNetBase):
     NAME = 'eyepacs_train' #"ILSVRC2012_train"
     # URL = "https://www.kaggle.com/competitions/diabetic-retinopathy-detection"
     # AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2" # only for torren
-    # # FILES and SIZES are a corspanding list.
     FILES = [
         'train.zip.001',
         'train.zip.002',
@@ -137,88 +139,47 @@ class ImageNetTrain(ImageNetBase):
         'train.zip.005',
         'trainLabels.csv.zip'
     ]
-    # SIZES = [
-    #     147897477120,
-    # ]
 
     def _prepare(self):
-        self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
-                                    default=True)
-        cachedir = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-        self.root = os.path.join(cachedir, "autoencoders/data", self.NAME)
-        self.datadir = os.path.join(self.root, "data")
-        self.txt_filelist = os.path.join(self.root, "filelist.txt")
-        # self.expected_length = 1281167
+        self.random_crop = retrieve(self.config, 'ImageNetTrain/random_crop', default=True)
+        cachedir = cacheDir()
+        self.root = join(cachedir, 'autoencoders/data', self.NAME)
+        self.datadir = join(self.root, 'data')
+        self.txt_filelist = join(self.root, 'filelist.txt')
         print('###########################3', self.config)
         print('###########3', self.config["ext"], f"*.{self.config['ext']}")
         print('###########3', self.datadir)
 
         if not bdu.is_prepared(self.root):
-            print("Preparing dataset {} in {}".format(self.NAME, self.root))
+            print('Preparing dataset {} in {}'.format(self.NAME, self.root))
             datadir = self.datadir
-            if not os.path.exists(datadir):
-                os.makedirs(datadir, exist_ok=True)
-                os.system('kaggle competitions download -p {} -c {} -f {}'.format(
-                    os.getenv('KAGGLE_PATH'),
-                    'diabetic-retinopathy-detection',
-                    'test.zip.007'
-                ))
+            if not exists(datadir):
+                makedirs(datadir, exist_ok=True)
+                for fname in self.FILES:
+                    fake_fpath = join(self.root, fname)
+                    if exists(fake_fpath):
+                        continue
+                    
+                    real_fdir = join(getenv('KAGGLE_PATH'), self.NAME)
+                    real_fpath = join(real_fdir, fname)
+                    if not exists(real_fpath):
+                        system('kaggle competitions download -p {} -c {} -f {}'.format(
+                            real_fdir,
+                            'diabetic-retinopathy-detection',
+                            fname
+                        ))
+                    
+                    symlink(src=real_fpath, dst=fake_fpath)
+                    extractor(src_file=fake_fpath, dst_dir=datadir, mode='zip')
 
-            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
-            filelist = [os.path.relpath(p, start=datadir) for p in filelist]
+            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['ext'])))
+            filelist = [relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
-            filelist = "\n".join(filelist)+"\n"
-            with open(self.txt_filelist, "w") as f:
+            filelist = '\n'.join(filelist) + '\n'
+            with open(self.txt_filelist, 'w') as f:
                 f.write(filelist)
 
             bdu.mark_prepared(self.root)
-
-
-
-    def __prepare(self):
-        self.random_crop = retrieve(self.config, "ImageNetTrain/random_crop",
-                                    default=True)
-        cachedir = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-        self.root = os.path.join(cachedir, "autoencoders/data", self.NAME)
-        self.datadir = os.path.join(self.root, "data")
-        self.txt_filelist = os.path.join(self.root, "filelist.txt")
-        self.expected_length = 1281167
-
-        if not bdu.is_prepared(self.root):
-            # prep
-            print("Preparing dataset {} in {}".format(self.NAME, self.root))
-
-            datadir = self.datadir
-            if not os.path.exists(datadir):
-                path = os.path.join(self.root, self.FILES[0])
-                if not os.path.exists(path) or not os.path.getsize(path)==self.SIZES[0]:
-                    import academictorrents as at
-                    atpath = at.get(self.AT_HASH, datastore=self.root)
-                    assert atpath == path
-
-                print("Extracting {} to {}".format(path, datadir))
-                os.makedirs(datadir, exist_ok=True)
-                with tarfile.open(path, "r:") as tar:
-                    tar.extractall(path=datadir)
-
-                print("Extracting sub-tars.")
-                subpaths = sorted(glob.glob(os.path.join(datadir, "*.tar")))
-                for subpath in tqdm(subpaths):
-                    subdir = subpath[:-len(".tar")]
-                    os.makedirs(subdir, exist_ok=True)
-                    with tarfile.open(subpath, "r:") as tar:
-                        tar.extractall(path=subdir)
-
-            
-            filelist = glob.glob(os.path.join(datadir, "**", f"*.{self.config['ext']}"))
-            filelist = [os.path.relpath(p, start=datadir) for p in filelist]
-            filelist = sorted(filelist)
-            filelist = "\n".join(filelist) + "\n"
-            with open(self.txt_filelist, "w") as f:
-                f.write(filelist)
-
-            bdu.mark_prepared(self.root)
-
 
 class ImageNetValidation(ImageNetBase):
     NAME = 'eyepacs_validation'
