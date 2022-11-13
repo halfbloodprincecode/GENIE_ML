@@ -161,7 +161,7 @@ class ImageNetTrain(ImageNetBase):
                             'diabetic-retinopathy-detection',
                             fname
                         ))
-
+                    real_fpath = glob.glob(real_fpath + '*')[0]
                     print('real_fpath', real_fpath)
                     print('fake_fpath', fake_fpath)
                     symlink(src=real_fpath, dst=fake_fpath)
