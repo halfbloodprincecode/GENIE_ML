@@ -131,6 +131,8 @@ class ImageNetBase(Dataset):
 
 class ImageNetTrain(ImageNetBase):
     def _prepare(self):
+        print('@@@@@@@@@@@@@@@@@@@@@@@', self.config)
+
         self.HOST_DIR = self.config['HOST_DIR']
         if self.HOST_DIR.upper() == '$KAGGLE_PATH':
             self.HOST_DIR = getenv('KAGGLE_PATH')
