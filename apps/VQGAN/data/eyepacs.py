@@ -10,7 +10,7 @@ from loguru import logger
 from omegaconf import OmegaConf
 from torch.utils.data import Dataset
 from libs.coding import sha1
-from libs.basicIO import extractor
+from libs.basicIO import extractor, pathBIO
 from libs.basicAR import cacheDir
 from apps.VQGAN.data.base import ImagePaths
 from apps.VQGAN.util import download, retrieve
@@ -135,7 +135,7 @@ class ImageNetTrain(ImageNetBase):
 
         self.HOST_DIR = self.config['HOST_DIR']
         if self.HOST_DIR.upper() == '$KAGGLE_PATH':
-            self.HOST_DIR = getenv('KAGGLE_PATH')
+            self.HOST_DIR = pathBIO('//' + getenv('KAGGLE_PATH'))
 
         self.NAME = self.config['NAME']
         self.FILES = self.config.get('FILES', [])
