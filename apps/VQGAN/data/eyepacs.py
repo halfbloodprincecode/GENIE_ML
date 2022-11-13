@@ -154,6 +154,7 @@ class ImageNetTrain(ImageNetBase):
                 if not exists(fake_fpath):
                     real_fdir = join(self.HOST_DIR, self.NAME)
                     real_fpath = join(real_fdir, fname)
+                    real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
                     if not exists(real_fpath):
                         system('kaggle competitions download -p {} -c {} -f {}'.format(
                             real_fdir,
