@@ -12,3 +12,19 @@ L = sorted(ls(datadir, '**/*.txt', full_path=True))
 print(filelist)
 print(L)
 print(filelist==L)
+
+
+
+
+
+
+
+
+
+
+
+
+import glob, os
+r = '/home/alihejrati/Desktop/untitled folder 2/test'
+filelist = sorted(glob.glob(os.path.join(r, '**', '**', '*.txt')))
+print(filelist)

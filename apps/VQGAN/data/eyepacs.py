@@ -9,6 +9,7 @@ import albumentations
 from loguru import logger
 from omegaconf import OmegaConf
 from torch.utils.data import Dataset
+from libs.coding import sha1
 from libs.basicIO import extractor
 from libs.basicAR import cacheDir
 from apps.VQGAN.data.base import ImagePaths
@@ -129,19 +130,13 @@ class ImageNetBase(Dataset):
 
 
 class ImageNetTrain(ImageNetBase):
-    NAME = 'eyepacs_train' #"ILSVRC2012_train"
-    # URL = "https://www.kaggle.com/competitions/diabetic-retinopathy-detection"
-    # AT_HASH = "a306397ccf9c2ead27155983c254227c0fd938e2" # only for torren
-    FILES = [
-        'train.zip.001',
-        'train.zip.002',
-        'train.zip.003',
-        'train.zip.004',
-        'train.zip.005',
-        'trainLabels.csv.zip'
-    ]
-
     def _prepare(self):
+        self.HOST_DIR = self.config['HOST_DIR']
+        if self.HOST_DIR.upper() == '$KAGGLE_PATH':
+            self.HOST_DIR = getenv('KAGGLE_PATH')
+
+        self.NAME = self.config['NAME']
+        self.FILES = self.config.get('FILES', [])
         self.random_crop = retrieve(self.config, 'ImageNetTrain/random_crop', default=True)
         cachedir = cacheDir()
         self.root = join(cachedir, 'autoencoders/data', self.NAME)
@@ -151,14 +146,11 @@ class ImageNetTrain(ImageNetBase):
         if not bdu.is_prepared(self.root):
             logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
             datadir = self.datadir
-            if not exists(datadir):
-                makedirs(datadir, exist_ok=True)
-                for fname in self.FILES:
-                    fake_fpath = join(self.root, fname)
-                    if exists(fake_fpath):
-                        continue
-                    
-                    real_fdir = join(getenv('KAGGLE_PATH'), self.NAME)
+            makedirs(datadir, exist_ok=True)
+            for fname in self.FILES:
+                fake_fpath = join(self.root, fname)
+                if not exists(fake_fpath):
+                    real_fdir = join(self.HOST_DIR, self.NAME)
                     real_fpath = join(real_fdir, fname)
                     if not exists(real_fpath):
                         system('kaggle competitions download -p {} -c {} -f {}'.format(
@@ -166,11 +158,14 @@ class ImageNetTrain(ImageNetBase):
                             'diabetic-retinopathy-detection',
                             fname
                         ))
-                    
+                
                     symlink(src=real_fpath, dst=fake_fpath)
-                    extractor(src_file=fake_fpath, dst_dir=datadir, mode='zip')
+                
+                hashbased_path = join(datadir, sha1(fake_fpath))
+                if not exists(hashbased_path):
+                    extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
 
-            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['ext'])))
+            filelist = glob.glob(join(datadir, '**', '**', '*.{}'.format(self.config['ext'])))
             filelist = [relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = '\n'.join(filelist) + '\n'
