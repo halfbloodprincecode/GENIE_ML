@@ -160,7 +160,9 @@ class ImageNetTrain(ImageNetBase):
                             'diabetic-retinopathy-detection',
                             fname
                         ))
-                
+
+                    print('real_fpath', real_fpath)
+                    print('fake_fpath', fake_fpath)
                     symlink(src=real_fpath, dst=fake_fpath)
                 
                 hashbased_path = join(datadir, sha1(fake_fpath))
