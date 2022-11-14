@@ -172,6 +172,12 @@ class ImageNetTrain(ImageNetBase):
                     try:
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
+                        for i in nested_list:
+                            try:
+                                extractor(src_file=i, dst_dir=hashbased_path, mode='zip')
+                            except Exception as e2:
+                                print('@@@@@@@@@ e2', e2)
+                                pass
                         print('$$$$$$$$$$$$$', nested_list)
                     except Exception as e:
                         print('@@@@@@@@@ e', e)
