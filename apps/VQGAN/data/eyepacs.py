@@ -168,14 +168,14 @@ class ImageNetTrain(ImageNetBase):
                 
                 hashbased_path = join(datadir, sha1(fake_fpath))
                 if not exists(hashbased_path):
-                    print('lets create', hashbased_path)
+                    logger.info('lets create', hashbased_path)
                     try:
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                     except Exception as e:
                         print('@@@@@@@@@ e', e)
                         pass
                 else:
-                    print('IGNORE', hashbased_path)
+                    logger.warning('IGNORE', hashbased_path)
 
             filelist = glob.glob(join(datadir, '**', '**', '*.{}'.format(self.config['ext'])))
             filelist = [relpath(p, start=datadir) for p in filelist]
