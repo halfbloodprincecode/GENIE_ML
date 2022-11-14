@@ -161,14 +161,21 @@ class ImageNetTrain(ImageNetBase):
                             'diabetic-retinopathy-detection',
                             fname
                         ))
-                    real_fpath = glob.glob(real_fpath + '*')[0]
+                        real_fpath = glob.glob(real_fpath + '*')[0]
                     print('real_fpath', real_fpath)
                     print('fake_fpath', fake_fpath)
                     symlink(src=real_fpath, dst=fake_fpath)
                 
                 hashbased_path = join(datadir, sha1(fake_fpath))
                 if not exists(hashbased_path):
-                    extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
+                    print('lets create', hashbased_path)
+                    try:
+                        extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
+                    except Exception as e:
+                        print('@@@@@@@@@ e', e)
+                        pass
+                else:
+                    print('IGNORE', hashbased_path)
 
             filelist = glob.glob(join(datadir, '**', '**', '*.{}'.format(self.config['ext'])))
             filelist = [relpath(p, start=datadir) for p in filelist]
