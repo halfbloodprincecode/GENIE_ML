@@ -178,24 +178,18 @@ class ImageNetTrain(ImageNetBase):
                     try:
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
+                        assert len(nested_list)==0, f'nested_list: {nested_list} is exist.'
                         print('nested_list', nested_list)
-                        for i in nested_list:
-                            i_d, i_f = os.path.split(i)
-                            new_i = join(i_d, i_f.replace('.', '_') + '.zip')
-                            rename(i, new_i)
-                            try:
-                                extractor(src_file=new_i, dst_dir=hashbased_path, mode='zip')
-                            except Exception as e2:
-                                print('@@@@@@@@@ e2', e2)
-                                pass
-                        print('$$$$$$$$$$$$$', nested_list)
                     except Exception as e:
                         print('@@@@@@@@@ e', e)
                         pass
                 else:
                     logger.warning('IGNORE', hashbased_path)
 
+            
+            print('datadir', datadir)
             filelist = glob.glob(join(datadir, '**', '**', '*.{}'.format(self.config['ext'])))
+            print('filelist', filelist)
             filelist = [relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = '\n'.join(filelist) + '\n'
