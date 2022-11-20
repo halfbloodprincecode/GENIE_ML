@@ -153,7 +153,7 @@ class ImageNetTrain(ImageNetBase):
             makedirs(datadir, exist_ok=True)
             for fname in self.FILES:
                 fake_fpath = join(self.root, fname)
-                if not exists(fake_fpath):
+                if True or not exists(fake_fpath):
                     real_fdir = join(self.HOST_DIR, self.NAME)
                     real_fpath = join(real_fdir, fname)
                     real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
