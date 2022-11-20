@@ -38,9 +38,9 @@ data:
           size: 256
           # URL: https://www.kaggle.com/competitions/diabetic-retinopathy-detection
           HOST_DIR: $KAGGLE_PATH
-          NAME: eyepacs_train
+          NAME: eyepacs_all
           FILES:
-            - ''
+            - eyepacs.zip
             # - train.zip.001
             # - train.zip.002
             # - train.zip.003

@@ -153,16 +153,15 @@ class ImageNetTrain(ImageNetBase):
             makedirs(datadir, exist_ok=True)
             for fname in self.FILES:
                 fake_fpath = join(self.root, fname)
-                if True or not exists(fake_fpath):
+                if not exists(fake_fpath):
                     real_fdir = join(self.HOST_DIR, self.NAME)
                     real_fpath = join(real_fdir, fname)
                     real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
                     if not exists(real_fpath):
-                        system('kaggle kernels output {} -p {}'.format(
-                            'umangtri/diabetic-retinopathy-version-2',
+                        system('kaggle datasets download -d {} -p {}'.format(
+                            'agaldran/eyepacs',
                             real_fdir
                         ))
-                        assert False, 'ok'
                         # system('kaggle competitions download -p {} -c {} -f {}'.format(
                         #     real_fdir,
                         #     'diabetic-retinopathy-detection',
@@ -179,6 +178,7 @@ class ImageNetTrain(ImageNetBase):
                     try:
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
+                        print('nested_list', nested_list)
                         for i in nested_list:
                             i_d, i_f = os.path.split(i)
                             new_i = join(i_d, i_f.replace('.', '_') + '.zip')
