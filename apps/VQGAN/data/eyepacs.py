@@ -175,6 +175,7 @@ class ImageNetTrain(ImageNetBase):
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
                         for i in nested_list:
+                            makedirs(self.tempdir, exist_ok=True)
                             new_i = join(self.tempdir, sha1(i) + '.zip')
                             symlink(src=i, dst=new_i)
                             try:
