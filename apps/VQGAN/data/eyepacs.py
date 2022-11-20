@@ -165,10 +165,6 @@ class ImageNetTrain(ImageNetBase):
                         ))
                         real_fpath = glob.glob(real_fpath + '*')[0]
                     
-                    real_fpath_d, real_fpath_f = os.path.split(real_fpath)
-                    real_fpath_fnew = real_fpath_f.replace('.', '_') + '.zip'
-                    real_fpath = join(real_fpath_d, real_fpath_fnew)
-                    rename(join(real_fpath_d, real_fpath_f), real_fpath)
                     print('real_fpath', real_fpath)
                     print('fake_fpath', fake_fpath)
                     symlink(src=real_fpath, dst=fake_fpath)
@@ -179,11 +175,11 @@ class ImageNetTrain(ImageNetBase):
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
                         for i in nested_list:
-                            # makedirs(self.tempdir, exist_ok=True)
-                            # new_i = join(self.tempdir, sha1(i) + '.zip')
-                            # symlink(src=i, dst=new_i)
+                            i_d, i_f = os.path.split(i)
+                            new_i = join(i_d, i_f.replace('.', '_') + '.zip')
+                            rename(i, new_i)
                             try:
-                                extractor(src_file=i, dst_dir=hashbased_path, mode='zip')
+                                extractor(src_file=new_i, dst_dir=hashbased_path, mode='zip')
                             except Exception as e2:
                                 print('@@@@@@@@@ e2', e2)
                                 pass
