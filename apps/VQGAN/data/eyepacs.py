@@ -144,6 +144,7 @@ class ImageNetTrain(ImageNetBase):
         cachedir = cacheDir()
         self.root = join(cachedir, 'autoencoders/data', self.NAME)
         self.datadir = join(self.root, 'data')
+        self.tempdir = join(self.root, 'temp')
         self.txt_filelist = join(self.root, 'filelist.txt')
 
         if not bdu.is_prepared(self.root):
@@ -174,10 +175,10 @@ class ImageNetTrain(ImageNetBase):
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
                         for i in nested_list:
-                            print('dest:', hashbased_path)
+                            new_i = join(self.tempdir, sha1(i) + '.zip')
+                            symlink(src=i, dst=new_i)
                             try:
-                                print(f'nested item:({i})', i)
-                                extractor(src_file=i, dst_dir=hashbased_path, mode='zip')
+                                extractor(src_file=new_i, dst_dir=hashbased_path, mode='zip')
                             except Exception as e2:
                                 print('@@@@@@@@@ e2', e2)
                                 pass
