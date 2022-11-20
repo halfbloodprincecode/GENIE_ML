@@ -158,11 +158,16 @@ class ImageNetTrain(ImageNetBase):
                     real_fpath = join(real_fdir, fname)
                     real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
                     if not exists(real_fpath):
-                        system('kaggle competitions download -p {} -c {} -f {}'.format(
-                            real_fdir,
-                            'diabetic-retinopathy-detection',
-                            fname
+                        system('kaggle kernels output {} -p {}'.format(
+                            'umangtri/diabetic-retinopathy-version-2',
+                            real_fdir
                         ))
+                        assert False, 'ok'
+                        # system('kaggle competitions download -p {} -c {} -f {}'.format(
+                        #     real_fdir,
+                        #     'diabetic-retinopathy-detection',
+                        #     fname
+                        # ))
                         real_fpath = glob.glob(real_fpath + '*')[0]
                     
                     print('real_fpath', real_fpath)
