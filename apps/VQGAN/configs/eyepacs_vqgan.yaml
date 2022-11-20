@@ -40,8 +40,7 @@ data:
           HOST_DIR: $KAGGLE_PATH
           NAME: eyepacs_train
           FILES:
-              - ''
-            # - train.zip.001
+            - train.zip.001
             # - train.zip.002
             # - train.zip.003
             # - train.zip.004
