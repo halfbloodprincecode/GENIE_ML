@@ -1,6 +1,6 @@
 import os, tarfile, glob, shutil
 from os import makedirs, system, environ, getenv, symlink
-from os.path import join, exists, relpath
+from os.path import join, exists, relpath, getsize
 import yaml
 import numpy as np
 from tqdm import tqdm
@@ -10,10 +10,10 @@ from loguru import logger
 from omegaconf import OmegaConf
 from torch.utils.data import Dataset
 from libs.coding import sha1
-from libs.basicIO import extractor, pathBIO
+from libs.basicIO import extractor, pathBIO, download
 from libs.basicAR import cacheDir
 from apps.VQGAN.data.base import ImagePaths
-from apps.VQGAN.util import download, retrieve
+from apps.VQGAN.util import retrieve
 import apps.VQGAN.data.utils as bdu
 
 
@@ -49,6 +49,7 @@ class ImageNetBase(Dataset):
         
         print('******************', type(self.config))
         if not type(self.config)==dict:
+            print('AAAAAAAAAAAAAAAAAAAAAAAAA', type(self.config))
             self.config = OmegaConf.to_container(self.config)
         else:
             print('******************************')
@@ -84,48 +85,48 @@ class ImageNetBase(Dataset):
             return relpaths
 
     def _prepare_synset_to_human(self):
-        SIZE = 2655750
-        URL = "https://heibox.uni-heidelberg.de/f/9f28e956cd304264bb82/?dl=1"
-        self.human_dict = os.path.join(self.root, "synset_human.txt")
-        if (not os.path.exists(self.human_dict) or
-                not os.path.getsize(self.human_dict)==SIZE):
+        URL = 'https://heibox.uni-heidelberg.de/f/9f28e956cd304264bb82/?dl=1'
+        self.human_dict = join(self.root, 'synset_human.txt')
+        if not exists(self.human_dict):
             download(URL, self.human_dict)
 
     def _prepare_idx_to_synset(self):
-        URL = "https://heibox.uni-heidelberg.de/f/d835d5b6ceda4d3aa910/?dl=1"
-        self.idx2syn = os.path.join(self.root, "index_synset.yaml")
-        if (not os.path.exists(self.idx2syn)):
+        URL = 'https://heibox.uni-heidelberg.de/f/d835d5b6ceda4d3aa910/?dl=1'
+        self.idx2syn = join(self.root, 'index_synset.yaml')
+        if not exists(self.idx2syn):
             download(URL, self.idx2syn)
 
     def _load(self):
-        with open(self.txt_filelist, "r") as f:
+        with open(self.txt_filelist, 'r') as f:
             self.relpaths = f.read().splitlines()
+            print('))))))))))))))))))', self.relpaths)
+
             l1 = len(self.relpaths)
             self.relpaths = self._filter_relpaths(self.relpaths)
-            print("Removed {} files from filelist during filtering.".format(l1 - len(self.relpaths)))
+            print('Removed {} files from filelist during filtering.'.format(l1 - len(self.relpaths)))
 
-        self.synsets = [p.split("/")[0] for p in self.relpaths]
+        self.synsets = [p.split('/')[0] for p in self.relpaths]
         self.abspaths = [os.path.join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
         class_dict = dict((synset, i) for i, synset in enumerate(unique_synsets))
         self.class_labels = [class_dict[s] for s in self.synsets]
 
-        with open(self.human_dict, "r") as f:
+        with open(self.human_dict, 'r') as f:
             human_dict = f.read().splitlines()
             human_dict = dict(line.split(maxsplit=1) for line in human_dict)
 
         self.human_labels = [human_dict[s] for s in self.synsets]
 
         labels = {
-            "relpath": np.array(self.relpaths),
-            "synsets": np.array(self.synsets),
-            "class_label": np.array(self.class_labels),
-            "human_label": np.array(self.human_labels),
+            'relpath': np.array(self.relpaths),
+            'synsets': np.array(self.synsets),
+            'class_label': np.array(self.class_labels),
+            'human_label': np.array(self.human_labels),
         }
         self.data = ImagePaths(self.abspaths,
                                labels=labels,
-                               size=retrieve(self.config, "size", default=0),
+                               size=retrieve(self.config, 'size', default=0),
                                random_crop=self.random_crop)
 
 
@@ -156,6 +157,9 @@ class ImageNetTrain(ImageNetBase):
                     real_fpath = join(real_fdir, fname)
                     real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
                     if not exists(real_fpath):
+                        system('kaggle kernels output umangtri/diabetic-retinopathy-version-2 -p {}'.format(
+                            real_fdir
+                        ))
                         system('kaggle competitions download -p {} -c {} -f {}'.format(
                             real_fdir,
                             'diabetic-retinopathy-detection',
@@ -196,7 +200,7 @@ class ImageNetTrain(ImageNetBase):
 
 class ImageNetValidation(ImageNetBase):
     NAME = 'eyepacs_validation'
-    # URL = "https://www.kaggle.com/competitions/diabetic-retinopathy-detection"
+    # URL = 'https://www.kaggle.com/competitions/diabetic-retinopathy-detection'
     # AT_HASH = "5d6d0df7ed81efd49ca99ea4737e0ae5e3a5f2e5"
     # VS_URL = "https://heibox.uni-heidelberg.de/f/3e0f6e9c624e45f2bd73/?dl=1"
     FILES = [

@@ -1,8 +1,12 @@
+import os
 import yaml
 import json
 import glob
 import pathlib
+import requests
+from tqdm import tqdm
 from os.path import join, exists
+from libs.coding import md5
 from libs.basicHR import EHR
 from libs.basicDS import dict2ns, dotdict
 
@@ -76,3 +80,20 @@ def extractor(src_file, dst_dir, mode='tar'):
         import zipfile
         with zipfile.ZipFile(src_file, 'r') as zip_ref:
             zip_ref.extractall(dst_dir)
+
+def download(url, local_path, chunk_size=1024):
+    os.makedirs(os.path.split(local_path)[0], exist_ok=True)
+    with requests.get(url, stream=True) as r:
+        total_size = int(r.headers.get('content-length', 0))
+        with tqdm(total=total_size, unit='B', unit_scale=True) as pbar:
+            with open(local_path, 'wb') as f:
+                for data in r.iter_content(chunk_size=chunk_size):
+                    if data:
+                        f.write(data)
+                        pbar.update(chunk_size)
+
+def file_hash(path, fn=md5):
+    with open(path, 'rb') as f:
+        content = f.read()
+    return fn(content)
+

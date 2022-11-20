@@ -5,3 +5,7 @@ os.system('kaggle competitions download -p {} -c {} -f {}'.format(
     'diabetic-retinopathy-detection',
     'test.zip.007'
 ))
+
+os.system('kaggle kernels output umangtri/diabetic-retinopathy-version-2 -p {}'.format(
+    os.getenv('KAGGLE_PATH')
+))
