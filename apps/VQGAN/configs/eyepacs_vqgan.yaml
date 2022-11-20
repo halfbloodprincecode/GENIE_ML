@@ -34,7 +34,7 @@ data:
       target: apps.VQGAN.data.eyepacs.ImageNetTrain
       params:
         config:
-          ext: JPEG
+          ext: jpeg
           size: 256
           # URL: https://www.kaggle.com/competitions/diabetic-retinopathy-detection
           HOST_DIR: $KAGGLE_PATH
