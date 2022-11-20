@@ -157,9 +157,6 @@ class ImageNetTrain(ImageNetBase):
                     real_fpath = join(real_fdir, fname)
                     real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
                     if not exists(real_fpath):
-                        system('kaggle kernels output umangtri/diabetic-retinopathy-version-2 -p {}'.format(
-                            real_fdir
-                        ))
                         system('kaggle competitions download -p {} -c {} -f {}'.format(
                             real_fdir,
                             'diabetic-retinopathy-detection',
@@ -177,7 +174,9 @@ class ImageNetTrain(ImageNetBase):
                         extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
                         nested_list = glob.glob(join(hashbased_path, '*.zip*'))
                         for i in nested_list:
+                            print('dest:', hashbased_path)
                             try:
+                                print(f'nested item:({i})', i)
                                 extractor(src_file=i, dst_dir=hashbased_path, mode='zip')
                             except Exception as e2:
                                 print('@@@@@@@@@ e2', e2)
