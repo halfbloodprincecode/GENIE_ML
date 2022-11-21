@@ -104,7 +104,7 @@ class ImageNetBase(Dataset):
             self.relpaths = self._filter_relpaths(self.relpaths)
             print('Removed {} files from filelist during filtering.'.format(l1 - len(self.relpaths)))
 
-        self.synsets = [p.split('/')[0:2] for p in self.relpaths]
+        self.synsets = [p.split('/')[0] for p in self.relpaths]
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
@@ -144,7 +144,8 @@ class ImageNetTrain(ImageNetBase):
         cachedir = cacheDir()
         self.root = join(cachedir, 'autoencoders/data', self.NAME)
         self.datadir = join(self.root, 'data')
-        self.tempdir = join(self.root, 'temp')
+        self.hashdir = join(self.root, 'hash')
+        makedirs(self.hashdir, exist_ok=True)
         self.txt_filelist = join(self.root, 'filelist.txt')
 
         if not bdu.is_prepared(self.root):
@@ -173,17 +174,19 @@ class ImageNetTrain(ImageNetBase):
                     print('fake_fpath', fake_fpath)
                     symlink(src=real_fpath, dst=fake_fpath)
                 
-                hashbased_path = join(datadir, sha1(fake_fpath))
+                hashbased_path = join(self.hashdir, sha1(fake_fpath))
                 if not exists(hashbased_path):
                     try:
-                        extractor(src_file=fake_fpath, dst_dir=hashbased_path, mode='zip')
-                        nested_list = glob.glob(join(hashbased_path, '*.zip*'))
+                        makedirs(hashbased_path, exist_ok=True)
+                        extractor(src_file=fake_fpath, dst_dir=datadir, mode='zip')
+                        nested_list = glob.glob(join(datadir, '*.zip*'))
+                        print('@@@@@@@@@@2 nested_list', nested_list)
                         assert len(nested_list)==0, f'nested_list: {nested_list} is exist.'
                     except Exception as e:
                         print('@@@@@@@@@ e', e)
                         pass
 
-            filelist = glob.glob(join(datadir, '**', '**', '*.{}'.format(self.config['ext'])))
+            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['ext'])))
             filelist = [relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = '\n'.join(filelist) + '\n'
