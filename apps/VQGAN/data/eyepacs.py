@@ -116,6 +116,7 @@ class ImageNetBase(Dataset):
             human_dict = f.read().splitlines()
             human_dict = dict(line.split(maxsplit=1) for line in human_dict)
 
+        print('XXXXXXXXXXXXX', list(human_dict.keys())[:5])
         self.human_labels = [human_dict[s] for s in self.synsets]
 
         labels = {
