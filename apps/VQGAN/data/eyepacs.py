@@ -99,16 +99,16 @@ class ImageNetBase(Dataset):
     def _load(self):
         with open(self.txt_filelist, 'r') as f:
             self.relpaths = f.read().splitlines()
-            print('))))))))))))))))))', self.relpaths)
 
             l1 = len(self.relpaths)
             self.relpaths = self._filter_relpaths(self.relpaths)
             print('Removed {} files from filelist during filtering.'.format(l1 - len(self.relpaths)))
 
-        self.synsets = [p.split('/')[0] for p in self.relpaths]
-        self.abspaths = [os.path.join(self.datadir, p) for p in self.relpaths]
+        self.synsets = [p.split('/')[0:2] for p in self.relpaths]
+        self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
+        print('FFFFFFFFFFFFFFF', unique_synsets)
         class_dict = dict((synset, i) for i, synset in enumerate(unique_synsets))
         self.class_labels = [class_dict[s] for s in self.synsets]
 
