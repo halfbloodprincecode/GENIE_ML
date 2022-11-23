@@ -2,6 +2,7 @@ import os, tarfile, glob, shutil
 from os import makedirs, system, environ, getenv, symlink, rename
 from os.path import join, exists, relpath, getsize
 import yaml
+import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
@@ -104,13 +105,18 @@ class ImageNetBase(Dataset):
             self.relpaths = self._filter_relpaths(self.relpaths)
             print('Removed {} files from filelist during filtering.'.format(l1 - len(self.relpaths)))
 
-        self.synsets = [p.split('/')[0] for p in self.relpaths]
+        # self.synsets = [p.split('/')[0] for p in self.relpaths]
+        
+        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [None])[0]
+        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in self.relpaths]
+        # self.synsets = [self.df(p.split('/')[-1]) for p in self.relpaths]
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
         print('FFFFFFFFFFFFFFF', unique_synsets)
         class_dict = dict((synset, i) for i, synset in enumerate(unique_synsets))
         self.class_labels = [class_dict[s] for s in self.synsets]
+        logger.info(f'class_dict: {class_dict}')
 
         with open(self.human_dict, 'r') as f:
             human_dict = f.read().splitlines()
@@ -130,11 +136,10 @@ class ImageNetBase(Dataset):
                                size=retrieve(self.config, 'size', default=0),
                                random_crop=self.random_crop)
 
-
 class ImageNetTrain(ImageNetBase):
     def _prepare(self):
         print('@@@@@@@@@@@@@@@@@@@@@@@', self.config)
-
+        
         self.HOST_DIR = self.config['HOST_DIR']
         if self.HOST_DIR.upper() == '$KAGGLE_PATH':
             self.HOST_DIR = pathBIO('//' + getenv('KAGGLE_PATH'))
@@ -148,6 +153,7 @@ class ImageNetTrain(ImageNetBase):
         self.hashdir = join(self.root, 'hash')
         makedirs(self.hashdir, exist_ok=True)
         self.txt_filelist = join(self.root, 'filelist.txt')
+        self.df = pd.read_csv(join(self.datadir, 'train_eyepacs.csv'))
 
         if not bdu.is_prepared(self.root):
             logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
@@ -270,7 +276,7 @@ class ImageNetValidation(ImageNetBase):
 
             bdu.mark_prepared(self.root)
 
-
+"""
 def get_preprocessor(size=None, random_crop=False, additional_targets=None,
                      crop_size=None):
     if size is not None and size > 0:
@@ -586,3 +592,5 @@ class ImageNetEdgesTrain(ImageNetEdges):
 class ImageNetEdgesValidation(ImageNetEdges):
     def get_base(self):
         return ImageNetValidation()
+
+"""
