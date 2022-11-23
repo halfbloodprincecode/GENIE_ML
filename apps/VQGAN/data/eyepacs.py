@@ -86,16 +86,14 @@ class ImageNetBase(Dataset):
             return relpaths
 
     def _prepare_synset_to_human(self):
-        URL = 'https://heibox.uni-heidelberg.de/f/9f28e956cd304264bb82/?dl=1'
         self.human_dict = join(self.root, 'synset_human.txt')
         if not exists(self.human_dict):
-            download(URL, self.human_dict)
+            download(self.config['URL']['synset'], self.human_dict)
 
     def _prepare_idx_to_synset(self):
-        URL = 'https://heibox.uni-heidelberg.de/f/d835d5b6ceda4d3aa910/?dl=1'
         self.idx2syn = join(self.root, 'index_synset.yaml')
         if not exists(self.idx2syn):
-            download(URL, self.idx2syn)
+            download(self.config['URL']['iSynsetTest'], self.idx2syn)
 
     def _load(self):
         with open(self.txt_filelist, 'r') as f:
@@ -124,7 +122,7 @@ class ImageNetBase(Dataset):
             human_dict = f.read().splitlines()
             human_dict = dict(line.split(maxsplit=1) for line in human_dict)
 
-        print('XXXXXXXXXXXXX', list(human_dict.keys())[:5])
+        print('XXXXXX human_dict XXXXXXX', human_dict)
         self.human_labels = [human_dict[s] for s in self.synsets]
 
         labels = {
@@ -135,7 +133,7 @@ class ImageNetBase(Dataset):
         }
         self.data = ImagePaths(self.abspaths,
                                labels=labels,
-                               size=retrieve(self.config, 'size', default=0),
+                               size=retrieve(self.config, 'SIZE', default=0),
                                random_crop=self.random_crop)
 
 class ImageNetTrain(ImageNetBase):
@@ -194,7 +192,7 @@ class ImageNetTrain(ImageNetBase):
                         print('@@@@@@@@@ e', e)
                         pass
 
-            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['ext'])))
+            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['EXT'])))
             filelist = [relpath(p, start=datadir) for p in filelist]
             filelist = sorted(filelist)
             filelist = '\n'.join(filelist) + '\n'
