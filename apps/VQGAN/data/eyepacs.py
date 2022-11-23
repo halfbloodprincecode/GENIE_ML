@@ -153,7 +153,6 @@ class ImageNetTrain(ImageNetBase):
         self.hashdir = join(self.root, 'hash')
         makedirs(self.hashdir, exist_ok=True)
         self.txt_filelist = join(self.root, 'filelist.txt')
-        self.df = pd.read_csv(join(self.datadir, 'train_eyepacs.csv'))
 
         if not bdu.is_prepared(self.root):
             logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
@@ -201,6 +200,8 @@ class ImageNetTrain(ImageNetBase):
                 f.write(filelist)
 
             bdu.mark_prepared(self.root)
+        
+        self.df = pd.read_csv(join(self.datadir, 'train_eyepacs.csv'))
 
 class ImageNetValidation(ImageNetBase):
     NAME = 'eyepacs_validation'
