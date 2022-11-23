@@ -107,8 +107,10 @@ class ImageNetBase(Dataset):
 
         # self.synsets = [p.split('/')[0] for p in self.relpaths]
         
-        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [None])[0]
-        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in self.relpaths]
+        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [False])[0]
+        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in self.relpaths if isinstance(drGrade(p.split('/')[-1]), (int, float))]
+        print('Synset len:', len(self.synsets))
+        print('relpaths len:', len(self.relpaths))
         # self.synsets = [self.df(p.split('/')[-1]) for p in self.relpaths]
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
