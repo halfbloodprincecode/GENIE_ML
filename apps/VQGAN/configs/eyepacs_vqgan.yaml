@@ -39,9 +39,9 @@ data:
           HOST_DIR: $KAGGLE_PATH
           NAME: eyepacs_all
           URL:
-            synset: https://cloud.degoo.com/share/3UfEFo0Glnxl0RoNeZYVgA
-            iSynset: https://cloud.degoo.com/share/b-DsG5WIuy7GFtJ99pWsLQ
-            iSynsetTest: https://cloud.degoo.com/share/64DaG933dLD-qdy-o7CS2A
+            synset: //data/external/eyepacs/cfg/synset.txt
+            iSynset: //data/external/eyepacs/cfg/index_synset.yaml
+            iSynsetTest: //data/external/eyepacs/cfg/index_synsetTest.yaml
           FILES:
             - eyepacs.zip
             # - train.zip.001

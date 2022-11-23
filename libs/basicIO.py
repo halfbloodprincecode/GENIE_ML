@@ -5,6 +5,7 @@ import glob
 import pathlib
 import requests
 from tqdm import tqdm
+from os import symlink
 from os.path import join, exists
 from libs.coding import md5
 from libs.basicHR import EHR
@@ -81,8 +82,13 @@ def extractor(src_file, dst_dir, mode='tar'):
         with zipfile.ZipFile(src_file, 'r') as zip_ref:
             zip_ref.extractall(dst_dir)
 
-def download(url, local_path, chunk_size=1024):
+def download(url: str, local_path, chunk_size=1024):
     os.makedirs(os.path.split(local_path)[0], exist_ok=True)
+    if not url.startswith('http'):
+        url = pathBIO(url)
+        symlink(src=url, dst=local_path)
+        return
+
     with requests.get(url, stream=True) as r:
         total_size = int(r.headers.get('content-length', 0))
         with tqdm(total=total_size, unit='B', unit_scale=True) as pbar:
