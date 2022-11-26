@@ -1,3 +1,4 @@
+import numpy as np
 from attrdict import AttrDict
 from argparse import Namespace
 from functools import partial, wraps

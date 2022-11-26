@@ -68,12 +68,22 @@ class ImageNetBase(Dataset):
     def _prepare(self):
         raise NotImplementedError()
 
-    def _filter_relpaths(self, relpaths):
+    def _filter_relpaths(self, relpaths, cb=None):
+        if exists(self.filtered_filelist):
+            aa = np.load(self.filtered_filelist)
+            print('aa | numpy load', aa)
+            return aa
+
         ignore = set([
-            "n06596364_9591.JPEG",
+            # 'n06596364_9591.JPEG',
         ])
-        relpaths = [rpath for rpath in relpaths if not rpath.split("/")[-1] in ignore]
-        if "sub_indices" in self.config:
+        cb = cb if cb else lambda inp: True
+        _cb = lambda _inp: bool(cb(_inp) and (not _inp.split('/')[-1] in ignore))
+        relpaths = [rpath for rpath in relpaths if _cb(rpath)]
+        
+        np.save(self.filtered_filelist, relpaths)
+        return relpaths
+        if 'sub_indices' in self.config:
             indices = str_to_indices(self.config["sub_indices"])
             synsets = give_synsets_from_indices(indices, path_to_yaml=self.idx2syn)  # returns a list of strings
             files = []
@@ -96,18 +106,18 @@ class ImageNetBase(Dataset):
             download(self.config['URL']['iSynsetTest'], self.idx2syn)
 
     def _load(self):
+        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [None])[0]
+        cb = lambda inp: isinstance(drGrade(inp.split('/')[-1]), (int, float))
+        
         with open(self.txt_filelist, 'r') as f:
             self.relpaths = f.read().splitlines()
             l1 = len(self.relpaths)
-            self.relpaths = self._filter_relpaths(self.relpaths)
-            print('Removed {} files from filelist during filtering.'.format(l1 - len(self.relpaths)))
+            self.relpaths = self._filter_relpaths(self.relpaths, cb=cb)
+            logger.info('{} | Removed {} files from filelist during filtering.'.format(self.__class__.__name__, l1 - len(self.relpaths)))
 
         # self.synsets = [p.split('/')[0] for p in self.relpaths]
-        
-        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [None])[0]
-        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets array') if isinstance(drGrade(p.split('/')[-1]), (int, float))]
+        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets array')]
         logger.info('relpaths len: {}, Synset len: {}'.format(len(self.relpaths), len(self.synsets)))
-        # self.synsets = [self.df(p.split('/')[-1]) for p in self.relpaths]
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
@@ -122,6 +132,7 @@ class ImageNetBase(Dataset):
 
         print('XXXXXX human_dict XXXXXXX', human_dict)
         self.human_labels = [human_dict[s] for s in self.synsets]
+        # synset and human_labels logicly is equal, they're used for machine and human respectivly.
 
         labels = {
             'relpath': np.array(self.relpaths),
@@ -151,6 +162,7 @@ class ImageNetTrain(ImageNetBase):
         self.hashdir = join(self.root, 'hash')
         makedirs(self.hashdir, exist_ok=True)
         self.txt_filelist = join(self.root, 'filelist.txt')
+        self.filtered_filelist = join(self.root, 'filtered_filelist.npy')
 
         if not bdu.is_prepared(self.root):
             logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
