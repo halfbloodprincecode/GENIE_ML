@@ -79,7 +79,7 @@ class ImageNetBase(Dataset):
         ])
         cb = cb if cb else lambda inp: True
         _cb = lambda _inp: bool(cb(_inp) and (not _inp.split('/')[-1] in ignore))
-        relpaths = [rpath for rpath in relpaths if _cb(rpath)]
+        relpaths = [rpath for rpath in tqdm(relpaths, desc='filtering of relpaths list.') if _cb(rpath)]
         
         np.save(self.filtered_filelist, relpaths)
         return relpaths
@@ -115,8 +115,11 @@ class ImageNetBase(Dataset):
             self.relpaths = self._filter_relpaths(self.relpaths, cb=cb)
             logger.info('{} | Removed {} files from filelist during filtering.'.format(self.__class__.__name__, l1 - len(self.relpaths)))
 
-        # self.synsets = [p.split('/')[0] for p in self.relpaths]
-        self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets array')]
+        if exists(self.synsets_of_filtered_filelist):
+            self.synsets = np.load(self.synsets_of_filtered_filelist)
+        else:
+            self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets list')]
+            np.save(self.synsets_of_filtered_filelist, self.synsets)
         logger.info('relpaths len: {}, Synset len: {}'.format(len(self.relpaths), len(self.synsets)))
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
@@ -163,6 +166,7 @@ class ImageNetTrain(ImageNetBase):
         makedirs(self.hashdir, exist_ok=True)
         self.txt_filelist = join(self.root, 'filelist.txt')
         self.filtered_filelist = join(self.root, 'filtered_filelist.npy')
+        self.synsets_of_filtered_filelist = join(self.root, 'synsets_of_filtered_filelist.npy')
 
         if not bdu.is_prepared(self.root):
             logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
