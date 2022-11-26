@@ -39,7 +39,7 @@ data:
           HOST_DIR: $KAGGLE_PATH
           NAME: eyepacs_all
           URL:
-            synset: //data/config/eyepacs/synset.txt
+            synset: //data/config/eyepacs/synset_human.txt
             iSynset: //data/config/eyepacs/index_synset.yaml
             iSynsetTest: //data/config/eyepacs/index_synsetTest.yaml
           FILES:
