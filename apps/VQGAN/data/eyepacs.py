@@ -1,5 +1,5 @@
 import os, tarfile, glob, shutil
-from os import makedirs, system, environ, getenv, symlink, rename
+from os import makedirs, system, environ, getenv, link, rename
 from os.path import join, exists, relpath, getsize
 import yaml
 import pandas as pd
@@ -169,16 +169,11 @@ class ImageNetTrain(ImageNetBase):
                             'agaldran/eyepacs',
                             real_fdir
                         ))
-                        # system('kaggle competitions download -p {} -c {} -f {}'.format(
-                        #     real_fdir,
-                        #     'diabetic-retinopathy-detection',
-                        #     fname
-                        # ))
                         real_fpath = glob.glob(real_fpath + '*')[0]
                     
                     print('real_fpath', real_fpath)
                     print('fake_fpath', fake_fpath)
-                    symlink(src=real_fpath, dst=fake_fpath)
+                    link(src=real_fpath, dst=fake_fpath)
                 
                 hashbased_path = join(self.hashdir, sha1(fake_fpath))
                 if not exists(hashbased_path):
@@ -186,7 +181,6 @@ class ImageNetTrain(ImageNetBase):
                         makedirs(hashbased_path, exist_ok=True)
                         extractor(src_file=fake_fpath, dst_dir=datadir, mode='zip')
                         nested_list = glob.glob(join(datadir, '*.zip*'))
-                        print('@@@@@@@@@@2 nested_list', nested_list)
                         assert len(nested_list)==0, f'nested_list: {nested_list} is exist.'
                     except Exception as e:
                         print('@@@@@@@@@ e', e)
