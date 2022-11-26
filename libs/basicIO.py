@@ -5,10 +5,11 @@ import glob
 import pathlib
 import requests
 from tqdm import tqdm
-from os import symlink
-from os.path import join, exists
+from loguru import logger
 from libs.coding import md5
 from libs.basicHR import EHR
+from os.path import join, exists
+from os import getenv, symlink, link
 from libs.basicDS import dict2ns, dotdict
 
 def rootPath():
@@ -83,10 +84,15 @@ def extractor(src_file, dst_dir, mode='tar'):
             zip_ref.extractall(dst_dir)
 
 def download(url: str, local_path, chunk_size=1024):
+    if exists(local_path):
+        if getenv('GENIE_ML_DEBUG_MODE') == 'True':
+            logger.debug('local_path already is exist.')
+        return
+
     os.makedirs(os.path.split(local_path)[0], exist_ok=True)
     if not url.startswith('http'):
         url = pathBIO(url)
-        symlink(src=url, dst=local_path)
+        link(src=url, dst=local_path)
         return
 
     with requests.get(url, stream=True) as r:
