@@ -1,8 +1,9 @@
+from loguru import logger
 from os.path import join, exists
 from libs.basicIO import download, file_hash as md5_file_hash
 
 def get_ckpt_path(name, root, check=False, **kwargs):
-    print('$$$$$$$$$$$$$$$$$$$$$', kwargs)
+    logger.warning('utils>tools.py>get_ckpt_path | $$$$$$$$$$$$$$$$$$$$$', kwargs)
     URL_MAP = kwargs.get('URL_MAP', dict())
     MD5_MAP = kwargs.get('MD5_MAP', dict())
     CKPT_MAP = kwargs.get('CKPT_MAP', dict())

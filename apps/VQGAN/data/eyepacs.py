@@ -1,22 +1,11 @@
-import os, tarfile, glob, shutil
-from os import makedirs, system, environ, getenv, link, rename
-from os.path import join, exists, relpath, getsize
 import yaml
-import pandas as pd
-import numpy as np
-from tqdm import tqdm
-from PIL import Image
-import albumentations
+from os import system
+from os.path import join
 from loguru import logger
-from omegaconf import OmegaConf
-from torch.utils.data import Dataset
-from libs.coding import sha1
-from libs.basicIO import extractor, pathBIO, download
-from libs.basicAR import cacheDir
 from apps.VQGAN.data.base import ImagePaths
 from apps.VQGAN.util import retrieve
 import apps.VQGAN.data.utils as bdu
-
+from utils.ptDatasets.imageNet import ImageNetTrain, ImageNetValidation
 
 def give_synsets_from_indices(indices, path_to_yaml="data/imagenet_idx_to_synset.yaml"):
     synsets = []
@@ -44,246 +33,35 @@ def str_to_indices(string):
     return sorted(indices)
 
 
-class ImageNetBase(Dataset):
-    def __init__(self, config=None):
-        self.config = config or OmegaConf.create()
-        
-        print('******************', type(self.config))
-        if not type(self.config)==dict:
-            print('AAAAAAAAAAAAAAAAAAAAAAAAA', type(self.config))
-            self.config = OmegaConf.to_container(self.config)
-        else:
-            print('******************************')
-        self._prepare()
-        self._prepare_synset_to_human()
-        self._prepare_idx_to_synset()
-        self._load()
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, i):
-        return self.data[i]
-
-    def _prepare(self):
-        raise NotImplementedError()
-
-    def _filter_relpaths(self, relpaths, cb=None):
-        if exists(self.filtered_filelist):
-            aa = np.load(self.filtered_filelist)
-            print('aa | numpy load', aa)
-            return aa
-
-        ignore = set([
-            # 'n06596364_9591.JPEG',
-        ])
-        cb = cb if cb else lambda inp: True
-        _cb = lambda _inp: bool(cb(_inp) and (not _inp.split('/')[-1] in ignore))
-        relpaths = [rpath for rpath in tqdm(relpaths, desc='filtering of relpaths list.') if _cb(rpath)]
-        
-        np.save(self.filtered_filelist, relpaths)
-        return relpaths
-        if 'sub_indices' in self.config:
-            indices = str_to_indices(self.config["sub_indices"])
-            synsets = give_synsets_from_indices(indices, path_to_yaml=self.idx2syn)  # returns a list of strings
-            files = []
-            for rpath in relpaths:
-                syn = rpath.split("/")[0]
-                if syn in synsets:
-                    files.append(rpath)
-            return files
-        else:
-            return relpaths
-
-    def _prepare_synset_to_human(self):
-        self.human_dict = join(self.root, 'synset_human.txt')
-        if not exists(self.human_dict):
-            download(self.config['URL']['synset'], self.human_dict)
-
-    def _prepare_idx_to_synset(self):
-        self.idx2syn = join(self.root, 'index_synset.yaml')
-        if not exists(self.idx2syn):
-            download(self.config['URL']['iSynsetTest'], self.idx2syn)
-
-    def _load(self):
-        drGrade = lambda image_id_value: (list(self.df.loc[self.df['image_id']==image_id_value].dr) + [None])[0]
-        cb = lambda inp: isinstance(drGrade(inp.split('/')[-1]), (int, float))
-        
-        with open(self.txt_filelist, 'r') as f:
-            self.relpaths = f.read().splitlines()
-            l1 = len(self.relpaths)
-            self.relpaths = self._filter_relpaths(self.relpaths, cb=cb)
-            logger.info('{} | Removed {} files from filelist during filtering.'.format(self.__class__.__name__, l1 - len(self.relpaths)))
-
-        if exists(self.synsets_of_filtered_filelist):
-            self.synsets = np.load(self.synsets_of_filtered_filelist)
-        else:
-            self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets list')]
-            np.save(self.synsets_of_filtered_filelist, self.synsets)
-        logger.info('relpaths len: {}, Synset len: {}'.format(len(self.relpaths), len(self.synsets)))
-        self.abspaths = [join(self.datadir, p) for p in self.relpaths]
-
-        unique_synsets = np.unique(self.synsets)
-        logger.info('unique_synsets: {}'.format(unique_synsets))
-        class_dict = dict((synset, i) for i, synset in enumerate(unique_synsets))
-        self.class_labels = [class_dict[s] for s in self.synsets]
-        logger.info('class_dict: {}'.format(class_dict))
-
-        with open(self.human_dict, 'r') as f:
-            human_dict = f.read().splitlines()
-            human_dict = dict(line.split(maxsplit=1) for line in human_dict)
-
-        print('XXXXXX human_dict XXXXXXX', human_dict)
-        self.human_labels = [human_dict[s] for s in self.synsets]
-        # synset and human_labels logicly is equal, they're used for machine and human respectivly.
-
-        labels = {
-            'relpath': np.array(self.relpaths),
-            'synsets': np.array(self.synsets),
-            'class_label': np.array(self.class_labels),
-            'human_label': np.array(self.human_labels),
-        }
-        self.data = ImagePaths(self.abspaths,
-                               labels=labels,
-                               size=retrieve(self.config, 'SIZE', default=0),
-                               random_crop=self.random_crop)
-
-class ImageNetTrain(ImageNetBase):
-    def _prepare(self):
-        print('@@@@@@@@@@@@@@@@@@@@@@@', self.config)
-        
-        self.HOST_DIR = self.config['HOST_DIR']
-        if self.HOST_DIR.upper() == '$KAGGLE_PATH':
-            self.HOST_DIR = pathBIO('//' + getenv('KAGGLE_PATH'))
-
-        self.NAME = self.config['NAME']
-        self.FILES = self.config.get('FILES', [])
+class eyepacsTrain(ImageNetTrain):
+    def download_dataset(self, **kwargs):
+        system('kaggle datasets download -d {} -p {}'.format(
+            'agaldran/eyepacs',
+            kwargs['real_fdir']
+        ))
+    
+    def preparation(self, **kwargs):
+        self.bdu = bdu
+        self.ImagePaths = ImagePaths
         self.random_crop = retrieve(self.config, 'ImageNetTrain/random_crop', default=True)
-        cachedir = cacheDir()
-        self.root = join(cachedir, 'autoencoders/data', self.NAME)
-        self.datadir = join(self.root, 'data')
-        self.hashdir = join(self.root, 'hash')
-        makedirs(self.hashdir, exist_ok=True)
-        self.txt_filelist = join(self.root, 'filelist.txt')
-        self.filtered_filelist = join(self.root, 'filtered_filelist.npy')
-        self.synsets_of_filtered_filelist = join(self.root, 'synsets_of_filtered_filelist.npy')
-
-        if not bdu.is_prepared(self.root):
-            logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
-            datadir = self.datadir
-            makedirs(datadir, exist_ok=True)
-            for fname in self.FILES:
-                fake_fpath = join(self.root, fname)
-                if not exists(fake_fpath):
-                    real_fdir = join(self.HOST_DIR, self.NAME)
-                    real_fpath = join(real_fdir, fname)
-                    real_fpath = (glob.glob(real_fpath + '*') + [real_fpath])[0]
-                    if not exists(real_fpath):
-                        system('kaggle datasets download -d {} -p {}'.format(
-                            'agaldran/eyepacs',
-                            real_fdir
-                        ))
-                        real_fpath = glob.glob(real_fpath + '*')[0]
-                    
-                    print('real_fpath', real_fpath)
-                    print('fake_fpath', fake_fpath)
-                    link(src=real_fpath, dst=fake_fpath)
-                
-                hashbased_path = join(self.hashdir, sha1(fake_fpath))
-                if not exists(hashbased_path):
-                    try:
-                        makedirs(hashbased_path, exist_ok=True)
-                        extractor(src_file=fake_fpath, dst_dir=datadir, mode='zip')
-                        nested_list = glob.glob(join(datadir, '*.zip*'))
-                        assert len(nested_list)==0, f'nested_list: {nested_list} is exist.'
-                    except Exception as e:
-                        print('@@@@@@@@@ e', e)
-                        pass
-
-            filelist = glob.glob(join(datadir, '**', '*.{}'.format(self.config['EXT'])))
-            filelist = [relpath(p, start=datadir) for p in filelist]
-            filelist = sorted(filelist)
-            filelist = '\n'.join(filelist) + '\n'
-            with open(self.txt_filelist, 'w') as f:
-                f.write(filelist)
-
-            bdu.mark_prepared(self.root)
-        
-        self.df = pd.read_csv(join(self.datadir, 'train_eyepacs.csv'))
-
-class ImageNetValidation(ImageNetBase):
-    NAME = 'eyepacs_validation'
-    # URL = 'https://www.kaggle.com/competitions/diabetic-retinopathy-detection'
-    # AT_HASH = "5d6d0df7ed81efd49ca99ea4737e0ae5e3a5f2e5"
-    # VS_URL = "https://heibox.uni-heidelberg.de/f/3e0f6e9c624e45f2bd73/?dl=1"
-    FILES = [
-        'sampleSubmission.csv.zip',
-        'sample.zip',
-        'test.zip.001',
-        'test.zip.002',
-        'test.zip.003',
-        'test.zip.004',
-        'test.zip.005',
-        'test.zip.006',
-        'test.zip.007',
-        # "ILSVRC2012_img_val.tar",
-        # "validation_synset.txt",
-    ]
-    # SIZES = [
-    #     6744924160,
-    #     1950000,
-    # ]
-
-    def _prepare(self):
-        self.random_crop = retrieve(self.config, "ImageNetValidation/random_crop",
-                                    default=False)
-        cachedir = os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-        self.root = os.path.join(cachedir, "autoencoders/data", self.NAME)
-        self.datadir = os.path.join(self.root, "data")
-        self.txt_filelist = os.path.join(self.root, "filelist.txt")
-        self.expected_length = 50000
-        if not bdu.is_prepared(self.root):
-            # prep
-            print("Preparing dataset {} in {}".format(self.NAME, self.root))
-
-            datadir = self.datadir
-            if not os.path.exists(datadir):
-                path = os.path.join(self.root, self.FILES[0])
-                if not os.path.exists(path) or not os.path.getsize(path)==self.SIZES[0]:
-                    import academictorrents as at
-                    atpath = at.get(self.AT_HASH, datastore=self.root)
-                    assert atpath == path
-
-                print("Extracting {} to {}".format(path, datadir))
-                os.makedirs(datadir, exist_ok=True)
-                with tarfile.open(path, "r:") as tar:
-                    tar.extractall(path=datadir)
-
-                vspath = os.path.join(self.root, self.FILES[1])
-                if not os.path.exists(vspath) or not os.path.getsize(vspath)==self.SIZES[1]:
-                    download(self.VS_URL, vspath)
-
-                with open(vspath, "r") as f:
-                    synset_dict = f.read().splitlines()
-                    synset_dict = dict(line.split() for line in synset_dict)
-
-                print("Reorganizing into synset folders")
-                synsets = np.unique(list(synset_dict.values()))
-                for s in synsets:
-                    os.makedirs(os.path.join(datadir, s), exist_ok=True)
-                for k, v in synset_dict.items():
-                    src = os.path.join(datadir, k)
-                    dst = os.path.join(datadir, v)
-                    shutil.move(src, dst)
-
-            filelist = glob.glob(os.path.join(datadir, "**", "*.JPEG"))
-            filelist = [os.path.relpath(p, start=datadir) for p in filelist]
-            filelist = sorted(filelist)
-            filelist = "\n".join(filelist)+"\n"
-            with open(self.txt_filelist, "w") as f:
-                f.write(filelist)
-
-            bdu.mark_prepared(self.root)
+        self.filtered_filelist = join(self.root, 'train__filtered_filelist.npy')
+        self.synsets_of_filtered_filelist = join(self.root, 'train__synsets_of_filtered_filelist.npy')
+        self.df_path = join(self.datadir, 'train_eyepacs.csv')
+    
+class eyepacsValidation(ImageNetValidation):
+    def download_dataset(self, **kwargs):
+        system('kaggle datasets download -d {} -p {}'.format(
+            'agaldran/eyepacs',
+            kwargs['real_fdir']
+        ))
+    
+    def preparation(self, **kwargs):
+        self.bdu = bdu
+        self.ImagePaths = ImagePaths
+        self.random_crop = retrieve(self.config, 'ImageNetValidation/random_crop', default=False)
+        self.filtered_filelist = join(self.root, 'val__filtered_filelist.npy')
+        self.synsets_of_filtered_filelist = join(self.root, 'val__synsets_of_filtered_filelist.npy')
+        self.df_path = join(self.datadir, 'val_eyepacs.csv')
 
 """
 def get_preprocessor(size=None, random_crop=False, additional_targets=None,
