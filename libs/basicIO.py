@@ -3,6 +3,8 @@ import yaml
 import json
 import glob
 import pathlib
+import tarfile
+import zipfile
 import requests
 from tqdm import tqdm
 from loguru import logger
@@ -74,14 +76,20 @@ def mark_prepared(adr):
 
 def extractor(src_file, dst_dir, mode='tar'):
     if mode == 'tar':
-        import tarfile
-        with tarfile.open(src_file, 'r:') as tar:
-            tar.extractall(path=dst_dir)
+        with tarfile.open(src_file, 'r:') as tar_ref:
+            # tar_ref.extractall(path=dst_dir)
+            for file in tqdm(iterable=tar_ref.namelist(), total=len(tar_ref.namelist())):
+                # Extract each file to another directory
+                # If you want to extract to current working directory, don't specify path
+                tar_ref.extract(member=file, path=dst_dir)
     
     if mode == 'zip':
-        import zipfile
         with zipfile.ZipFile(src_file, 'r') as zip_ref:
-            zip_ref.extractall(dst_dir)
+            # zip_ref.extractall(dst_dir)
+            for file in tqdm(iterable=zip_ref.namelist(), total=len(zip_ref.namelist())):
+                # Extract each file to another directory
+                # If you want to extract to current working directory, don't specify path
+                zip_ref.extract(member=file, path=dst_dir)
 
 def download(url: str, local_path, chunk_size=1024):
     if exists(local_path):
