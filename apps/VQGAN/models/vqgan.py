@@ -29,8 +29,7 @@ class VQModel(pl.LightningModule):
         self.encoder = Encoder(**ddconfig)
         self.decoder = Decoder(**ddconfig)
         self.loss = instantiate_from_config(lossconfig)
-        self.quantize = VectorQuantizer(n_embed, embed_dim, beta=0.25,
-                                        remap=remap, sane_index_shape=sane_index_shape)
+        self.quantize = VectorQuantizer(n_embed, embed_dim, beta=0.25, remap=remap, sane_index_shape=sane_index_shape)
         self.quant_conv = torch.nn.Conv2d(ddconfig["z_channels"], embed_dim, 1)
         self.post_quant_conv = torch.nn.Conv2d(embed_dim, ddconfig["z_channels"], 1)
         if ckpt_path is not None:
@@ -50,6 +49,7 @@ class VQModel(pl.LightningModule):
                 if k.startswith(ik):
                     print("Deleting key {} from state_dict.".format(k))
                     del sd[k]
+        print('TODO!! where is it? self.load_state_dict', self.load_state_dict)
         self.load_state_dict(sd, strict=False)
         print(f"Restored from {path}")
 
@@ -75,7 +75,11 @@ class VQModel(pl.LightningModule):
         return dec, diff
 
     def get_input(self, batch, k):
+        print('CC', batch)
+        input()
         x = batch[k]
+        print('CC', x)
+        input()
         if len(x.shape) == 3:
             x = x[..., None]
         x = x.permute(0, 3, 1, 2).to(memory_format=torch.contiguous_format)
