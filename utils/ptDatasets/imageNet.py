@@ -49,7 +49,7 @@ class ImageNetBase(Dataset):
         self.preparation() # this function is overwrite by the user.
 
         if not self.bdu.is_prepared(self.root):
-            logger.info('Preparing dataset {} in {}'.format(self.NAME, self.root))
+            logger.info('{} | Preparing dataset {} in {}'.format(self.__class__.__name__, self.NAME, self.root))
             datadir = self.datadir
             makedirs(datadir, exist_ok=True)
             for fname in self.FILES:
@@ -138,14 +138,14 @@ class ImageNetBase(Dataset):
         else:
             self.synsets = ['class_' + str(drGrade(p.split('/')[-1])) for p in tqdm(self.relpaths, desc='creation of synsets list')]
             np.save(self.synsets_of_filtered_filelist, self.synsets)
-        logger.info('relpaths len: {}, Synset len: {}'.format(len(self.relpaths), len(self.synsets)))
+        logger.info('{} | relpaths len: {}, Synset len: {}'.format(self.__class__.__name__, len(self.relpaths), len(self.synsets)))
         self.abspaths = [join(self.datadir, p) for p in self.relpaths]
 
         unique_synsets = np.unique(self.synsets)
-        logger.info('unique_synsets: {}'.format(unique_synsets))
+        logger.info('{} | unique_synsets: {}'.format(self.__class__.__name__, unique_synsets))
         class_dict = dict((synset, i) for i, synset in enumerate(unique_synsets))
         self.class_labels = [class_dict[s] for s in self.synsets]
-        logger.info('class_dict: {}'.format(class_dict))
+        logger.info('{} | class_dict: {}'.format(self.__class__.__name__, class_dict))
 
         with open(self.human_dict, 'r') as f:
             human_dict = f.read().splitlines()
