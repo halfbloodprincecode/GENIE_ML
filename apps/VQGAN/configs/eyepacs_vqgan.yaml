@@ -44,15 +44,17 @@ data:
             iSynsetTest: //data/config/eyepacs/index_synsetTest.yaml
           FILES:
             - eyepacs.zip
-            # - train.zip.001
-            # - train.zip.002
-            # - train.zip.003
-            # - train.zip.004
-            # - train.zip.005
-            # - trainLabels.csv.zip 
     validation:
       target: apps.VQGAN.data.eyepacs.eyepacsValidation
       params:
         config:
-          ext: JPEG
-          size: 256
+          EXT: jpeg
+          SIZE: 256
+          HOST_DIR: $KAGGLE_PATH
+          NAME: eyepacs_all
+          URL:
+            synset: //data/config/eyepacs/synset_human.txt
+            iSynset: //data/config/eyepacs/index_synset.yaml
+            iSynsetTest: //data/config/eyepacs/index_synsetTest.yaml
+          FILES:
+            - eyepacs.zip
