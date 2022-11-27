@@ -29,7 +29,7 @@ data:
   target: apps.VQGAN.modules.dataset.DataModuleFromConfig
   params:
     batch_size: 12
-    num_workers: 24
+    num_workers: 2 #24
     train:
       target: apps.VQGAN.data.eyepacs.eyepacsTrain
       params:
