@@ -19,8 +19,8 @@ class SetupCallbackBase(Callback):
         self.config = config
         self.lightning_config = lightning_config
 
-    def on_pretrain_routine_start(self, trainer, pl_module):
-        print('-> on_pretrain_routine_start')
+    def on_fit_start(self, trainer, pl_module):
+        print('base class-> on_fit_start')
         if trainer.global_rank == 0:
             # Create logdirs and save configs
             os.makedirs(self.logdir, exist_ok=True)
