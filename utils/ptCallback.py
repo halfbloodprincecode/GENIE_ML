@@ -1,7 +1,10 @@
 import os
+from os import makedirs, rename
+from os.path import join, exists
 import torch
 import torchvision
 import numpy as np
+from loguru import logger
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
@@ -22,29 +25,27 @@ class SetupCallbackBase(Callback):
     def on_fit_start(self, trainer, pl_module):
         print('base class-> on_fit_start')
         if trainer.global_rank == 0:
+            logger.warning('on_fit_start > gRank 0')
             # Create logdirs and save configs
-            os.makedirs(self.logdir, exist_ok=True)
-            os.makedirs(self.ckptdir, exist_ok=True)
-            os.makedirs(self.cfgdir, exist_ok=True)
+            makedirs(self.logdir, exist_ok=True)
+            makedirs(self.ckptdir, exist_ok=True)
+            makedirs(self.cfgdir, exist_ok=True)
 
-            print('Project config')
-            print(self.config.pretty())
-            OmegaConf.save(self.config,
-                           os.path.join(self.cfgdir, '{}-project.yaml'.format(self.now)))
+            logger.info('Project config: {}'.format(self.config.pretty()))
+            OmegaConf.save(self.config, join(self.cfgdir, '{}-project.yaml'.format(self.now)))
 
-            print('Lightning config')
-            print(self.lightning_config.pretty())
-            OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}),
-                           os.path.join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
-
+            logger.info('Lightning config: {}'.format(self.lightning_config.pretty()))
+            OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
         else:
+            logger.warning('on_fit_start > gRank {}'.format(trainer.global_rank))
             # ModelCheckpoint callback created log directory --- remove it
-            if not self.resume and os.path.exists(self.logdir):
+            if not self.resume and exists(self.logdir):
+                logger.warning('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
                 dst, name = os.path.split(self.logdir)
-                dst = os.path.join(dst, 'child_runs', name)
-                os.makedirs(os.path.split(dst)[0], exist_ok=True)
+                dst = join(dst, 'child_runs', name)
+                makedirs(os.path.split(dst)[0], exist_ok=True)
                 try:
-                    os.rename(self.logdir, dst)
+                    rename(self.logdir, dst)
                 except FileNotFoundError:
                     pass
 
@@ -98,7 +99,7 @@ class ImageLoggerBase(Callback):
     @rank_zero_only
     def log_local(self, save_dir, split, images,
                   global_step, current_epoch, batch_idx):
-        root = os.path.join(save_dir, 'images', split)
+        root = join(save_dir, 'images', split)
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=4)
 
@@ -111,7 +112,7 @@ class ImageLoggerBase(Callback):
                 global_step,
                 current_epoch,
                 batch_idx)
-            path = os.path.join(root, filename)
+            path = join(root, filename)
             os.makedirs(os.path.split(path)[0], exist_ok=True)
             Image.fromarray(grid).save(path)
 

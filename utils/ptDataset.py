@@ -55,10 +55,11 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         return DataLoader(self.datasets['test'], batch_size=self.batch_size,
                           num_workers=self.num_workers, collate_fn=self.custom_collate)
 
-    def prepare_data(self): # I think this function shoulde be remove! TODO
-        for data_cfg in self.dataset_configs.values():
-            print('prepare_data', data_cfg)
-            self.instantiate_from_config(data_cfg)
+    def prepare_data(self): # I think this function shoulde be remove since in setup function all datasets instantioation are done! TODO
+        return
+        # for data_cfg in self.dataset_configs.values():
+        #     print('prepare_data', data_cfg)
+        #     self.instantiate_from_config(data_cfg)
 
     def setup(self, stage=None):
         self.datasets = dict(
