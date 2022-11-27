@@ -75,7 +75,7 @@ class VQModel(pl.LightningModule):
         return dec, diff
 
     def get_input(self, batch, k):
-        print('CC',type(batch), hasattr(batch, k))
+        print('CCccccccccccccccccccccc',type(batch), hasattr(batch, k))
         # input()
         x = batch[k]
         if len(x.shape) == 3:
@@ -84,6 +84,7 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
+        print('+++++++++training_step++++++++')
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
@@ -105,6 +106,7 @@ class VQModel(pl.LightningModule):
             return discloss
 
     def validation_step(self, batch, batch_idx):
+        print('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
         aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step,
