@@ -17,7 +17,7 @@ class WrappedDatasetBase(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& __getitem__')
+        # print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& __getitem__')
         return self.data[idx]
 
 class DataModuleFromConfigBase(pl.LightningDataModule):
