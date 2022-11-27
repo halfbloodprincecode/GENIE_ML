@@ -54,7 +54,7 @@ class ImagePaths(Dataset):
         image = self.preprocessor(image=image)['image']
         image = (image/127.5 - 1.0).astype(np.float32)
 
-        logger.info('image!! {}'.format(image))
+        # logger.info('image!! {}'.format(image))
         return image
 
     def __getitem__(self, i):
