@@ -17,6 +17,7 @@ class WrappedDatasetBase(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
+        print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& __getitem__')
         return self.data[idx]
 
 class DataModuleFromConfigBase(pl.LightningDataModule):
@@ -40,10 +41,12 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         self.wrap_cls = WrappedDatasetBase
 
     def _train_dataloader(self):
+        logger.warning('_train_dataloader is called!!!!!!!!!')
         return DataLoader(self.datasets['train'], batch_size=self.batch_size,
                           num_workers=self.num_workers, shuffle=True, collate_fn=self.custom_collate)
 
     def _val_dataloader(self):
+        logger.warning('_val_dataloader is called!!!!!!!!!')
         return DataLoader(self.datasets['validation'],
                           batch_size=self.batch_size,
                           num_workers=self.num_workers, collate_fn=self.custom_collate)
@@ -52,15 +55,15 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         return DataLoader(self.datasets['test'], batch_size=self.batch_size,
                           num_workers=self.num_workers, collate_fn=self.custom_collate)
 
-    def prepare_data(self):
+    def prepare_data(self): # I think this function shoulde be remove! TODO
         for data_cfg in self.dataset_configs.values():
-            print('@@@@@@@@@@@@2', data_cfg)
+            print('prepare_data', data_cfg)
             self.instantiate_from_config(data_cfg)
 
     def setup(self, stage=None):
         self.datasets = dict(
             (k, self.instantiate_from_config(self.dataset_configs[k]))
-            for k in self.dataset_configs)
+            for k in self.dataset_configs) # self.datasets contain datasets such as imageNetTrain, imageNetValidation, ... and so on.
         if self.wrap:
             for k in self.datasets:
                 self.datasets[k] = self.wrap_cls(self.datasets[k])
