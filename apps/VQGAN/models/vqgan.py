@@ -18,7 +18,7 @@ class VQModel(pl.LightningModule):
                  embed_dim,
                  ckpt_path=None,
                  ignore_keys=[],
-                 image_key="image",
+                 image_key="image", # this `key` is defined in //apps/VQGAN/data/base.py > __getitem__ function
                  colorize_nlabels=None,
                  monitor=None,
                  remap=None,
@@ -78,6 +78,7 @@ class VQModel(pl.LightningModule):
         print('CCccccccccccccccccccccc', k, type(batch), list(batch.keys()))
         # input()
         x = batch[k]
+        print(x.shape)
         if len(x.shape) == 3:
             x = x[..., None]
         x = x.permute(0, 3, 1, 2).to(memory_format=torch.contiguous_format)

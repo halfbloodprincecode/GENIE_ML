@@ -47,9 +47,8 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
 
     def _val_dataloader(self):
         logger.warning('_val_dataloader is called!!!!!!!!!')
-        return DataLoader(self.datasets['validation'],
-                          batch_size=self.batch_size,
-                          num_workers=self.num_workers, collate_fn=self.custom_collate)
+        return DataLoader(self.datasets['validation'], batch_size=self.batch_size,
+                            num_workers=self.num_workers, collate_fn=self.custom_collate)
 
     def _test_dataloader(self):
         return DataLoader(self.datasets['test'], batch_size=self.batch_size,
