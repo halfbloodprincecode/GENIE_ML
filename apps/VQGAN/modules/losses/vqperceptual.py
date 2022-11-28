@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
+from loguru import logger
 import torch.nn.functional as F
-
 from apps.VQGAN.modules.losses.lpips import LPIPS
 from apps.VQGAN.modules.discriminator.model import NLayerDiscriminator, weights_init
 
@@ -55,7 +55,7 @@ class VQLPIPSWithDiscriminator(nn.Module):
             self.disc_loss = vanilla_d_loss
         else:
             raise ValueError(f"Unknown GAN loss '{disc_loss}'.")
-        print(f"VQLPIPSWithDiscriminator running with {disc_loss} loss.")
+        logger.info(f"VQLPIPSWithDiscriminator running with {disc_loss} loss.")
         self.disc_factor = disc_factor
         self.discriminator_weight = disc_weight
         self.disc_conditional = disc_conditional
