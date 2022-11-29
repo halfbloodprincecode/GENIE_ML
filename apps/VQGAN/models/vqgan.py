@@ -111,16 +111,15 @@ class VQModel(pl.LightningModule):
         print('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
-        aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step,
-                                            last_layer=self.get_last_layer(), split="val")
-
-        discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step,
-                                            last_layer=self.get_last_layer(), split="val")
+        aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
+        discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step, last_layer=self.get_last_layer(), split="val")
         rec_loss = log_dict_ae["val/rec_loss"]
+
         # self.log("val/rec_loss", rec_loss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
         # self.log("val/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
-        self.log_dict(log_dict_ae)
-        self.log_dict(log_dict_disc)
+        self.log_dict(dict(aeloss=aeloss, rec_loss=rec_loss, discloss=discloss), prog_bar=True)
+        self.log_dict(log_dict_ae, prog_bar=True)
+        self.log_dict(log_dict_disc, prog_bar=True)
         return self.log_dict
 
     def configure_optimizers(self):

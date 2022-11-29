@@ -93,7 +93,15 @@ class ConfigBase:
                     'save_dir': logdir,
                 }
             },
+            'genie': {
+                'target': 'apps.VQGAN.modules.genie_logger.GenieLogger',
+                'params': {
+                    'name': nowname,
+                    'save_dir': logdir,
+                }
+            },
         }
+         
         default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'testtube'
         logger_cfg = lightning_config.get('logger', OmegaConf.create()) # lightning_config.logger or OmegaConf.create()
         logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
