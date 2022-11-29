@@ -19,7 +19,7 @@ class ParserBasic(ABC):
         parser.add_argument(
             '--logger_ml',
             type=str,
-            default='tensorboard',
+            default='genie', #'tensorboard',
             help='default_logger_cfgs key name',
         )
         parser.add_argument(
