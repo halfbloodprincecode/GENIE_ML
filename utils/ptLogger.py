@@ -8,8 +8,8 @@ class GenieLoggerBase(Logger):
             self, 
             save_dir: str = None,
             name: Optional[str] = 'GeineLogs',
-            agg_key_funcs: Optional[Mapping[str, Callable[[Sequence[float]], float]]] = None,
-            agg_default_func: Optional[Callable[[Sequence[float]], float]] = None,
+            agg_key_funcs=None,
+            agg_default_func=None,
             **kwargs: Any
         ):
         super().__init__(agg_key_funcs=agg_key_funcs, 
