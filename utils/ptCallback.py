@@ -152,7 +152,7 @@ class ImageLoggerBase(Callback):
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
             # logger.error('-----------------loggerName={}'.format())
-            _logger = pl_module.logger.fn_name2 or 'hooooooo'
+            _logger = getattr(pl_module.logger, 'fn_name2', 'hooooooo')
             logger_log_images = self.logger_log_images.get(_logger, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
