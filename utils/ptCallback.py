@@ -4,6 +4,7 @@ from os.path import join, exists
 import torch
 import torchvision
 import numpy as np
+from PIL import Image
 from loguru import logger
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
@@ -36,7 +37,7 @@ class SetupCallbackBase(Callback):
             logger.info('Lightning config: {}'.format(self.lightning_config))
             OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
         else:
-            logger.warning('on_fit_start > gRank {}'.format(trainer.global_rank))
+            logger.warning('vvvvvv on_fit_start > gRank {}'.format(trainer.global_rank))
             # ModelCheckpoint callback created log directory --- remove it
             if not self.resume and exists(self.logdir):
                 logger.warning('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
@@ -57,7 +58,8 @@ class ImageLoggerBase(Callback):
         self.logger_log_images = {
             pl.loggers.WandbLogger: self._wandb,
             # pl.loggers.TestTubeLogger: self._testtube,
-            pl.loggers.TensorBoardLogger: self._tb
+            pl.loggers.TensorBoardLogger: self._tb,
+            utils.pt: self._genie
         }
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
         if not increase_log_steps:
@@ -91,13 +93,20 @@ class ImageLoggerBase(Callback):
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
 
             tag = f'{split}/{k}'
-            # pl_module.logger.experiment.add_image(
-            #     tag, grid,
-            #     global_step=pl_module.global_step)
+            # pl_module.logger.experiment.add_image(tag, grid, global_step=pl_module.global_step)
+    
+    @rank_zero_only
+    def _genie(self, pl_module, images, batch_idx, split):
+        logger.warning('ImageLoggerBase | _genie', type(images), batch_idx)
+        for k in images:
+            grid = torchvision.utils.make_grid(images[k])
+            grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
+
+            tag = f'{split}/{k}'
+            # pl_module.logger.experiment.add_image(tag, grid, global_step=pl_module.global_step)
 
     @rank_zero_only
-    def log_local(self, save_dir, split, images,
-                  global_step, current_epoch, batch_idx):
+    def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
         root = join(save_dir, 'images', split)
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=4)
@@ -140,6 +149,7 @@ class ImageLoggerBase(Callback):
             self.log_local(pl_module.logger.save_dir, split, images,
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
+            print('-----------------logger key', logger)
             logger_log_images = self.logger_log_images.get(logger, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
@@ -156,8 +166,10 @@ class ImageLoggerBase(Callback):
         return False
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+        logger.warning('ImageLoggerBase | on_train_batch_end')
         self.log_img(pl_module, batch, batch_idx, split='train')
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+        logger.warning('ImageLoggerBase | on_validation_batch_end')
         self.log_img(pl_module, batch, batch_idx, split='val')
 
