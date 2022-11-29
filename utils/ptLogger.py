@@ -5,13 +5,13 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
 
 class GenieLoggerBase(Logger):
     def __init__(
-            self, 
-            save_dir: str = None,
-            name: Optional[str] = 'GeineLogs',
-            agg_key_funcs=None,
-            agg_default_func=None,
-            **kwargs: Any
-        ):
+        self, 
+        save_dir: str = None,
+        name: Optional[str] = 'GeineLogs',
+        agg_key_funcs=None,
+        agg_default_func=None,
+        **kwargs: Any
+    ):
         super().__init__(agg_key_funcs=agg_key_funcs, 
                         agg_default_func=agg_default_func)
         print('hoooooooooooooooooooooooooooo!!')
