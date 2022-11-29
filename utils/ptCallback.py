@@ -97,7 +97,7 @@ class ImageLoggerBase(Callback):
     
     @rank_zero_only
     def _genie(self, pl_module, images, batch_idx, split):
-        logger.warning('OK | ImageLoggerBase | _genie', type(images), batch_idx)
+        logger.warning('OK | ImageLoggerBase | _genie | {}'.format([type(images), batch_idx]))
         for k in images:
             grid = torchvision.utils.make_grid(images[k])
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
