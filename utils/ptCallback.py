@@ -97,7 +97,7 @@ class ImageLoggerBase(Callback):
     
     @rank_zero_only
     def _genie(self, pl_module, images, batch_idx, split):
-        logger.warning('ImageLoggerBase | _genie', type(images), batch_idx)
+        logger.warning('OK | ImageLoggerBase | _genie', type(images), batch_idx)
         for k in images:
             grid = torchvision.utils.make_grid(images[k])
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
@@ -152,10 +152,11 @@ class ImageLoggerBase(Callback):
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
             
-            _logger = getattr(pl_module.logger, 'fn_name', 'hooooooo')
-            logger.error('@@@@@@@@@@ = {} = {}'.format(_logger, getattr(self, _logger)))
-            logger_log_images = getattr(self, _logger) #self.logger_log_images[_logger] #.get(, lambda *args, **kwargs: None)
-            logger_log_images(pl_module, images, pl_module.global_step, split)
+            _logger = getattr(pl_module.logger, 'fn_name', '_tb')
+            logger_log_images_fn = getattr(self, _logger, lambda *args, **kwargs: None) 
+            
+            logger.error('!!!!!!!1 = {} = {}'.format(_logger, logger_log_images_fn))
+            logger_log_images_fn(pl_module, images, pl_module.global_step, split)
 
             if is_train:
                 pl_module.train()
