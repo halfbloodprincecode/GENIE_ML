@@ -171,12 +171,7 @@ class ImageLoggerBase(Callback):
         logger.warning('ImageLoggerBase | on_train_batch_end')
         # self.log_img(pl_module, batch, batch_idx, split='train')
 
-    def on_validation_batch_end(self, *args, **kwargs):
-        # trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
-        logger.error('trainer={}'.format(args[0]))
-        logger.info('pl_m={}'.format(args[1]))
-        logger.debug('outputs={}'.format(args[2]))
-        logger.error('batch={}'.format(args[3]))
-        logger.warning('ImageLoggerBase | on_validation_batch_end | args={}, kwargs={}'.format(args, kwargs))
+    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
+        logger.warning('ImageLoggerBase | on_validation_batch_end')
         # self.log_img(pl_module, batch, batch_idx, split='val')
 
