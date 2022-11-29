@@ -131,7 +131,7 @@ class ImageLoggerBase(Callback):
                 hasattr(pl_module, 'log_images') and
                 callable(pl_module.log_images) and
                 self.max_images > 0):
-            logger = type(pl_module.logger)
+            _logger = type(pl_module.logger)
 
             is_train = pl_module.training
             if is_train:
@@ -151,8 +151,8 @@ class ImageLoggerBase(Callback):
             self.log_local(pl_module.logger.save_dir, split, images,
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
-            print('-----------------logger key', logger)
-            logger_log_images = self.logger_log_images.get(logger, lambda *args, **kwargs: None)
+            print('-----------------logger key', _logger)
+            logger_log_images = self.logger_log_images.get(_logger, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
             if is_train:

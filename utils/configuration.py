@@ -96,6 +96,8 @@ class ConfigBase:
             'genie': {
                 'target': 'apps.VQGAN.modules.genie_logger.GenieLogger',
                 'params': {
+                    'name': nowname,
+                    'save_dir': logdir,
                 }
             },
         }
