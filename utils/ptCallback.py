@@ -30,10 +30,10 @@ class SetupCallbackBase(Callback):
             makedirs(self.ckptdir, exist_ok=True)
             makedirs(self.cfgdir, exist_ok=True)
 
-            print('Project config: {}'.format(self.config.pretty()))
+            logger.info('Project config: {}'.format(self.config))
             OmegaConf.save(self.config, join(self.cfgdir, '{}-project.yaml'.format(self.now)))
 
-            print('Lightning config: {}'.format(self.lightning_config.pretty()))
+            logger.info('Lightning config: {}'.format(self.lightning_config))
             OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
         else:
             logger.warning('on_fit_start > gRank {}'.format(trainer.global_rank))
