@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
 class GenieLoggerBase(Logger):
     def __init__(
             self, 
-            save_dir: str,
+            save_dir: str = None,
             name: Optional[str] = 'GeineLogs',
             agg_key_funcs: Optional[Mapping[str, Callable[[Sequence[float]], float]]] = None,
             agg_default_func: Optional[Callable[[Sequence[float]], float]] = None,
