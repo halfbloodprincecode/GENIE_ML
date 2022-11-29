@@ -14,6 +14,7 @@ class GenieLoggerBase(Logger):
         ):
         super().__init__(agg_key_funcs=agg_key_funcs, 
                         agg_default_func=agg_default_func)
+        print('hoooooooooooooooooooooooooooo!!')
         self._save_dir = save_dir
         self._name = name or ''
 
