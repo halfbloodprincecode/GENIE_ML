@@ -94,8 +94,7 @@ class ConfigBase:
                 }
             },
             'genie': {
-                'target': 'utils.ptLogger.GenieLoggerBase',
-                # 'target': 'apps.VQGAN.modules.genie_logger.GenieLogger',
+                'target': 'apps.VQGAN.modules.genie_logger.GenieLogger',
                 'params': {
                     'name': nowname,
                     'save_dir': logdir,
