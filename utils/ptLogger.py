@@ -7,18 +7,24 @@ class GenieLoggerBase(Logger):
     def __init__(
         self, 
         save_dir: str = None,
-        name: Optional[str] = 'GeineLogs',
+        name: Optional[str] = 'GeineLogger',
+        fn_name: Optional[str] = 'geine',
         version: str = '0.1',
         **kwargs: Any
     ):
         super().__init__(**kwargs)
         self._save_dir = save_dir
-        self._name = name or ''
+        self._name = name
+        self._fn_name = fn_name
         self._version = version
 
     @property
     def name(self):
         return self._name
+    
+    @property
+    def fn_name(self):
+        return self._fn_name
 
     @property
     def version(self):
