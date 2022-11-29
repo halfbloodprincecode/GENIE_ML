@@ -56,10 +56,10 @@ class ImageLoggerBase(Callback):
         self.batch_freq = batch_frequency
         self.max_images = max_images
         self.logger_log_images = {
-            pl.loggers.WandbLogger: self._wandb,
+            # pl.loggers.WandbLogger: self._wandb,
             # pl.loggers.TestTubeLogger: self._testtube,
-            pl.loggers.TensorBoardLogger: self._tb,
-            # utils.pt: self._genie
+            # pl.loggers.TensorBoardLogger: self._tb,
+            'apps.VQGAN.modules.genie_logger.GenieLogger': self._genie
         }
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
         if not increase_log_steps:
@@ -151,7 +151,7 @@ class ImageLoggerBase(Callback):
             self.log_local(pl_module.logger.save_dir, split, images,
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
-            logger.error('-----------------_logger={}'.format(_logger))
+            logger.error('-----------------loggerName={}'.format('_'+pl_module.logger.name))
             logger_log_images = self.logger_log_images.get(_logger, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
