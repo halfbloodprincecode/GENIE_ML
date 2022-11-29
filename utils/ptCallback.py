@@ -107,7 +107,9 @@ class ImageLoggerBase(Callback):
 
     @rank_zero_only
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
+        logger.warning('ImageLoggerBase | log_local | save_dir={} | split={}'.format(save_dir, split))
         root = join(save_dir, 'images', split)
+        print('++++++++++++++++++++++++++++++')
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=4)
 
