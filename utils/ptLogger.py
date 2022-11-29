@@ -12,7 +12,7 @@ class GenieLoggerBase(Logger):
             agg_default_func: Optional[Callable[[Sequence[float]], float]] = None,
             **kwargs: Any,
         ):
-        super().__init__(agg_key_funcs, agg_default_func)
+        super().__init__(agg_key_funcs=agg_key_funcs, agg_default_func=agg_default_func)
         self._save_dir = save_dir
         self._name = name or ''
 
