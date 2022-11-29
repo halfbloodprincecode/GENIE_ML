@@ -10,7 +10,7 @@ class GenieLoggerBase(Logger):
             name: Optional[str] = 'GeineLogs',
             agg_key_funcs: Optional[Mapping[str, Callable[[Sequence[float]], float]]] = None,
             agg_default_func: Optional[Callable[[Sequence[float]], float]] = None,
-            **kwargs: Any
+            # **kwargs: Any
         ):
         super().__init__(agg_key_funcs=agg_key_funcs, agg_default_func=agg_default_func)
         self._save_dir = save_dir
