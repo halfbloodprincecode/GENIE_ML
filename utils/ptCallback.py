@@ -151,7 +151,7 @@ class ImageLoggerBase(Callback):
             self.log_local(pl_module.logger.save_dir, split, images,
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
-            logger.error('-----------------logger key={}'.format(_logger))
+            logger.error('-----------------pl_module.logger.save_dir={}'.format(pl_module.logger.save_dir))
             logger_log_images = self.logger_log_images.get(_logger, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
