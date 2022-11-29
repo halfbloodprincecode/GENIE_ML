@@ -8,12 +8,9 @@ class GenieLoggerBase(Logger):
         self, 
         save_dir: str = None,
         name: Optional[str] = 'GeineLogs',
-        agg_key_funcs=None,
-        agg_default_func=None,
         **kwargs: Any
     ):
-        super().__init__(agg_key_funcs=agg_key_funcs, 
-                        agg_default_func=agg_default_func)
+        super().__init__(**kwargs)
         print('hoooooooooooooooooooooooooooo!!')
         self._save_dir = save_dir
         self._name = name or ''
