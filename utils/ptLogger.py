@@ -34,7 +34,7 @@ class GenieLoggerBase(Logger):
     def log_hyperparams(self, params):
         # params is an argparse.Namespace
         # your code to record hyperparameters goes here
-        logger.warning('log_hyperparams | params={}'.format(params))
+        logger.error('log_hyperparams | params={}'.format(params))
         pass
 
     @rank_zero_only
