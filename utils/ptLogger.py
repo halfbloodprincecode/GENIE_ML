@@ -11,7 +11,7 @@ class GenieLoggerBase(Logger):
         **kwargs: Any
     ):
         super().__init__(**kwargs)
-        print('hoooooooooooooooooooooooooooo!!')
+        print('hoooooooooooooooooooooooooooo!!', save_dir)
         self._save_dir = save_dir
         self._name = name or ''
 
@@ -23,6 +23,12 @@ class GenieLoggerBase(Logger):
     def version(self):
         # Return the experiment version, int or str.
         return "0.1"
+
+    @property
+    def save_dir(self) -> Optional[str]:
+        """Return the root directory where experiment logs get saved, or `None` if the logger does not save data
+        locally."""
+        return self._save_dir
 
     @rank_zero_only
     def log_hyperparams(self, params):
