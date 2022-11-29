@@ -152,11 +152,8 @@ class ImageLoggerBase(Callback):
                            pl_module.global_step, pl_module.current_epoch, batch_idx)
 
             
-            logger.error('@@@@@@@@@@ = {}'.format(getattr(self, '_genie')))
-            return
             _logger = getattr(pl_module.logger, 'fn_name', 'hooooooo')
-            logger.error('-----------------_logger={}'.format(_logger))
-            logger.debug('self[_logger] = {}'.format(getattr(self, _logger)))
+            logger.error('@@@@@@@@@@ = {} = {}'.format(_logger, getattr(self, _logger)))
             logger_log_images = self[_logger] #self.logger_log_images[_logger] #.get(, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
