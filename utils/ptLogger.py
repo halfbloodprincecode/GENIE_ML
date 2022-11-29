@@ -8,7 +8,7 @@ class GenieLoggerBase(Logger):
         self, 
         save_dir: str = None,
         name: Optional[str] = 'GeineLogger',
-        fn_name: Optional[str] = '_geine',
+        fn_name: Optional[str] = '_genie',
         version: str = '0.1',
         **kwargs: Any
     ):
