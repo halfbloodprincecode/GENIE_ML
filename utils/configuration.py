@@ -106,6 +106,7 @@ class ConfigBase:
         default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'testtube'
         logger_cfg = lightning_config.get('logger', OmegaConf.create()) # lightning_config.logger or OmegaConf.create()
         logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
+        print('******logger_cfg', logger_cfg)
         trainer_kwargs['logger'] = cls.instantiate_from_config(logger_cfg)
         
 
