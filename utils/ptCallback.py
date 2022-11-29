@@ -154,7 +154,7 @@ class ImageLoggerBase(Callback):
             
             _logger = getattr(pl_module.logger, 'fn_name', 'hooooooo')
             logger.error('@@@@@@@@@@ = {} = {}'.format(_logger, getattr(self, _logger)))
-            logger_log_images = self[_logger] #self.logger_log_images[_logger] #.get(, lambda *args, **kwargs: None)
+            logger_log_images = getattr(self, _logger) #self.logger_log_images[_logger] #.get(, lambda *args, **kwargs: None)
             logger_log_images(pl_module, images, pl_module.global_step, split)
 
             if is_train:
