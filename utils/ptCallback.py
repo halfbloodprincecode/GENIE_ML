@@ -66,9 +66,6 @@ class ImageLoggerBase(Callback):
             self.log_steps = [self.batch_freq]
         self.clamp = clamp
 
-        logger.error('AA @@@@@@@@@@@@@ | self.log_steps={}, self.batch_freq={}'.format(self.log_steps, self.batch_freq))
-
-
     @rank_zero_only
     def _wandb(self, pl_module, images, batch_idx, split):
         raise ValueError('No way wandb')
@@ -169,10 +166,10 @@ class ImageLoggerBase(Callback):
         return False
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
-        logger.warning('ImageLoggerBase | on_train_batch_end')
+        logger.warning('ImageLoggerBase | on_train_batch_end | batch_idx={}'.format(batch_idx))
         self.log_img(pl_module, batch, batch_idx, split='train')
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        logger.warning('ImageLoggerBase | on_validation_batch_end')
+        logger.warning('ImageLoggerBase | on_validation_batch_end | batch_idx={}'.format(batch_idx))
         self.log_img(pl_module, batch, batch_idx, split='val')
 
