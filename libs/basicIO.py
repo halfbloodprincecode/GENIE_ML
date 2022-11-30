@@ -6,6 +6,7 @@ import pathlib
 import tarfile
 import zipfile
 import requests
+from PIL import Image
 from tqdm import tqdm
 from loguru import logger
 from libs.coding import md5
@@ -117,3 +118,10 @@ def file_hash(path, fn=md5):
         content = f.read()
     return fn(content)
 
+def signal_save(s, path, makedirsFlag=True):
+    path = pathBIO(path)
+    d, ext = os.path.split(path)
+    if makedirsFlag:
+        os.makedirs(d, exist_ok=True)
+    logger.error('###### type(s)={} | ext={}'.format(type(s), ext))
+    # Image.fromarray(grid).save(path)

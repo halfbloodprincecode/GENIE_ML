@@ -4,10 +4,11 @@ from os.path import join, exists
 import torch
 import torchvision
 import numpy as np
-from PIL import Image
+# from PIL import Image
 from loguru import logger
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
+from libs.basicIO import signal_save
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
 # from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
@@ -115,23 +116,14 @@ class ImageLoggerBase(Callback):
         ))
         root = join(save_dir, 'images', split)
         for k in images:
-            grid = torchvision.utils.make_grid(images[k], nrow=self.opt_params.get('make_grid_nrow', 4)) # this grid finally has shape: [images[k].shape[0]/nrow, nrow]
-            
-            logger.error('k={} | grid={}, grid_shape={}'.format(k, grid, grid.shape))
-
-
-            grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
+            grid = torchvision.utils.make_grid(images[k], nrow=self.opt_params.get('make_grid_nrow', 4)) # this grid finally contains table of iamges like this -> [images[k].shape[0]/nrow, nrow] ; Notic: grid is tensor with shape: ch x h? x w?
+            grid = (grid+1.0)/2.0 # turn each image from range [-1,1] to range [0,1]; c,h,w
             grid = grid.transpose(0,1).transpose(1,2).squeeze(-1)
             grid = grid.numpy()
             grid = (grid*255).astype(np.uint8)
-            filename = '{}_gs-{:06}_e-{:06}_b-{:06}.png'.format(
-                k,
-                global_step,
-                current_epoch,
-                batch_idx)
+            filename = '{}_gs-{:06}_e-{:06}_b-{:06}.png'.format(k, global_step, current_epoch, batch_idx)
             path = join(root, filename)
-            os.makedirs(os.path.split(path)[0], exist_ok=True)
-            Image.fromarray(grid).save(path)
+            signal_save(grid, path)
 
     def log_img(self, pl_module, batch, batch_idx, split='train'):
         if (self.check_frequency(batch_idx) and  # batch_idx % self.batch_freq == 0
