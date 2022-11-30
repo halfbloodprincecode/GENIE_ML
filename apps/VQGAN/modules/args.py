@@ -1,4 +1,5 @@
 import os
+from os import getenv
 from libs.basicIO import ls, pathBIO
 from omegaconf import OmegaConf
 from libs.args import ParserBasic
@@ -136,7 +137,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
         else:
             name = ''
         nowname = now + name + opt.postfix
-        logdir = join(pathBIO('//logs'), nowname)
+        logdir = join(pathBIO(getenv('GENIE_ML_LOGDIR')), nowname)
 
     ckptdir = join(logdir, 'checkpoints')
     cfgdir = join(logdir, 'configs')
