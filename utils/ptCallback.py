@@ -117,7 +117,7 @@ class ImageLoggerBase(Callback):
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=self.opt_params.get('make_grid_nrow', 4)) # this grid finally has shape: [images[k].shape[0]/nrow, nrow]
             
-            logger.error('k={} | grid={}'.format(k, grid))
+            logger.error('k={} | grid={}, grid_shape={}'.format(k, grid, grid.shape))
 
 
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
