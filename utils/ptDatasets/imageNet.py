@@ -9,7 +9,6 @@ from omegaconf import OmegaConf
 from torch.utils.data import Dataset
 from libs.coding import sha1
 from libs.basicIO import extractor, pathBIO, download
-from libs.basicAR import cacheDir
 from libs.basicDS import retrieve
 
 # from apps.VQGAN.util import retrieve
@@ -39,8 +38,8 @@ class ImageNetBase(Dataset):
 
         self.NAME = self.config['NAME']
         self.FILES = self.config.get('FILES', [])
-        cachedir = cacheDir()
-        self.root = join(cachedir, 'autoencoders/data', self.NAME)
+        # self.root = join(cachedir, 'autoencoders/data', self.NAME)
+        self.root = join(pathBIO(getenv('GENIE_ML_CACHEDIR')), self.NAME)
         self.datadir = join(self.root, 'data')
         self.hashdir = join(self.root, 'hash')
         makedirs(self.hashdir, exist_ok=True)
