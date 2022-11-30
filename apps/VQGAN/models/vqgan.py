@@ -1,4 +1,5 @@
 import torch
+from loguru import logger
 import torch.nn.functional as F
 import pytorch_lightning as pl
 
@@ -49,7 +50,7 @@ class VQModel(pl.LightningModule):
                 if k.startswith(ik):
                     print("Deleting key {} from state_dict.".format(k))
                     del sd[k]
-        print('TODO!! where is it? self.load_state_dict', self.load_state_dict)
+        logger.error('TODO!! where is it? self.load_state_dict={}'.format(self.load_state_dict))
         self.load_state_dict(sd, strict=False)
         print(f"Restored from {path}")
 
@@ -75,10 +76,7 @@ class VQModel(pl.LightningModule):
         return dec, diff
 
     def get_input(self, batch, k):
-        print('CCccccccccccccccccccccc', k, type(batch), list(batch.keys()))
-        # input()
         x = batch[k]
-        print(x.shape)
         if len(x.shape) == 3:
             x = x[..., None]
         x = x.permute(0, 3, 1, 2).to(memory_format=torch.contiguous_format)
@@ -86,14 +84,13 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        print('+++++++++training_step++++++++')
+        logger.error('+++++++++training_step++++++++ | batch_idx={}, optimizer_idx={}'.format(batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
         if optimizer_idx == 0:
             # autoencode
-            aeloss, log_dict_ae = self.loss(qloss, x, xrec, optimizer_idx, self.global_step,
-                                            last_layer=self.get_last_layer(), split="train")
+            aeloss, log_dict_ae = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
 
             self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=True, on_epoch=True)
@@ -101,14 +98,13 @@ class VQModel(pl.LightningModule):
 
         if optimizer_idx == 1:
             # discriminator
-            discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step,
-                                            last_layer=self.get_last_layer(), split="train")
+            discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
             self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=True, on_epoch=True)
             return discloss
 
     def validation_step(self, batch, batch_idx):
-        print('---------validation_step----------')
+        logger.warning('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
         aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
@@ -138,6 +134,7 @@ class VQModel(pl.LightningModule):
         return self.decoder.conv_out.weight
 
     def log_images(self, batch, **kwargs):
+        """this function is must be exist for ptCallback.ImageLoggerBase"""
         log = dict()
         x = self.get_input(batch, self.image_key)
         x = x.to(self.device)

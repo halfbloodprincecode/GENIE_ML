@@ -40,21 +40,21 @@ class GenieLoggerBase(Logger):
     def log_hyperparams(self, params):
         # params is an argparse.Namespace
         # your code to record hyperparameters goes here
-        logger.error('log_hyperparams | params={}'.format(params))
+        logger.critical('log_hyperparams | params={}'.format(params))
         pass
 
     @rank_zero_only
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
-        logger.warning('log_hyperparams | metrics={}'.format(metrics))
+        logger.critical('log_hyperparams | metrics={}'.format(metrics))
         pass
 
     @rank_zero_only
     def save(self):
         # Optional. Any code necessary to save logger data goes here
         super().save()
-        logger.warning('save')
+        logger.critical('save')
         pass
 
     @rank_zero_only
@@ -62,5 +62,5 @@ class GenieLoggerBase(Logger):
         # Optional. Any code that needs to be run after training
         # finishes goes here
         super().finalize(status)
-        logger.warning('finalize | status={}'.format(status))
+        logger.critical('finalize | status={}'.format(status))
         pass
