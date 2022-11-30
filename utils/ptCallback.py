@@ -51,7 +51,7 @@ class SetupCallbackBase(Callback):
 
 # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class ImageLoggerBase(Callback):
-    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True):
+    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, opt_params=None):
         super().__init__()
         self.batch_freq = batch_frequency
         self.max_images = max_images
@@ -65,6 +65,7 @@ class ImageLoggerBase(Callback):
         if not increase_log_steps:
             self.log_steps = [self.batch_freq]
         self.clamp = clamp
+        self.opt_params = opt_params if opt_params else dict()
 
     @rank_zero_only
     def _wandb(self, pl_module, images, batch_idx, split):
@@ -107,14 +108,17 @@ class ImageLoggerBase(Callback):
 
     @rank_zero_only
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
+        # here save_dir is address of logdir
         logger.error('ImageLoggerBase | log_local | \
         save_dir={}, split={}, images_KEYS={}, global_step={}, current_epoch={}, batch_idx={}'.format(
             save_dir, split, list(images.keys()), global_step, current_epoch, batch_idx
         ))
         root = join(save_dir, 'images', split)
-        print('++++++++++++++++++++++++++++++ root={}'.format(root))
         for k in images:
-            grid = torchvision.utils.make_grid(images[k], nrow=4)
+            grid = torchvision.utils.make_grid(images[k], nrow=self.opt_params.get('make_grid_nrow', 4)) # this grid finally has shape: [images[k].shape[0]/nrow, nrow]
+            
+            logger.error('k={} | grid={}'.format(k, grid))
+
 
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
             grid = grid.transpose(0,1).transpose(1,2).squeeze(-1)
