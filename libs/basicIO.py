@@ -123,5 +123,5 @@ def signal_save(s, path, makedirsFlag=True):
     d, ext = os.path.split(path)
     if makedirsFlag:
         os.makedirs(d, exist_ok=True)
-    logger.error('###### type(s)={} | ext={}'.format(type(s), ext))
+    logger.error('###### type(s)={} | dtype={} | ext={}'.format(type(s), s.dtype, ext))
     # Image.fromarray(grid).save(path)
