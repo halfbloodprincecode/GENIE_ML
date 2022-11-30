@@ -108,8 +108,8 @@ class ImageLoggerBase(Callback):
     @rank_zero_only
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
         logger.error('ImageLoggerBase | log_local | \
-        save_dir={}, split={}, images_shape={}, global_step={}, current_epoch={}, batch_idx={}'.format(
-            save_dir, split, images.shape, global_step, current_epoch, batch_idx
+        save_dir={}, split={}, images_KEYS={}, global_step={}, current_epoch={}, batch_idx={}'.format(
+            save_dir, split, list(images.keys()), global_step, current_epoch, batch_idx
         ))
         root = join(save_dir, 'images', split)
         print('++++++++++++++++++++++++++++++ root={}'.format(root))
