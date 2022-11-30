@@ -102,7 +102,7 @@ class ConfigBase:
             },
         }
          
-        default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'testtube'
+        default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'genie'
         logger_cfg = lightning_config.get('logger', OmegaConf.create()) # lightning_config.logger or OmegaConf.create()
         logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
         print('******logger_cfg', logger_cfg)

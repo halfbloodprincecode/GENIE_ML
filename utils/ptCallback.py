@@ -55,16 +55,19 @@ class ImageLoggerBase(Callback):
         super().__init__()
         self.batch_freq = batch_frequency
         self.max_images = max_images
-        self.logger_log_images = {
-            # pl.loggers.WandbLogger: self._wandb,
-            # pl.loggers.TestTubeLogger: self._testtube,
-            # pl.loggers.TensorBoardLogger: self._tb,
-            'apps.VQGAN.modules.genie_logger.GenieLogger': self._genie
-        }
+        # self.logger_log_images = {
+        #     # pl.loggers.WandbLogger: self._wandb,
+        #     # pl.loggers.TestTubeLogger: self._testtube,
+        #     # pl.loggers.TensorBoardLogger: self._tb,
+        #     'apps.VQGAN.modules.genie_logger.GenieLogger': self._genie
+        # }
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
         if not increase_log_steps:
             self.log_steps = [self.batch_freq]
         self.clamp = clamp
+
+        logger.error('AA @@@@@@@@@@@@@ | self.log_steps={}, self.batch_freq={}'.format(self.log_steps, self.batch_freq))
+
 
     @rank_zero_only
     def _wandb(self, pl_module, images, batch_idx, split):
@@ -131,7 +134,6 @@ class ImageLoggerBase(Callback):
                 hasattr(pl_module, 'log_images') and
                 callable(pl_module.log_images) and
                 self.max_images > 0):
-            # _logger = type(pl_module.logger)
 
             is_train = pl_module.training
             if is_train:
@@ -148,14 +150,10 @@ class ImageLoggerBase(Callback):
                     if self.clamp:
                         images[k] = torch.clamp(images[k], -1., 1.)
 
-            self.log_local(pl_module.logger.save_dir, split, images,
-                           pl_module.global_step, pl_module.current_epoch, batch_idx)
-
+            self.log_local(pl_module.logger.save_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx)
             
             _logger = getattr(pl_module.logger, 'fn_name', '_tb')
             logger_log_images_fn = getattr(self, _logger, lambda *args, **kwargs: None) 
-            
-            logger.error('!!!!!!!1 = {} = {}'.format(_logger, logger_log_images_fn))
             logger_log_images_fn(pl_module, images, pl_module.global_step, split)
 
             if is_train:
