@@ -84,7 +84,8 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        logger.error('+++++++++training_step++++++++ | batch_idx={}, optimizer_idx={}'.format(batch_idx, optimizer_idx))
+        results = self.trainer._results # delete this line
+        logger.error('+++++++++training_step++++++++ | results={} | batch_idx={}, optimizer_idx={}'.format(results, batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
