@@ -107,9 +107,12 @@ class ImageLoggerBase(Callback):
 
     @rank_zero_only
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
-        logger.warning('ImageLoggerBase | log_local | save_dir={} | split={}'.format(save_dir, split))
+        logger.error('ImageLoggerBase | log_local | \
+        save_dir={}, split={}, images_shape={}, global_step={}, current_epoch={}, batch_idx={}'.format(
+            save_dir, split, images.shape, global_step, current_epoch, batch_idx
+        ))
         root = join(save_dir, 'images', split)
-        print('++++++++++++++++++++++++++++++')
+        print('++++++++++++++++++++++++++++++ root={}'.format(root))
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=4)
 
@@ -145,7 +148,7 @@ class ImageLoggerBase(Callback):
                 if isinstance(images[k], torch.Tensor):
                     images[k] = images[k].detach().cpu()
                     if self.clamp:
-                        images[k] = torch.clamp(images[k], -1., 1.)
+                        images[k] = torch.clamp(images[k], -1., 1.) # it garanty that signal is in range [-1, +1]
 
             self.log_local(pl_module.logger.save_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx)
             
@@ -156,7 +159,7 @@ class ImageLoggerBase(Callback):
             if is_train:
                 pl_module.train()
 
-    def check_frequency(self, batch_idx):
+    def check_frequency(self, batch_idx): #TODO!!!!!!!!!!!!!!
         if (batch_idx % self.batch_freq) == 0 or (batch_idx in self.log_steps):
             try:
                 self.log_steps.pop(0)
