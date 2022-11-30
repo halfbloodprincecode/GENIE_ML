@@ -26,19 +26,17 @@ class SetupCallbackBase(Callback):
 
     def on_fit_start(self, trainer, pl_module):
         if trainer.global_rank == 0:
-            logger.warning('on_fit_start > gRank 0')
             # Create logdirs and save configs
             makedirs(self.logdir, exist_ok=True)
             makedirs(self.ckptdir, exist_ok=True)
             makedirs(self.cfgdir, exist_ok=True)
 
-            logger.info('Project config: {}'.format(self.config))
             OmegaConf.save(self.config, join(self.cfgdir, '{}-project.yaml'.format(self.now)))
-
-            logger.info('Lightning config: {}'.format(self.lightning_config))
             OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
+            logger.info('Project config: {}'.format(self.config))
+            logger.info('Lightning config: {}'.format(self.lightning_config))
         else:
-            logger.warning('vvvvvv on_fit_start > gRank {}'.format(trainer.global_rank))
+            logger.warning('vvvvvv on_fit_start > gRank -> {}'.format(trainer.global_rank))
             # ModelCheckpoint callback created log directory --- remove it
             if not self.resume and exists(self.logdir):
                 logger.warning('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
@@ -50,9 +48,8 @@ class SetupCallbackBase(Callback):
                 except FileNotFoundError:
                     pass
 
-# TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class ImageLoggerBase(Callback):
-    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, opt_params=None):
+    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, use_log_local_fn=True, opt_params=None):
         super().__init__()
         self.batch_freq = batch_frequency
         self.max_images = max_images
@@ -66,11 +63,12 @@ class ImageLoggerBase(Callback):
         if not increase_log_steps:
             self.log_steps = [self.batch_freq]
         self.clamp = clamp
+        self.use_log_local_fn = use_log_local_fn
         self.opt_params = opt_params if opt_params else dict()
 
     @rank_zero_only
     def _wandb(self, pl_module, images, batch_idx, split):
-        raise ValueError('No way wandb')
+        raise NotImplementedError
         grids = dict()
         for k in images:
             grid = torchvision.utils.make_grid(images[k])
@@ -79,6 +77,7 @@ class ImageLoggerBase(Callback):
 
     @rank_zero_only
     def _testtube(self, pl_module, images, batch_idx, split):
+        raise NotImplementedError
         for k in images:
             grid = torchvision.utils.make_grid(images[k])
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
@@ -90,6 +89,7 @@ class ImageLoggerBase(Callback):
 
     @rank_zero_only
     def _tb(self, pl_module, images, batch_idx, split):
+        raise NotImplementedError
         for k in images:
             grid = torchvision.utils.make_grid(images[k])
             grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
@@ -99,17 +99,12 @@ class ImageLoggerBase(Callback):
     
     @rank_zero_only
     def _genie(self, pl_module, images, batch_idx, split):
-        logger.warning('OK | ImageLoggerBase | _genie | {}'.format([type(images), batch_idx]))
-        for k in images:
-            grid = torchvision.utils.make_grid(images[k])
-            grid = (grid+1.0)/2.0 # -1,1 -> 0,1; c,h,w
-
-            tag = f'{split}/{k}'
-            # pl_module.logger.experiment.add_image(tag, grid, global_step=pl_module.global_step)
+        return # Not statement becuse images already loged into `save_dir` By `self.log_local` function.
 
     @rank_zero_only
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
-        # here save_dir is address of logdir
+        """task of this function is save images into save_dir. Notic that (`save_dir` is address of `logdir`)"""
+        
         logger.error('ImageLoggerBase | log_local | \
         save_dir={}, split={}, images_KEYS={}, global_step={}, current_epoch={}, batch_idx={}'.format(
             save_dir, split, list(images.keys()), global_step, current_epoch, batch_idx
@@ -146,7 +141,8 @@ class ImageLoggerBase(Callback):
                     if self.clamp:
                         images[k] = torch.clamp(images[k], -1., 1.) # it garanty that signal is in range [-1, +1]
 
-            self.log_local(pl_module.logger.save_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx)
+            if self.use_log_local_fn:
+                self.log_local(pl_module.logger.save_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx) # save images on disk.
             
             _logger = getattr(pl_module.logger, 'fn_name', '_tb')
             logger_log_images_fn = getattr(self, _logger, lambda *args, **kwargs: None) 
