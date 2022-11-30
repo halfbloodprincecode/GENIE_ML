@@ -6,6 +6,7 @@ import pathlib
 import tarfile
 import zipfile
 import requests
+import numpy as np
 from PIL import Image
 from tqdm import tqdm
 from loguru import logger
@@ -120,8 +121,13 @@ def file_hash(path, fn=md5):
 
 def signal_save(s, path, makedirsFlag=True):
     path = pathBIO(path)
-    d, ext = os.path.split(path)
+    dname, fname = os.path.split(path)
     if makedirsFlag:
-        os.makedirs(d, exist_ok=True)
-    logger.error('###### type(s)={} | dtype={} | ext={}'.format(type(s), s.dtype, ext))
-    # Image.fromarray(grid).save(path)
+        os.makedirs(dname, exist_ok=True)
+    
+    if isinstance(s, np.ndarray):
+        if any(ext in fname for ext in ['.png', '.jpg', '.JPEG']):
+            Image.fromarray(s).save(path)
+    
+    # if isinstance(s, ...):
+    #     ...
