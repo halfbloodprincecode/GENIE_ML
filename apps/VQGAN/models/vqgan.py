@@ -84,8 +84,8 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        results = self.trainer._results # delete this line
-        logger.error('+++++++++training_step++++++++ | results={} | batch_idx={}, optimizer_idx={}'.format(results, batch_idx, optimizer_idx))
+        logger.error('+++++++++training_step++++++++ | batch_idx={}, optimizer_idx={}'.format(batch_idx, optimizer_idx))
+        print(self.trainer._results)
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
@@ -114,9 +114,9 @@ class VQModel(pl.LightningModule):
 
         # self.log("val/rec_loss", rec_loss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
         # self.log("val/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
-        self.log_dict(dict(aeloss=aeloss, rec_loss=rec_loss, discloss=discloss), prog_bar=True)
-        self.log_dict(log_dict_ae, prog_bar=True)
-        self.log_dict(log_dict_disc, prog_bar=True)
+        self.log_dict(dict(aeloss=aeloss, rec_loss=rec_loss, discloss=discloss), prog_bar=False, logger=True, on_step=True, on_epoch=True)
+        self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=True, on_epoch=True)
+        self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         return self.log_dict
 
     def configure_optimizers(self):
