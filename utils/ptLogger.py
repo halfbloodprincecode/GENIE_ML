@@ -55,8 +55,10 @@ class GenieLoggerBase(Logger):
         # Optional. Any code necessary to save logger data goes here
         super().save()
         logger.critical('save')
-        # print(self.hparams)
-        pass
+        try:
+            print(self.hparams)
+        except Exception as e:
+            print(e)
 
     @rank_zero_only
     def finalize(self, status):
