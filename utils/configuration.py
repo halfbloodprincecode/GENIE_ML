@@ -155,13 +155,13 @@ class ConfigBase:
                     'clamp': True
                 }
             },
-            'learning_rate_logger': {
-                'target': 'apps.VQGAN.modules.callback.LearningRateMonitor',
-                'params': {
-                    'logging_interval': 'step',
-                    #'log_momentum': True
-                }
-            },
+            # 'learning_rate_logger': { # it must be uncomment!!!!!!
+            #     'target': 'apps.VQGAN.modules.callback.LearningRateMonitor',
+            #     'params': {
+            #         'logging_interval': 'step',
+            #         #'log_momentum': True
+            #     }
+            # },
         }
         callbacks_cfg = lightning_config.get('callbacks', OmegaConf.create()) # lightning_config.callbacks or OmegaConf.create()
         callbacks_cfg = OmegaConf.merge(default_callbacks_cfg, callbacks_cfg)

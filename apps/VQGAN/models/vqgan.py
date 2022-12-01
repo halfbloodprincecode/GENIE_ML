@@ -110,11 +110,13 @@ class VQModel(pl.LightningModule):
         xrec, qloss = self(x)
         aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
         discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step, last_layer=self.get_last_layer(), split="val")
-        rec_loss = log_dict_ae["val/rec_loss"]
+        # rec_loss = log_dict_ae["val/rec_loss"]
 
         # self.log("val/rec_loss", rec_loss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
         # self.log("val/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
-        self.log_dict(dict(aeloss=aeloss, rec_loss=rec_loss, discloss=discloss), prog_bar=False, logger=True, on_step=True, on_epoch=True)
+        self.log_dict({
+            'val/aeloss':aeloss, 'val/discloss':discloss
+        }, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         return self.log_dict
