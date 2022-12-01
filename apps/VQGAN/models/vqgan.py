@@ -85,7 +85,6 @@ class VQModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         logger.error('+++++++++training_step++++++++ | batch_idx={}, optimizer_idx={}'.format(batch_idx, optimizer_idx))
-        print(self.trainer._results)
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
@@ -103,6 +102,8 @@ class VQModel(pl.LightningModule):
             self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             return discloss
+        
+        print(self.trainer._results)
 
     def validation_step(self, batch, batch_idx):
         logger.warning('---------validation_step----------')
