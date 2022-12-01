@@ -52,8 +52,8 @@ class SetupCallbackBase(Callback):
 class CustomProgressBarBase(TQDMProgressBar):
     def get_metrics(self, *args, **kwargs):
         # don't show the version number
-        items = super().get_metrics()
-        items.pop("v_num", None)
+        items = super().get_metrics(*args, **kwargs)
+        items.pop('v_num', None)
         print('@@@@@@@@@@@@@@@ items={}'.format(items))
         return items
 
