@@ -41,14 +41,12 @@ class GenieLoggerBase(Logger):
         # params is an argparse.Namespace
         # your code to record hyperparameters goes here
         logger.critical('log_hyperparams | params={}'.format(params))
-        pass
 
     @rank_zero_only
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
-        logger.critical('log_hyperparams | metrics={}'.format(metrics))
-        pass
+        logger.critical('log_metrics | metrics={} | step={}'.format(metrics, step))
 
     @rank_zero_only
     def save(self):
