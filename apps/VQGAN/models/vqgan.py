@@ -94,6 +94,7 @@ class VQModel(pl.LightningModule):
 
             self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            print(self.trainer._results)
             return aeloss
 
         if optimizer_idx == 1:
@@ -101,10 +102,9 @@ class VQModel(pl.LightningModule):
             discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
             self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            print(self.trainer._results)
             return discloss
         
-        print(self.trainer._results)
-
     def validation_step(self, batch, batch_idx):
         logger.warning('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
