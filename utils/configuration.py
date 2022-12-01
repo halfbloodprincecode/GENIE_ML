@@ -168,7 +168,7 @@ class ConfigBase:
         trainer_kwargs['callbacks'] = [cls.instantiate_from_config(callbacks_cfg[k]) for k in callbacks_cfg]
         trainer_kwargs['callbacks'].append(_checkpoint_callback)
 
-
+        print('||trainer_opt|| -> {}'.format(trainer_opt))
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
         
         # configure data #############################################
