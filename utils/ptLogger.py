@@ -62,6 +62,9 @@ class GenieLoggerBase(Logger):
     def finalize(self, status):
         # Optional. Any code that needs to be run after training
         # finishes goes here
-        super().finalize(status)
         logger.critical('finalize | status={}'.format(status))
-        pass
+        print(self.get('hparams', None))
+        if self._experiment is not None:
+            self.experiment.flush()
+            self.experiment.close()
+        self.save()
