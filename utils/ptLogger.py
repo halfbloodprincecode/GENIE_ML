@@ -42,6 +42,18 @@ class GenieLoggerBase(Logger):
         # your code to record hyperparameters goes here
         logger.critical('log_hyperparams | params={}'.format(params))
 
+    @property  # type: ignore[misc]
+    @rank_zero_experiment
+    def experiment(self):
+        # if self._experiment is not None:
+        #     return self._experiment
+
+        # assert rank_zero_only.rank == 0, 'tried to init log dirs in non global_rank=0'
+        # if self.root_dir:
+        #     self._fs.makedirs(self.root_dir, exist_ok=True)
+        # self._experiment = SummaryWriter(log_dir=self.log_dir, **self._kwargs)
+        return {'mmd': 'hoooooooooo!!'}
+
     @rank_zero_only
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
