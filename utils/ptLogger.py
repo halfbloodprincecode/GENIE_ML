@@ -47,6 +47,10 @@ class GenieLoggerBase(Logger):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         logger.critical('log_metrics | metrics={} | step={}'.format(metrics, step))
+        try:
+            print(self.hparams)
+        except Exception as e:
+            print(e)
 
     @rank_zero_only
     def save(self):
