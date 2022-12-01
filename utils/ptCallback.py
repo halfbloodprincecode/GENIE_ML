@@ -10,6 +10,7 @@ import pytorch_lightning as pl
 from omegaconf import OmegaConf
 from libs.basicIO import signal_save
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
+from pytorch_lightning.callbacks.progress import TQDMProgressBar
 # from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
 
@@ -47,6 +48,14 @@ class SetupCallbackBase(Callback):
                     rename(self.logdir, dst)
                 except FileNotFoundError:
                     pass
+
+class CustomProgressBarBase(TQDMProgressBar):
+    def get_metrics(self, *args, **kwargs):
+        # don't show the version number
+        items = super().get_metrics()
+        items.pop("v_num", None)
+        print('@@@@@@@@@@@@@@@ items={}'.format(items))
+        return items
 
 class ImageLoggerBase(Callback):
     def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, use_log_local_fn=True, opt_params=None):

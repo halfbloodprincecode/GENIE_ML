@@ -147,6 +147,10 @@ class ConfigBase:
                     'lightning_config': lightning_config,
                 }
             },
+            'custom_progressBar': {
+                'target': 'apps.VQGAN.modules.callback.CustomProgressBar',
+                'params': {}
+            },
             'image_logger': {
                 'target': 'apps.VQGAN.modules.callback.ImageLogger',
                 'params': {
