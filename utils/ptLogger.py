@@ -55,7 +55,7 @@ class GenieLoggerBase(Logger):
         # Optional. Any code necessary to save logger data goes here
         super().save()
         logger.critical('save')
-        print(self.trainer._results)
+        print(self.hparams)
         pass
 
     @rank_zero_only
