@@ -45,6 +45,7 @@ class GenieLoggerBase(Logger):
     @property  # type: ignore[misc]
     @rank_zero_experiment
     def experiment(self):
+        logger.critical('{{{{{{{{{{{{{{{{{{|experiment|}}}}}}}}}}}}}}}')
         # if self._experiment is not None:
         #     return self._experiment
 
