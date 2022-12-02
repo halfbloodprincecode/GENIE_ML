@@ -171,6 +171,10 @@ class ConfigBase:
             #         #'log_momentum': True
             #     }
             # },
+            'cb': {
+                'target': 'apps.VQGAN.modules.callback.CB',
+                'params': {}
+            },
         }
         callbacks_cfg = lightning_config.get('callbacks', OmegaConf.create()) # lightning_config.callbacks or OmegaConf.create()
         callbacks_cfg = OmegaConf.merge(default_callbacks_cfg, callbacks_cfg)
