@@ -156,14 +156,14 @@ class ConfigBase:
                 'target': 'apps.VQGAN.modules.callback.CustomProgressBar',
                 'params': {}
             },
-            'image_logger': {
-                'target': 'apps.VQGAN.modules.callback.ImageLogger',
-                'params': {
-                    'batch_frequency': 2,# 750,
-                    'max_images': 4,
-                    'clamp': True
-                }
-            },
+            # 'image_logger': {
+            #     'target': 'apps.VQGAN.modules.callback.ImageLogger',
+            #     'params': {
+            #         'batch_frequency': 2,# 750,
+            #         'max_images': 4,
+            #         'clamp': True
+            #     }
+            # },
             # 'learning_rate_logger': { # it must be uncomment!!!!!!
             #     'target': 'apps.VQGAN.modules.callback.LearningRateMonitor',
             #     'params': {
