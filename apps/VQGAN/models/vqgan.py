@@ -85,8 +85,8 @@ class VQModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         logger.error(
-            'training_step | gs={} | LENS={} | batch_idx={}, optimizer_idx={}'.format(
-                self.global_step, self.log_every_n_steps, batch_idx, optimizer_idx))
+            'training_step | gs={} | batch_idx={}, optimizer_idx={}'.format(
+                self.global_step, batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
