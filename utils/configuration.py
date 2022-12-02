@@ -105,7 +105,6 @@ class ConfigBase:
         default_logger_cfg = default_logger_cfgs[opt.logger_ml] # default is: 'genie'
         logger_cfg = lightning_config.get('logger', OmegaConf.create()) # lightning_config.logger or OmegaConf.create()
         logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
-        print('******logger_cfg', logger_cfg)
         trainer_kwargs['logger'] = cls.instantiate_from_config(logger_cfg)
         
 
@@ -154,7 +153,7 @@ class ConfigBase:
             'image_logger': {
                 'target': 'apps.VQGAN.modules.callback.ImageLogger',
                 'params': {
-                    'batch_frequency': 750,
+                    'batch_frequency':2,# 750,
                     'max_images': 4,
                     'clamp': True
                 }
@@ -172,7 +171,6 @@ class ConfigBase:
         trainer_kwargs['callbacks'] = [cls.instantiate_from_config(callbacks_cfg[k]) for k in callbacks_cfg]
         trainer_kwargs['callbacks'].append(_checkpoint_callback)
 
-        print('||trainer_opt|| -> {}'.format(trainer_opt))
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
         
         # configure data #############################################
