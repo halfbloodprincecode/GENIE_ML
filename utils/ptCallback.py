@@ -185,7 +185,7 @@ class ImageLoggerBase(Callback):
 
 class CBBase(Callback):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
-        logger.info('outputs={}'.format(outputs))
+        pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        logger.info('outputs={}'.format(outputs))
+        pass
