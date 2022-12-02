@@ -68,20 +68,20 @@ class GenieLoggerBase(Logger):
     @rank_zero_only
     def save(self):
         # Optional. Any code necessary to save logger data goes here
-        super().save()
+        # super().save()
         logger.critical('save')
-        try:
-            print(self.hparams)
-        except Exception as e:
-            print(e)
+        # try:
+        #     print(self.hparams)
+        # except Exception as e:
+        #     print(e)
 
     @rank_zero_only
     def finalize(self, status):
         # Optional. Any code that needs to be run after training
         # finishes goes here
         logger.critical('finalize | status={}'.format(status))
-        print(self.get('hparams', None))
-        if self._experiment is not None:
-            self.experiment.flush()
-            self.experiment.close()
-        self.save()
+        # print(self.get('hparams', None))
+        # if self._experiment is not None:
+        #     self.experiment.flush()
+        #     self.experiment.close()
+        # self.save()

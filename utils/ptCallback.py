@@ -54,7 +54,7 @@ class CustomProgressBarBase(TQDMProgressBar):
         # don't show the version number
         items = super().get_metrics(*args, **kwargs)
         items.pop('v_num', None)
-        print('@@@@@@@@@@@@@@@ items={}'.format(items))
+        logger.debug('items={}'.format(items))
         return items
 
 class ImageLoggerBase(Callback):
@@ -178,4 +178,3 @@ class ImageLoggerBase(Callback):
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
         # logger.warning('ImageLoggerBase | on_validation_batch_end | batch_idx={}'.format(batch_idx))
         self.log_img(pl_module, batch, batch_idx, split='val')
-
