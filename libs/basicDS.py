@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from attrdict import AttrDict
 from argparse import Namespace
 from functools import partial, wraps
@@ -18,6 +19,37 @@ def dict2ns(d: dict):
     if isinstance(d, dict):
         return Namespace(**d)
 
+
+
+# Example: d does not contain dict in list!! (like below) d['d'][3] is not support By this function!!
+# d = {'a': 1,
+#      'c': {'a': '#a_val', 'b': {'x': '#x_value', 'y' : '#y', 'z': {'aa': 12, 'cv': 13}}},
+#      'd': [1, '#d_i1', 3, {'b': {'x': '#x_value', 'y' : '#y'}}]}
+# 
+# sep = '_'
+# d2 = make_flatten_dict(d, sep=sep)
+# print(d2)
+# make_nested_dict(d2, sep=sep)
+# Outputs:
+# {'a': 1, 'd': [1, '#d_i1', 3, {'b': {'x': '#x_value', 'y': '#y'}}], 'c_a': '#a_val', 'c_b_x': '#x_value', 'c_b_y': '#y', 'c_b_z_aa': 12, 'c_b_z_cv': 13}
+# 
+# {'a': 1,
+#  'd': [1, '#d_i1', 3, {'b': {'x': '#x_value', 'y': '#y'}}],
+#  'c': {'a': '#a_val',
+#   'b': {'x': '#x_value', 'y': '#y', 'z': {'aa': 12, 'cv': 13}}}}
+
+def make_flatten_dict(d, sep='.'):
+    return pd.json_normalize(d, sep=sep).to_dict(orient='records')[0]
+
+def make_nested_dict(flatted_dict, sep='.'):
+    result = {}
+    for k, v in flatted_dict.items():
+        tmp = result
+        *keys, last = k.split(sep)
+        for key in keys:
+            tmp = tmp.setdefault(key, {})
+        tmp[last] = v
+    return result
 
 def retrieve(
     list_or_dict, key, splitval='/', default=None, expand=True, pass_success=False

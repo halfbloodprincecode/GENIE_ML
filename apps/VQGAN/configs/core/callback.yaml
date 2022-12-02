@@ -1,0 +1,28 @@
+setup_callback:
+  target: apps.VQGAN.modules.callback.SetupCallback
+  params:
+    resume: $_opt.resume
+    now: $_now
+    logdir: $_logdir
+    ckptdir: $_ckptdir
+    cfgdir: $_cfgdir
+    config: $_config
+    lightning_config: $_lightning_config
+    
+custom_progressBar:
+  target: apps.VQGAN.modules.callback.CustomProgressBar
+  params: {}
+
+image_logger:
+  target: apps.VQGAN.modules.callback.ImageLogger
+  params:
+    batch_frequency: 2 # 750
+    max_images: 4
+    clamp: True
+    
+# learning_rate_logger: # it must be uncomment!!!!!!
+#     target: apps.VQGAN.modules.callback.LearningRateMonitor
+#     params:
+#       logging_interval: $_step
+#       #log_momentum: True
+    

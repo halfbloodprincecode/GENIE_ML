@@ -55,6 +55,9 @@ class ConfigBase:
             gpuinfo = trainer_config['gpus']
             logger.info(f'Running on GPUs {gpuinfo}')
             cpu = False
+        
+        logger.warning('trainer_config={}'.format(trainer_config))
+        
         trainer_opt = argparse.Namespace(**trainer_config)
         lightning_config.trainer = trainer_config
 
