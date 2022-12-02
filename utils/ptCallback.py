@@ -129,6 +129,7 @@ class ImageLoggerBase(Callback):
             path = join(root, filename)
             signal_save(grid, path)
 
+    @rank_zero_only # DELETE
     def log_img(self, pl_module, batch, batch_idx, split='train'):
         if (self.check_frequency(batch_idx) and  # batch_idx % self.batch_freq == 0
                 hasattr(pl_module, 'log_images') and
@@ -160,6 +161,7 @@ class ImageLoggerBase(Callback):
             if is_train:
                 pl_module.train()
 
+    @rank_zero_only # DELETE
     def check_frequency(self, batch_idx): #TODO!!!!!!!!!!!!!!
         if (batch_idx % self.batch_freq) == 0 or (batch_idx in self.log_steps):
             try:
