@@ -12,7 +12,10 @@ from libs.basicIO import signal_save
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
 from pytorch_lightning.callbacks.progress import TQDMProgressBar
 # from pytorch_lightning.utilities.distributed import rank_zero_only
-from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
+from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBasic, Callback, LearningRateMonitor
+
+class ModelCheckpointBase(ModelCheckpointBasic):
+    pass
 
 class SetupCallbackBase(Callback):
     def __init__(self, resume, now, logdir, ckptdir, cfgdir, config, lightning_config):

@@ -84,7 +84,9 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        logger.error('+++++++++training_step++++++++ | batch_idx={}, optimizer_idx={}'.format(batch_idx, optimizer_idx))
+        logger.error(
+            'training_step | gs={} | LENS={} | batch_idx={}, optimizer_idx={}'.format(
+                self.global_step, self.log_every_n_steps, batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
@@ -92,16 +94,24 @@ class VQModel(pl.LightningModule):
             # autoencode
             aeloss, log_dict_ae = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
 
-            self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
-            self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            # self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            # self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            
+            
+            self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=False)
+            self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=False)
             print(self.trainer._results)
             return aeloss
 
         if optimizer_idx == 1:
             # discriminator
             discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
-            self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
-            self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            # self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+            # self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+
+
+            self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=False)
+            self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=False)
             print(self.trainer._results)
             return discloss
         
@@ -117,9 +127,9 @@ class VQModel(pl.LightningModule):
         # self.log("val/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
         self.log_dict({
             'val/aeloss':aeloss, 'val/discloss':discloss
-        }, prog_bar=False, logger=True, on_step=True, on_epoch=True)
-        self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=True, on_epoch=True)
-        self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=True, on_epoch=True)
+        }, prog_bar=False, logger=True, on_step=False, on_epoch=True)
+        self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=False, on_epoch=True)
+        self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=False, on_epoch=True)
         return self.log_dict
 
     def configure_optimizers(self):

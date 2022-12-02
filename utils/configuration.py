@@ -115,8 +115,11 @@ class ConfigBase:
         # modelcheckpoint - use TrainResult/EvalResult(checkpoint_on=metric) to
         # specify which metric is used to determine best models
         default_modelckpt_cfg = {
-            'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+            # 'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+            'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
             'params': {
+                'monitor': 'val/loss', # this line maybe had changed!!
+                'mode': 'min',
                 'dirpath': ckptdir,
                 'filename': '{epoch:06}',
                 'verbose': True,
@@ -124,7 +127,7 @@ class ConfigBase:
             }
         }
         if hasattr(model, 'monitor'):
-            logger.info(f'Monitoring {model.monitor} as checkpoint metric.')
+            logger.error(f'||||Monitoring {model.monitor} as checkpoint metric.')
             default_modelckpt_cfg['params']['monitor'] = model.monitor
             default_modelckpt_cfg['params']['save_top_k'] = 3
 
