@@ -1,6 +1,7 @@
 from os import getenv, makedirs
 from os.path import join
 from loguru import logger
+from libs.coding import sha1
 from utils.metrics import Metrics
 from pytorch_lightning.loggers.logger import Logger, rank_zero_experiment
 from pytorch_lightning.utilities import rank_zero_only
@@ -62,16 +63,20 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
-        metrics_keys = ' | '.join(list(metrics.keys()))
+        hash_metrics_keys = sha1(' | '.join(list(metrics.keys())))
         if self.metrics is None:
-            logger.info('metrics.keys={}'.format(metrics_keys))
-            # self.set_metrics()
+            self.hash_metrics_keys = hash_metrics_keys
+            self.set_metrics(list(metrics.keys()))
+        logger.info('hash_metrics_keys={}'.format(hash_metrics_keys))
         logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
-        try:
-            logger.debug(self.hparams)
-        except Exception as e:
-            logger.debug(e)
-
+        if self.hash_metrics_keys == hash_metrics_keys:
+            self.metrics.add({
+                **metrics,
+                'step': step,
+            })
+        else:
+            logger.warning('(step={}) [self.hash_metrics_keys:{}] != [hash_metrics_keys:{}]'.format(step, self.hash_metrics_keys, hash_metrics_keys))
+        
     @rank_zero_only
     def save(self):
         # Optional. Any code necessary to save logger data goes here
