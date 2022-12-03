@@ -62,8 +62,9 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
+        metrics_keys = ' | '.join(list(metrics.keys()))
         if self.metrics is None:
-            logger.info('metrics.keys={}'.format(list(metrics.keys())))
+            logger.info('metrics.keys={}'.format(metrics_keys))
             # self.set_metrics()
         logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
         try:
