@@ -49,7 +49,7 @@ class GenieLoggerBase(Logger):
         self.metrics = Metrics(
             db_path_dir,
             'metrics',
-            self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+            'tbl_' + self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
             metrics_items
         )
 
