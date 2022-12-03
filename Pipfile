@@ -24,6 +24,7 @@ einops = "*"
 albumentations = "*"
 academictorrents = "*"
 kaggle = "*"
+matplotlib = "*"
 
 [dev-packages]
 

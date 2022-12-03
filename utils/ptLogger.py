@@ -1,4 +1,6 @@
+from os import getenv
 from loguru import logger
+from utils.metrics import Metrics
 from pytorch_lightning.loggers.logger import Logger, rank_zero_experiment
 from pytorch_lightning.utilities import rank_zero_only
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
@@ -9,6 +11,7 @@ class GenieLoggerBase(Logger):
         save_dir: str = None,
         name: Optional[str] = 'GeineLogger',
         fn_name: Optional[str] = '_genie',
+        select_storage: Optional[str] = 'GENIE_ML_STORAGE0',
         version: str = '0.1',
         **kwargs: Any
     ):
@@ -17,6 +20,8 @@ class GenieLoggerBase(Logger):
         self._name = name
         self._fn_name = fn_name
         self._version = version
+        self.select_storage = select_storage
+        self.metrics = None
 
     @property
     def name(self):
@@ -35,6 +40,14 @@ class GenieLoggerBase(Logger):
     def save_dir(self) -> Optional[str]:
         """Return the root directory where experiment logs get saved, or `None` if the logger does not save data locally."""
         return self._save_dir
+    
+    def set_metrics(self, metrics_items):
+        self.metrics = Metrics(
+            getenv(self.select_storage),
+            'metrics',
+            self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+            metrics_items
+        )
 
     @rank_zero_only
     def log_hyperparams(self, params):
@@ -59,6 +72,8 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
+        # if self.metrics is None:
+        #     self.set_metrics()
         logger.critical('log_metrics | metrics={} | step={}'.format(metrics, step))
         try:
             print(self.hparams)
@@ -69,19 +84,21 @@ class GenieLoggerBase(Logger):
     def save(self):
         # Optional. Any code necessary to save logger data goes here
         # super().save()
-        logger.critical('save')
+        # logger.critical('save')
         # try:
         #     print(self.hparams)
         # except Exception as e:
         #     print(e)
+        pass
 
     @rank_zero_only
     def finalize(self, status):
         # Optional. Any code that needs to be run after training
         # finishes goes here
-        logger.critical('finalize | status={}'.format(status))
+        # logger.critical('finalize | status={}'.format(status))
         # print(self.get('hparams', None))
         # if self._experiment is not None:
         #     self.experiment.flush()
         #     self.experiment.close()
         # self.save()
+        pass
