@@ -1,4 +1,5 @@
-from os import getenv
+from os import getenv, makedirs
+from os.path import join
 from loguru import logger
 from utils.metrics import Metrics
 from pytorch_lightning.loggers.logger import Logger, rank_zero_experiment
@@ -42,8 +43,10 @@ class GenieLoggerBase(Logger):
         return self._save_dir
     
     def set_metrics(self, metrics_items):
+        db_path_dir = getenv(self.select_storage)
+        makedirs(db_path_dir, exist_ok=True)
         self.metrics = Metrics(
-            getenv(self.select_storage),
+            db_path_dir,
             'metrics',
             self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
             metrics_items
@@ -72,8 +75,9 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
-        # if self.metrics is None:
-        #     self.set_metrics()
+        if self.metrics is None:
+            logger.info('metrics.keys={}'.format(list(metrics.keys())))
+            # self.set_metrics()
         logger.critical('log_metrics | metrics={} | step={}'.format(metrics, step))
         try:
             print(self.hparams)
