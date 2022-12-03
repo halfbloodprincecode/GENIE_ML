@@ -50,7 +50,7 @@ class GenieLoggerBase(Logger):
             db_path_dir,
             'metrics',
             'tbl_' + self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
-            metrics_items
+            [str(m).replace('/', '__') for m in metrics_items]
         )
 
     @rank_zero_only
@@ -70,8 +70,9 @@ class GenieLoggerBase(Logger):
         logger.info('hash_metrics_keys={}'.format(hash_metrics_keys))
         logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
         if self.hash_metrics_keys == hash_metrics_keys:
+            M = {str(m).replace('/', '__'): v for m, v in metrics.items()}
             self.metrics.add({
-                **metrics,
+                **M,
                 'step': step,
             })
         else:
