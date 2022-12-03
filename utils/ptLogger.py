@@ -43,7 +43,7 @@ class GenieLoggerBase(Logger):
         return self._save_dir
     
     def set_metrics(self, metrics_items):
-        db_path_dir = getenv(self.select_storage)
+        db_path_dir = join(getenv(self.select_storage), getenv('GENIE_ML_APP'))
         makedirs(db_path_dir, exist_ok=True)
         self.metrics = Metrics(
             db_path_dir,
@@ -58,19 +58,6 @@ class GenieLoggerBase(Logger):
         # your code to record hyperparameters goes here
         logger.critical('log_hyperparams | params={}'.format(params))
 
-    @property  # type: ignore[misc]
-    @rank_zero_experiment
-    def experiment(self):
-        logger.critical('{{{{{{{{{{{{{{{{{{|experiment|}}}}}}}}}}}}}}}')
-        # if self._experiment is not None:
-        #     return self._experiment
-
-        # assert rank_zero_only.rank == 0, 'tried to init log dirs in non global_rank=0'
-        # if self.root_dir:
-        #     self._fs.makedirs(self.root_dir, exist_ok=True)
-        # self._experiment = SummaryWriter(log_dir=self.log_dir, **self._kwargs)
-        return {'mmd': 'hoooooooooo!!'}
-
     @rank_zero_only
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
@@ -78,11 +65,11 @@ class GenieLoggerBase(Logger):
         if self.metrics is None:
             logger.info('metrics.keys={}'.format(list(metrics.keys())))
             # self.set_metrics()
-        logger.critical('log_metrics | metrics={} | step={}'.format(metrics, step))
+        logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
         try:
-            print(self.hparams)
+            logger.debug(self.hparams)
         except Exception as e:
-            print(e)
+            logger.debug(e)
 
     @rank_zero_only
     def save(self):
