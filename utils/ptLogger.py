@@ -69,6 +69,10 @@ class GenieLoggerBase(Logger):
         logger.critical('log_hyperparams | params={}'.format(params))
 
     @rank_zero_only
+    def log_metrics_handiCall(self, **kwargs):
+        return self.log_metrics(**kwargs)
+    
+    @rank_zero_only
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
