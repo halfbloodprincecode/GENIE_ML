@@ -130,7 +130,7 @@ class VQModel(pl.LightningModule):
         }, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_ae, prog_bar=False, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_disc, prog_bar=False, logger=True, on_step=True, on_epoch=True)
-        return self.log_dict
+        # return self.log_dict
 
     def configure_optimizers(self):
         lr = self.learning_rate
