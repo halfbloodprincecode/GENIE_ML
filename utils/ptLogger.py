@@ -30,7 +30,8 @@ class GenieLoggerBase(Logger):
         self.db_path_dir = join(getenv(self.select_storage), getenv('GENIE_ML_APP'))
         makedirs(self.db_path_dir, exist_ok=True)
         self.sqlite_dbms = SqliteDBMS(join(self.db_path_dir, self.db_fname))
-
+        table_names = self.sqlite_dbms.get_tables()
+        self.table_numbers = sum([1 for t in table_names if self._name in t])
 
     @property
     def name(self):
@@ -51,9 +52,8 @@ class GenieLoggerBase(Logger):
         return self._save_dir
     
     def create_metrics_table(self, metrics_items):
-        table_names = self.sqlite_dbms.get_tables()
-        n = sum([1 for t in table_names if self._name in t]) + 1
-        new_table_name = f'tbl_{n}_' + self._name # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+        self.table_numbers = self.table_numbers + 1
+        new_table_name = f'tbl_{self.table_numbers}_' + self._name # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
         logger.info('metric table {} was created.'.format(new_table_name))
         return Metrics(
             self.db_path_dir,
