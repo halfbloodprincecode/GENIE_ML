@@ -182,8 +182,7 @@ class CBBase(Callback):
         pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        logger.critical(trainer.log_every_n_steps)
-        if False:
+        if batch_idx % trainer.log_every_n_steps == 0:
             S = pl_module.current_epoch * trainer.num_val_batches[dataloader_idx] + batch_idx
             M = {k: v.item() for k, v in trainer.logged_metrics.items()}
             for tl in trainer.loggers:
