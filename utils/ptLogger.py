@@ -54,7 +54,7 @@ class GenieLoggerBase(Logger):
         table_names = self.sqlite_dbms.get_tables()
         n = sum([1 for t in table_names if self._name in t]) + 1
         new_table_name = f'tbl_{n}_' + self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
-        logger.info('metric table {} was created.'.format(new_table_name))
+        logger.info('{} | metric table {} was created.'.format(self._name, new_table_name))
         return Metrics(
             self.db_path_dir,
             self.db_fname,
