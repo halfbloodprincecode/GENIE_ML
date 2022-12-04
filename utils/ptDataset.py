@@ -28,13 +28,13 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         self.num_workers = num_workers if num_workers is not None else batch_size*2
         if train is not None:
             self.dataset_configs['train'] = train
-            self.train_dataloader = self._train_dataloader
+            self.train_dataloader = self._train_dataloader # meaningfull name
         if validation is not None:
             self.dataset_configs['validation'] = validation
-            self.val_dataloader = self._val_dataloader
+            self.val_dataloader = self._val_dataloader # meaningfull name
         if test is not None:
             self.dataset_configs['test'] = test
-            self.test_dataloader = self._test_dataloader
+            self.test_dataloader = self._test_dataloader # meaningfull name
         self.instantiate_from_config = instantiate_from_config
         self.custom_collate = custom_collate
         self.wrap = wrap
