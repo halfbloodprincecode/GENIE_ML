@@ -31,15 +31,6 @@ parser.add_argument(
     required=True,
     help='app name',
 )
-# parser.add_argument(
-#     '-m',
-#     '--metrics_tbl',
-#     type=str,
-#     const=True,
-#     default=None,
-#     nargs='?',
-#     help='metrics table name',
-# )
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
@@ -52,27 +43,3 @@ if getenv('KAGGLE_CHMOD'):
     ))
 
 import kaggle # need to import here(after env variables had defined)
-
-
-#database handler
-# metrics = Metrics(
-#     f'//apps/{opt.app}',
-#     'metrics',
-#     opt.metrics_tbl if opt.metrics_tbl else f'{CONFIG.logs.model.name}__{CONFIG.logs.data.name}__{getTimeHR(split="", dateFormat="%YY%mM%dD", timeFormat="%HH%MM%SS")}',
-#     CONFIG.logs.metrics
-# )
-
-
-# environ['GENIE_ML_METRICS'] = None
-
-# logs = readBIO(join(RESUME, 'config.yaml'), dotdictFlag=False)
-# LOGS_APP_NAME = logs['app']['name']
-
-# # load CONFIG
-# CONFIG = dotdict({
-#     'root': readBIO('//config.yaml', dotdictFlag=False),
-#     'models': readBIO(join('//apps', LOGS_APP_NAME, 'models', 'config.yaml'), dotdictFlag=False),
-#     'logs': logs,
-#     'ARGS': {'RESUME': RESUME, 'METRICS': METRICS}
-# })
-

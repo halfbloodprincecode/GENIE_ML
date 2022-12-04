@@ -3,6 +3,7 @@ from os.path import join
 from loguru import logger
 from libs.coding import sha1
 from utils.metrics import Metrics
+from libs.dbms.sqlite_dbms import SqliteDBMS
 from pytorch_lightning.loggers.logger import Logger, rank_zero_experiment
 from pytorch_lightning.utilities import rank_zero_only
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
@@ -23,7 +24,13 @@ class GenieLoggerBase(Logger):
         self._fn_name = fn_name
         self._version = version
         self.select_storage = select_storage
-        self.metrics = None
+        self.all_metrics_tbls = dict()
+
+        self.db_fname = 'metrics'
+        self.db_path_dir = join(getenv(self.select_storage), getenv('GENIE_ML_APP'))
+        makedirs(self.db_path_dir, exist_ok=True)
+        self.sqlite_dbms = SqliteDBMS(join(self.db_path_dir, self.db_fname))
+
 
     @property
     def name(self):
@@ -43,13 +50,15 @@ class GenieLoggerBase(Logger):
         """Return the root directory where experiment logs get saved, or `None` if the logger does not save data locally."""
         return self._save_dir
     
-    def set_metrics(self, metrics_items):
-        db_path_dir = join(getenv(self.select_storage), getenv('GENIE_ML_APP'))
-        makedirs(db_path_dir, exist_ok=True)
-        self.metrics = Metrics(
-            db_path_dir,
-            'metrics',
-            'tbl_' + self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+    def create_metrics_table(self, metrics_items):
+        table_names = self.sqlite_dbms.get_tables()
+        n = sum([1 for t in table_names if self._name in t]) + 1
+        new_table_name = f'tbl_{n}_' + self._name, # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+        logger.info('metric table {} was created.'.format(new_table_name))
+        return Metrics(
+            self.db_path_dir,
+            self.db_fname,
+            new_table_name,
             [str(m).replace('/', '__') for m in metrics_items]
         )
 
@@ -63,21 +72,17 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
-        hash_metrics_keys = sha1(' | '.join(list(metrics.keys())))
-        if self.metrics is None:
-            self.hash_metrics_keys = hash_metrics_keys
-            self.set_metrics(list(metrics.keys()))
+        hash_metrics_keys = sha1(' | '.join(set(list(metrics.keys()))))
+        tbl = self.all_metrics_tbls.get(hash_metrics_keys, None)
+        if tbl is None:
+            self.all_metrics_tbls[hash_metrics_keys] = self.create_metrics_table(list(metrics.keys()))
+            tbl = self.all_metrics_tbls[hash_metrics_keys]
+        M = {str(m).replace('/', '__'): v for m, v in metrics.items()}
+        tbl.add({**M, 'step': step})
+
         logger.info('hash_metrics_keys={}'.format(hash_metrics_keys))
         logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
-        if self.hash_metrics_keys == hash_metrics_keys:
-            M = {str(m).replace('/', '__'): v for m, v in metrics.items()}
-            self.metrics.add({
-                **M,
-                'step': step,
-            })
-        else:
-            logger.warning('(step={}) [self.hash_metrics_keys:{}] != [hash_metrics_keys:{}]'.format(step, self.hash_metrics_keys, hash_metrics_keys))
-        
+
     @rank_zero_only
     def save(self):
         # Optional. Any code necessary to save logger data goes here

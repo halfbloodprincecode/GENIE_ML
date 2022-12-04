@@ -3,10 +3,14 @@ import sqlite3
 import orm_sqlite
 import pandas as pd
 from os.path import join
-from libs.basicIO import pathBIO
 
 class Metrics():
     def __init__(self, db_path_dir: str, fname: str, tableName: str =None, items: list = None):
+        try:
+            from libs.basicIO import pathBIO
+        except Exception as e:
+            pathBIO = lambda x: x
+        
         self._real_items_NOT_USED = items
         self._processed_items = [str(item).lower().replace(' ', '_').replace('-', '_') for item in items] 
         self.tableName = tableName.lower().strip().replace(' ', '_').replace('-', '_')
@@ -61,7 +65,7 @@ class Metrics():
     def sql(self, sql: str):
         "Executes an SQL statement and returns rows affected."
         return self.DB.execute(sql, *[], autocommit=True)
-
+    
     def to_csv(self, sql=None, dist=None):
         sql = sql if sql else f'SELECT * FROM {self.tableName}'
         dist = self.db_path.replace('.db', '.csv') if dist is None else dist
@@ -71,6 +75,14 @@ class Metrics():
         conn.close()
 
 """
+Example:
+#database handler
+# metrics = Metrics(
+#     f'//apps/{opt.app}',
+#     'metrics',
+#     opt.metrics_tbl if opt.metrics_tbl else f'{CONFIG.logs.model.name}__{CONFIG.logs.data.name}__{getTimeHR(split="", dateFormat="%YY%mM%dD", timeFormat="%HH%MM%SS")}',
+#     CONFIG.logs.metrics
+# )
 Example:
     import database as my_db
     metrics = Metrics(my_db, 'my-db', ['loss', 'val_loss'])
@@ -92,3 +104,36 @@ Example:
     metrics.to_csv()
     metrics.to_csv(dist='/home/test.csv', sql='select step, loss from metric where step > 0')
 """
+
+if __name__ == '__main__':
+    m = Metrics(
+        '/media/alihejrati/3E3009073008C83B/Code/Genie-ML/logs/vqgan/firstStage-IdrId/garbage',
+        'metrics',
+        'tbl_test2',
+        ['loss', 'val_loss', 'x'] # step, timestamp are automatically considired and timestamp is automatically filled.
+    )
+    m.add({
+        'val_loss': 2,
+        'step': 6, 
+        'x': -23.5,
+        'x2': -13.5,
+        'loss': 14.261
+    })
+    m.add({
+        'x': 11,
+        'step': 24, 
+        'loss': -14.372,
+        'val_loss': 6,
+    })
+    m.add({
+        'x': -4.5,
+        'step': 2, 
+        'val_loss': 4.261,
+        'loss': 2.2361,
+    })
+    m.add({
+        'x': 13.5,
+        'val_loss': 12,
+        'loss': 114.261,
+        'step': -24,
+    })
