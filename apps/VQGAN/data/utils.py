@@ -137,7 +137,8 @@ def custom_collate(batch):
         # print(batch, out)
         # print('*'*30)
         # print(type(batch), type(out), out, torch.utils.data.get_worker_info())
-        return torch.stack(batch, dim=0, out=out)
+        # return torch.stack(batch, dim=0, out=out)
+        return torch.stack(batch, dim=0)
         # return torch.stack(batch, 0, out=out)
     elif elem_type.__module__ == 'numpy' and elem_type.__name__ != 'str_' \
             and elem_type.__name__ != 'string_':
