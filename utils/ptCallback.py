@@ -182,8 +182,11 @@ class CBBase(Callback):
         pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
+        s = pl_module.current_epoch * trainer.num_val_batches + batch_idx
         # for tl in trainer.loggers:
         #     handiCall = getattr(tl, 'log_metrics_handiCall', lambda *args, **kwargs: None)
-        #     handiCall(metrics={k: v.item() for k, v in trainer.logged_metrics.items()}, step=None)
-        logger.critical('{} | !! logs={}'.format(pl_module.current_epoch, {k: v.item() for k, v in trainer.logged_metrics.items()}))
-        logger.critical('{} | !! logs={}'.format(pl_module.current_epoch, trainer.logged_metrics))
+        #     handiCall(metrics={k: v.item() for k, v in trainer.logged_metrics.items()}, step=s)
+        logger.critical('{} | !! logs={}'.format([
+            trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches
+        ], {k: v.item() for k, v in trainer.logged_metrics.items()}))
+        logger.critical('s={} | !! logs={}'.format(s, trainer.logged_metrics))
