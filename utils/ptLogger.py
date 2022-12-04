@@ -54,7 +54,7 @@ class GenieLoggerBase(Logger):
     def create_metrics_table(self, metrics_items):
         self.table_numbers = self.table_numbers + 1
         new_table_name = f'tbl_{self.table_numbers}_' + self._name # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
-        logger.info('metric table {} was created.'.format(new_table_name))
+        logger.info('metric table `{}` was created.'.format(new_table_name))
         return Metrics(
             self.db_path_dir,
             self.db_fname,
