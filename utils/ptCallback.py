@@ -186,7 +186,9 @@ class CBBase(Callback):
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
         logger.debug(
-            '{}, {}, {}'.format(trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches)
+            '{}, {}, {} | {}'.format(trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches
+            , trainer.num_val_batches[dataloader_idx]
+            )
             )
         # s = (type(pl_module.current_epoch), type(trainer.num_val_batches), type(batch_idx))
         # s = pl_module.current_epoch * trainer.num_val_batches + batch_idx
