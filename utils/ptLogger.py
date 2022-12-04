@@ -80,7 +80,6 @@ class GenieLoggerBase(Logger):
         M = {str(m).replace('/', '__'): v for m, v in metrics.items()}
         tbl.add({**M, 'step': step})
 
-        logger.info('hash_metrics_keys={}'.format(hash_metrics_keys))
         logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
 
     @rank_zero_only
