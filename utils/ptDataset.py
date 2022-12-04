@@ -41,14 +41,15 @@ class DataModuleFromConfigBase(pl.LightningDataModule):
         self.wrap_cls = WrappedDatasetBase
 
     def _train_dataloader(self):
-        logger.warning('_train_dataloader is called!!!!!!!!!')
+        # logger.warning('_train_dataloader is called!!!!!!!!!')
         return DataLoader(self.datasets['train'], batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True, collate_fn=self.custom_collate)
 
     def _val_dataloader(self):
-        logger.warning('_val_dataloader is called!!!!!!!!!')
+        # logger.warning('_val_dataloader is called!!!!!!!!!')
         return DataLoader(self.datasets['validation'], batch_size=self.batch_size, num_workers=self.num_workers, collate_fn=self.custom_collate)
 
     def _test_dataloader(self):
+        # logger.warning('_test_dataloader is called!!!!!!!!!')
         return DataLoader(self.datasets['test'], batch_size=self.batch_size, num_workers=self.num_workers, collate_fn=self.custom_collate)
 
     def prepare_data(self): # I think this function shoulde be remove since in setup function all datasets instantioation are done! TODO
