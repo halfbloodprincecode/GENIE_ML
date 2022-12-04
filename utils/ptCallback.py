@@ -182,6 +182,6 @@ class CBBase(Callback):
         pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        logger.warning(trainer.loggers)
+        logger.warning('{} | {}'.format(trainer.logger, trainer.loggers))
         logger.critical('!! logs={}'.format({k: v.item() for k,v in trainer.logged_metrics.items()}))
         logger.critical('!! logs={}'.format(trainer.logged_metrics))
