@@ -65,12 +65,6 @@ class ImageLoggerBase(Callback):
         super().__init__()
         self.batch_freq = batch_frequency
         self.max_images = max_images
-        # self.logger_log_images = {
-        #     # pl.loggers.WandbLogger: self._wandb,
-        #     # pl.loggers.TestTubeLogger: self._testtube,
-        #     # pl.loggers.TensorBoardLogger: self._tb,
-        #     'apps.VQGAN.modules.genie_logger.GenieLogger': self._genie
-        # }
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
         if not increase_log_steps:
             self.log_steps = [self.batch_freq]
@@ -117,10 +111,10 @@ class ImageLoggerBase(Callback):
     def log_local(self, save_dir, split, images, global_step, current_epoch, batch_idx):
         """task of this function is save images into save_dir. Notic that (`save_dir` is address of `logdir`)"""
         
-        logger.error('ImageLoggerBase | log_local | \
-        save_dir={}, split={}, images_KEYS={}, global_step={}, current_epoch={}, batch_idx={}'.format(
-            save_dir, split, list(images.keys()), global_step, current_epoch, batch_idx
-        ))
+        # logger.error('ImageLoggerBase | log_local | \
+        # save_dir={}, split={}, images_KEYS={}, global_step={}, current_epoch={}, batch_idx={}'.format(
+        #     save_dir, split, list(images.keys()), global_step, current_epoch, batch_idx
+        # ))
         root = join(save_dir, 'images', split)
         for k in images:
             grid = torchvision.utils.make_grid(images[k], nrow=self.opt_params.get('make_grid_nrow', 4)) # this grid finally contains table of iamges like this -> [images[k].shape[0]/nrow, nrow] ; Notic: grid is tensor with shape: ch x h? x w?
