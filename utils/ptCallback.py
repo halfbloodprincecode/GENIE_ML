@@ -179,15 +179,17 @@ class ImageLoggerBase(Callback):
 class CBBase(Callback):
     """this callback defiend only for handling some BUGs of lightning and give more control to user"""
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
+        logger.debug(trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches)
         pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        s = (type(pl_module.current_epoch), type(trainer.num_val_batches), type(batch_idx))
+        logger.debug(trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches)
+        # s = (type(pl_module.current_epoch), type(trainer.num_val_batches), type(batch_idx))
         # s = pl_module.current_epoch * trainer.num_val_batches + batch_idx
         # for tl in trainer.loggers:
         #     handiCall = getattr(tl, 'log_metrics_handiCall', lambda *args, **kwargs: None)
         #     handiCall(metrics={k: v.item() for k, v in trainer.logged_metrics.items()}, step=s)
-        logger.critical('{} | !! logs={}'.format([
-            trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches
-        ], {k: v.item() for k, v in trainer.logged_metrics.items()}))
-        logger.critical('s={} | !! logs={}'.format(s, trainer.logged_metrics))
+        # logger.critical('{} | !! logs={}'.format([
+        #     trainer.num_training_batches, trainer.num_val_batches, trainer.num_test_batches
+        # ], {k: v.item() for k, v in trainer.logged_metrics.items()}))
+        # logger.critical('s={} | !! logs={}'.format(s, trainer.logged_metrics))
