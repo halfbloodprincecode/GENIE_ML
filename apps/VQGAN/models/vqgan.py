@@ -112,7 +112,7 @@ class VQModel(pl.LightningModule):
 
             self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=False)
             self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=False)
-            print(self.trainer._results)
+            logger.debug(self.trainer._results)
             return discloss
         
     def validation_step(self, batch, batch_idx):
@@ -130,6 +130,7 @@ class VQModel(pl.LightningModule):
         }, prog_bar=True, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
+        logger.debug(self.trainer._results)
         # return self.log_dict
 
     def configure_optimizers(self):
