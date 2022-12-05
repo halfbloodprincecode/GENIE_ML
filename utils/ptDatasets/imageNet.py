@@ -98,8 +98,6 @@ class ImageNetBase(Dataset):
         _cb = lambda _inp: bool(cb(_inp) and (not _inp.split('/')[-1] in ignore))
         relpaths = [rpath for rpath in tqdm(relpaths, desc='filtering of relpaths list') if _cb(rpath)]
         
-        
-        logger.critical('self.config={}'.format(self.config))
         mode_val = self.config.get('MODE_VAL', None)
         if isinstance(mode_val, int):
             relpaths = [rpath for idx, rpath in tqdm(enumerate(relpaths), desc='filtering of relpaths list through indexing with mode={}'.format(mode_val)) if idx % mode_val == 0]
@@ -136,7 +134,7 @@ class ImageNetBase(Dataset):
             self.relpaths = f.read().splitlines()
             l1 = len(self.relpaths)
             self.relpaths = self._filter_relpaths(self.relpaths, cb=cb)
-            logger.info('{} | Removed {} files from filelist during filtering.'.format(self.__class__.__name__, l1 - len(self.relpaths)))
+            logger.info('{} | ({}/{}) -> Removed {} files from filelist during filtering.'.format(len(self.relpaths), l1, self.__class__.__name__, l1 - len(self.relpaths)))
 
         if exists(self.synsets_of_filtered_filelist):
             self.synsets = np.load(self.synsets_of_filtered_filelist)
