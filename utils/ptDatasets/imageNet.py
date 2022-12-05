@@ -154,7 +154,7 @@ class ImageNetBase(Dataset):
             human_dict = f.read().splitlines()
             human_dict = dict(line.split(maxsplit=1) for line in human_dict)
 
-        print('XXXXXX human_dict XXXXXXX', human_dict)
+        logger.info('{} | human_dict: {}'.format(self.__class__.__name__, human_dict))
         self.human_labels = [human_dict[s] for s in self.synsets]
         # synset and human_labels logicly is equal, they're used for machine and human respectivly.
 
