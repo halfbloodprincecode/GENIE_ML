@@ -98,6 +98,12 @@ class ImageNetBase(Dataset):
         _cb = lambda _inp: bool(cb(_inp) and (not _inp.split('/')[-1] in ignore))
         relpaths = [rpath for rpath in tqdm(relpaths, desc='filtering of relpaths list') if _cb(rpath)]
         
+        
+        logger.critical('self.config={}'.format(self.config))
+        mode_val = self.config.get('mode_val', None)
+        if isinstance(mode_val, int):
+            relpaths = [rpath for idx, rpath in tqdm(enumerate(relpaths), desc='filtering of relpaths list through indexing with mode={}'.format(mode_val)) if idx % mode_val == 0]
+
         np.save(self.filtered_filelist, relpaths)
         return relpaths
         if 'sub_indices' in self.config:
