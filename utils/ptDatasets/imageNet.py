@@ -134,7 +134,7 @@ class ImageNetBase(Dataset):
             self.relpaths = f.read().splitlines()
             l1 = len(self.relpaths)
             self.relpaths = self._filter_relpaths(self.relpaths, cb=cb)
-            logger.info('{} | ({}/{}) -> Removed {} files from filelist during filtering.'.format(len(self.relpaths), l1, self.__class__.__name__, l1 - len(self.relpaths)))
+            logger.info('{} | ({}/{}) -> Removed {} files from filelist during filtering.'.format(self.__class__.__name__, len(self.relpaths), l1, l1 - len(self.relpaths)))
 
         if exists(self.synsets_of_filtered_filelist):
             self.synsets = np.load(self.synsets_of_filtered_filelist)
