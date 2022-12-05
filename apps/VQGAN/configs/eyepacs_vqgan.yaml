@@ -34,6 +34,7 @@ data:
       target: apps.VQGAN.data.eyepacs.eyepacsTrain
       params:
         config:
+          MODE_VAL: 500 # optianal
           EXT: jpeg
           SIZE: 256
           HOST_DIR: $KAGGLE_PATH
@@ -48,6 +49,7 @@ data:
       target: apps.VQGAN.data.eyepacs.eyepacsValidation
       params:
         config:
+          MODE_VAL: 10000 # optianal
           EXT: jpeg
           SIZE: 256
           HOST_DIR: $KAGGLE_PATH

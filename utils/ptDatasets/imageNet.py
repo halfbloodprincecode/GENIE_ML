@@ -100,7 +100,7 @@ class ImageNetBase(Dataset):
         
         
         logger.critical('self.config={}'.format(self.config))
-        mode_val = self.config.get('mode_val', None)
+        mode_val = self.config.get('MODE_VAL', None)
         if isinstance(mode_val, int):
             relpaths = [rpath for idx, rpath in tqdm(enumerate(relpaths), desc='filtering of relpaths list through indexing with mode={}'.format(mode_val)) if idx % mode_val == 0]
 
