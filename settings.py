@@ -43,3 +43,8 @@ if getenv('KAGGLE_CHMOD'):
     ))
 
 import kaggle # need to import here(after env variables had defined)
+
+# GENIE_ML_VARS declaration. this contains some important runtime variables.
+environ['GENIE_ML_VARS']=dict(
+    pl=dict(), pt=dict(), tf=dict()
+)
