@@ -183,7 +183,10 @@ class ConfigBase:
         trainer_kwargs['callbacks'].append(_checkpoint_callback)
 
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
-        environ['GENIE_ML_VARS']['pl']['trainer'] = trainer
+        for tl in trainer.loggers:
+            logger.critical('tl={}'.format(tl))
+            # handiCall = getattr(tl, 'log_metrics_handiCall', lambda *args, **kwargs: None)
+            # handiCall(metrics={**M, f'val_dl_{dataloader_idx}': dataloader_idx}, step=S)
 
         # configure data #############################################
         data = cls.instantiate_from_config(config.data)
