@@ -185,7 +185,7 @@ class ConfigBase:
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
         for tl in trainer.loggers:
             handiCall = getattr(tl, 'setter_handiCall', lambda *args, **kwargs: None)
-            handiCall(trainer_obj=trainer)
+            handiCall(_trainer_obj=trainer)
 
         # configure data #############################################
         data = cls.instantiate_from_config(config.data)

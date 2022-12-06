@@ -75,7 +75,7 @@ class GenieLoggerBase(Logger):
     @rank_zero_only
     def setter_handiCall(self, **kwargs):
         for k, v in kwargs.items():
-            setattr(self, f'_{k}', v)
+            setattr(self, k, v)
     
     @rank_zero_only
     def log_metrics_handiCall(self, **kwargs):
