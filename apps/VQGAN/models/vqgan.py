@@ -125,7 +125,7 @@ class VQModel(pl.LightningModule):
         # self.log("val/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
         self.log_dict({
             'val/aeloss':aeloss, 'val/discloss':discloss
-        }, prog_bar=True, logger=True, on_step=True, on_epoch=False)
+        }, prog_bar=True, logger=True, on_step=True, on_epoch=True)
         self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=False)
         self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=False)
         # return self.log_dict
