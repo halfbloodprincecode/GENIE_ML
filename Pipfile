@@ -25,6 +25,7 @@ albumentations = "*"
 academictorrents = "*"
 kaggle = "*"
 matplotlib = "*"
+inflect = "*"
 
 [dev-packages]
 

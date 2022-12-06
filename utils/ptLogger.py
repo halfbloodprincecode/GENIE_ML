@@ -1,4 +1,5 @@
 from os import getenv, makedirs
+import inflect
 from os.path import join
 from loguru import logger
 from libs.coding import sha1
@@ -33,6 +34,8 @@ class GenieLoggerBase(Logger):
         table_names = self.sqlite_dbms.get_tables()
         self.table_numbers = sum([1 for t in table_names if self._name in t])
 
+        self.inflect_engine = inflect.engine()
+
     @property
     def name(self):
         return self._name
@@ -53,7 +56,8 @@ class GenieLoggerBase(Logger):
     
     def create_metrics_table(self, metrics_items):
         self.table_numbers = self.table_numbers + 1
-        new_table_name = f'tbl_{self.table_numbers}_' + self._name # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+        ord_number = self.inflect_engine.ordinal(self.table_numbers)
+        new_table_name = 'tbl_' + self._name + f'_{ord_number}' # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
         logger.info('metric table `{}` was created.'.format(new_table_name))
         return Metrics(
             self.db_path_dir,
