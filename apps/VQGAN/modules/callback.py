@@ -1,6 +1,4 @@
-import os
 from loguru import logger
-from omegaconf import OmegaConf
 from utils.ptCallback import ModelCheckpointBase, SetupCallbackBase, CustomProgressBarBase, ImageLoggerBase, CBBase
 # from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBase, Callback, LearningRateMonitor
 
@@ -10,7 +8,7 @@ class ModelCheckpoint(ModelCheckpointBase):
 
 class SetupCallback(SetupCallbackBase):
     def on_fit_start(self, trainer, pl_module):
-        logger.warning('-> ***on_fit_start***')
+        logger.warning('[child class] -> ***on_fit_start***')
         super().on_fit_start(trainer, pl_module)
 
 class CustomProgressBar(CustomProgressBarBase):

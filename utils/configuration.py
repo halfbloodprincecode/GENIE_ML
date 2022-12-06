@@ -118,7 +118,7 @@ class ConfigBase:
             # 'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
             'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
             'params': {
-                'monitor': 'val/loss', # this line maybe had changed!!
+                'monitor': 'val/total_loss_epoch', #val/total_loss_epoch # this line maybe had changed!!
                 'mode': 'min',
                 'dirpath': ckptdir,
                 'filename': '{epoch:06}',
