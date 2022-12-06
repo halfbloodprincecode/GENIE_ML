@@ -73,6 +73,11 @@ class GenieLoggerBase(Logger):
         logger.critical('log_hyperparams | params={}'.format(params))
 
     @rank_zero_only
+    def setter_handiCall(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, f'_{k}', v)
+    
+    @rank_zero_only
     def log_metrics_handiCall(self, **kwargs):
         return self.log_metrics(**kwargs)
     
@@ -81,7 +86,7 @@ class GenieLoggerBase(Logger):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:
-            logger.warning('EEEEEEEEEEEEEEEEE epoch={}'.format(getenv['GENIE_ML_VARS']['pl']['trainer'].current_epoch))
+            logger.warning('EEEEEEEEEEEEEEEEE epoch={}'.format(self._trainer_obj.current_epoch))
         hash_metrics_keys = sha1(' | '.join(set(list(metrics.keys()))))
         tbl = self.all_metrics_tbls.get(hash_metrics_keys, None)
         if tbl is None:
