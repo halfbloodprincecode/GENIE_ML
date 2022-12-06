@@ -81,7 +81,7 @@ class GenieLoggerBase(Logger):
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:
-            logger.warning('EEEEEEEEEEEEEEEEE epoch={}'.format(self.trainer.current_epoch))
+            logger.warning('EEEEEEEEEEEEEEEEE epoch={}'.format(getenv['GENIE_ML_VARS']['pl']['trainer'].current_epoch))
         hash_metrics_keys = sha1(' | '.join(set(list(metrics.keys()))))
         tbl = self.all_metrics_tbls.get(hash_metrics_keys, None)
         if tbl is None:

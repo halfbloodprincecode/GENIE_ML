@@ -1,5 +1,5 @@
 import argparse
-from os import getenv
+from os import environ
 from loguru import logger
 from omegaconf import OmegaConf
 from libs.dyimport import Import
@@ -183,7 +183,7 @@ class ConfigBase:
         trainer_kwargs['callbacks'].append(_checkpoint_callback)
 
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
-        getenv('GENIE_ML_VARS')['pl']['trainer'] = trainer
+        environ['GENIE_ML_VARS']['pl']['trainer'] = trainer
 
         # configure data #############################################
         data = cls.instantiate_from_config(config.data)
