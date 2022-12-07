@@ -23,9 +23,10 @@ class ModelCheckpointBase(ModelCheckpointBasic):
 
 
 class CheckpointHandlerBase(Callback):
-    def on_save_checkpoint(self, checkpoint):
+    def on_save_checkpoint(self, *args, **kwargs):
+        print(*args, **kwargs)
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
-        logger.warning('checkpoint.keys={}'.format(list(checkpoint.keys())))
+        # logger.warning('checkpoint.keys={}'.format(list(checkpoint.keys())))
 
     def on_load_checkpoint(self, checkpoint):
         # my_cool_pickable_object = checkpoint['something_cool_i_want_to_save']
