@@ -23,7 +23,7 @@ class ModelCheckpointBase(ModelCheckpointBasic):
 
     def on_save_checkpoint(self, checkpoint, *args, **kwargs):
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
-        logger.warning('self.current_train_batch_index={}'.format(self.current_train_batch_index))
+        logger.warning('checkpoint.keys={}'.format(list(checkpoint.keys())))
 
     def on_load_checkpoint(self, checkpoint, *args, **kwargs):
         # my_cool_pickable_object = checkpoint['something_cool_i_want_to_save']
