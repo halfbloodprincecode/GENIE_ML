@@ -27,6 +27,8 @@ class ModelCheckpointBase(ModelCheckpointBasic):
         if not self.save_last:
             return
 
+        logger.critical('0 self.last_model_path={}'.format(self.last_model_path))
+        
         filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
         filepath = self.filepath_for_last_ckpt_fn(filepath)
 
@@ -85,7 +87,7 @@ class CustomProgressBarBase(TQDMProgressBar):
         # don't show the version number
         items = super().get_metrics(*args, **kwargs)
         items.pop('v_num', None)
-        logger.debug('items={}'.format(items))
+        # logger.debug('items={}'.format(items))
         return items
 
 class ImageLoggerBase(Callback):
