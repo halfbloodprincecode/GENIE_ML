@@ -20,6 +20,7 @@ class ModelCheckpointBase(ModelCheckpointBasic):
             return
 
         filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
+        logger.critical('self.dirpath={}'.format(self.dirpath))
         logger.critical('_save_last_checkpoint:filepath={}'.format(filepath))
 
         version_cnt = self.STARTING_VERSION
