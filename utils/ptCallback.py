@@ -8,13 +8,31 @@ from loguru import logger
 import pytorch_lightning as pl
 from omegaconf import OmegaConf
 from libs.basicIO import signal_save
+from torch import Tensor
+from typing import Any, Dict, Optional
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
 from pytorch_lightning.callbacks.progress import TQDMProgressBar
 # from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBasic, Callback, LearningRateMonitor
 
 class ModelCheckpointBase(ModelCheckpointBasic):
-    pass
+    def _save_last_checkpoint(self, trainer: "pl.Trainer", monitor_candidates: Dict[str, Tensor]) -> None:
+        if not self.save_last:
+            return
+
+        filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
+        logger.critical('_save_last_checkpoint:filepath={}'.format(filepath))
+
+        version_cnt = self.STARTING_VERSION
+        while self.file_exists(filepath, trainer) and filepath != self.last_model_path:
+            filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST, ver=version_cnt)
+            version_cnt += 1
+
+        # set the last model path before saving because it will be part of the state.
+        previous, self.last_model_path = self.last_model_path, filepath
+        self._save_checkpoint(trainer, filepath)
+        if previous and previous != filepath:
+            trainer.strategy.remove_checkpoint(previous)
 
 class SetupCallbackBase(Callback):
     def __init__(self, resume, now, logdir, ckptdir, cfgdir, config, lightning_config):
@@ -188,4 +206,4 @@ class CBBase(Callback):
             for tl in trainer.loggers:
                 handiCall = getattr(tl, 'log_metrics_handiCall', lambda *args, **kwargs: None)
                 handiCall(metrics={**M, f'val_dl_{dataloader_idx}': dataloader_idx}, step=S)
-            logger.critical('hooooooo!! logs -> {}'.format(trainer.logged_metrics))
+            logger.critical('logs -> {}'.format(trainer.logged_metrics))
