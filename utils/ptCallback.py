@@ -28,6 +28,7 @@ class CheckpointHandlerBase(Callback):
         for pl_cb in trainer.callbacks:
             if isinstance(pl_cb, ModelCheckpointBasic):
                 logger.warning(pl_cb.monitor)
+                logger.warning(pl_cb.best_model_score)
         # logger.warning('hooooooooooo!! {}'.format(dict( best_model_score=trainer.best_model_score)))
         # checkpoint['genie'] = dict(monitor=self.monitor, score=self.best_model_score)
 
