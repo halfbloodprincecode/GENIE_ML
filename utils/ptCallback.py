@@ -25,7 +25,10 @@ class ModelCheckpointBase(ModelCheckpointBasic):
 class CheckpointHandlerBase(Callback):
     def on_save_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
-        logger.warning('hooooooooooo!! {}'.format(dict( best_model_score=trainer.best_model_score)))
+        for pl_cb in trainer.callbacks:
+            if isinstance(pl_cb, ModelCheckpointBasic):
+                logger.warning(pl_cb.monitor)
+        # logger.warning('hooooooooooo!! {}'.format(dict( best_model_score=trainer.best_model_score)))
         # checkpoint['genie'] = dict(monitor=self.monitor, score=self.best_model_score)
 
     def on_load_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
