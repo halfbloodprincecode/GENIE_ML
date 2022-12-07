@@ -11,13 +11,12 @@ from libs.basicIO import signal_save
 from torch import Tensor
 from datetime import timedelta
 from typing import Any, Dict, Optional
-from pytorch_lightning.utilities.types import _PATH
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
 from pytorch_lightning.callbacks.progress import TQDMProgressBar
 from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBasic, Callback, LearningRateMonitor
 
 class ModelCheckpointBase(ModelCheckpointBasic):
-    def __init__(self, dirpath: Optional[_PATH] = None, filename: Optional[str] = None, monitor: Optional[str] = None, verbose: bool = False, save_last: Optional[bool] = None, save_top_k: int = 1, save_weights_only: bool = False, mode: str = "min", auto_insert_metric_name: bool = True, every_n_train_steps: Optional[int] = None, train_time_interval: Optional[timedelta] = None, every_n_epochs: Optional[int] = None, save_on_train_epoch_end: Optional[bool] = None, select_storage: Optional[str] = 'GENIE_ML_STORAGE0'):
+    def __init__(self, dirpath = None, filename: Optional[str] = None, monitor: Optional[str] = None, verbose: bool = False, save_last: Optional[bool] = None, save_top_k: int = 1, save_weights_only: bool = False, mode: str = "min", auto_insert_metric_name: bool = True, every_n_train_steps: Optional[int] = None, train_time_interval: Optional[timedelta] = None, every_n_epochs: Optional[int] = None, save_on_train_epoch_end: Optional[bool] = None, select_storage: Optional[str] = 'GENIE_ML_STORAGE0'):
         super().__init__(dirpath, filename, monitor, verbose, save_last, save_top_k, save_weights_only, mode, auto_insert_metric_name, every_n_train_steps, train_time_interval, every_n_epochs, save_on_train_epoch_end)
         self.select_storage = select_storage
         self.filepath_for_last_ckpt_fn = lambda fp: fp.replace(self.dirpath, join(getenv(self.select_storage), getenv('GENIE_ML_APP')))
