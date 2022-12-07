@@ -27,7 +27,7 @@ class CheckpointHandlerBase(Callback):
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
         for pl_cb in trainer.callbacks:
             if pl_cb.__class__.__name__ == 'ModelCheckpoint':
-                logger.warning(pl_cb.monitor)
+                logger.warning('{} | {}'.format(pl_cb.__class__.__name__, pl_cb.monitor))
                 logger.warning(pl_cb._monitor_candidates(trainer))
         # logger.warning('hooooooooooo!! {}'.format(dict( best_model_score=trainer.best_model_score)))
         # checkpoint['genie'] = dict(monitor=self.monitor, score=self.best_model_score)
