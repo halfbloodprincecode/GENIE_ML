@@ -12,7 +12,6 @@ from torch import Tensor
 from typing import Any, Dict, Optional
 from pytorch_lightning.utilities.rank_zero import rank_zero_only 
 from pytorch_lightning.callbacks.progress import TQDMProgressBar
-# from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBasic, Callback, LearningRateMonitor
 
 class ModelCheckpointBase(ModelCheckpointBasic):
