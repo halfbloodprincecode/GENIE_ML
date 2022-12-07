@@ -6,8 +6,8 @@ from utils.ptCallback import ModelCheckpointBase, CheckpointHandlerBase, SetupCa
 class ModelCheckpoint(ModelCheckpointBase):
     pass
 
-# class CheckpointHandler(CheckpointHandlerBase):
-#     pass
+class CheckpointHandler(CheckpointHandlerBase):
+    pass
 
 class SetupCallback(SetupCallbackBase):
     def on_fit_start(self, trainer, pl_module):
