@@ -117,9 +117,10 @@ class ConfigBase:
         # modelcheckpoint - use TrainResult/EvalResult(checkpoint_on=metric) to
         # specify which metric is used to determine best models
         default_modelckpt_cfg = {
-            'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
-            # 'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
+            # 'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+            'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
             'params': {
+                'every_n_epochs': 0,
                 'monitor': 'val/total_loss_epoch', #val/total_loss_epoch # this line maybe had changed!!
                 'mode': 'max',
                 'dirpath': ckptdir,
@@ -179,10 +180,11 @@ class ConfigBase:
                 'params': {}
             },
             'UnconditionalCheckpointing': {
-                'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+                'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
                 'params': {
+                    'every_n_epochs': 0,
                     'dirpath': join(ckptdir, 'unconditional'),
-                    'save_last': False,
+                    'save_last': True,
                     'verbose': True
                 }
             }
