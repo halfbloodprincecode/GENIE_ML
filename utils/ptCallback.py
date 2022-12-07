@@ -60,7 +60,9 @@ class SetupCallbackBase(Callback):
 
 class CustomProgressBarBase(TQDMProgressBar):
     def init_validation_tqdm(self):
-        bar = tqdm(disable=True)
+        items = self.get_metrics()
+        logger.critical('items={}'.format(items))
+        bar = tqdm(disable=False, leave=True, desc='running validation')
         return bar
 
     def get_metrics(self, *args, **kwargs):
