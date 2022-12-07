@@ -210,7 +210,8 @@ class ImageLoggerBase(Callback):
 class CBBase(Callback):
     """this callback defiend only for handling some BUGs of lightning and give more control to user"""
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
-        logger.warning(trainer.logged_metrics)
+        # logger.warning(trainer.logged_metrics)
+        pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
         if False and (batch_idx % trainer.log_every_n_steps == 0):
