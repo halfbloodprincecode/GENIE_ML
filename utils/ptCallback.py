@@ -1,4 +1,5 @@
 import os
+from tqdm import tqdm
 from os import makedirs, rename, getenv
 from os.path import join, exists
 import torch
@@ -16,37 +17,10 @@ from pytorch_lightning.callbacks.progress import TQDMProgressBar
 from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBasic, Callback, LearningRateMonitor
 
 class ModelCheckpointBase(ModelCheckpointBasic):
-    def __init__(self, dirpath = None, filename: Optional[str] = None, monitor: Optional[str] = None, verbose: bool = False, save_last: Optional[bool] = None, save_top_k: int = 1, save_weights_only: bool = False, mode: str = "min", auto_insert_metric_name: bool = True, every_n_train_steps: Optional[int] = None, train_time_interval: Optional[timedelta] = None, every_n_epochs: Optional[int] = None, save_on_train_epoch_end: Optional[bool] = None, select_storage: Optional[str] = 'GENIE_ML_STORAGE0', lastname='last', lastname_format=''):
+    def __init__(self, dirpath = None, filename: Optional[str] = None, monitor: Optional[str] = None, verbose: bool = False, save_last: Optional[bool] = None, save_top_k: int = 1, save_weights_only: bool = False, mode: str = "min", auto_insert_metric_name: bool = True, every_n_train_steps: Optional[int] = None, train_time_interval: Optional[timedelta] = None, every_n_epochs: Optional[int] = None, save_on_train_epoch_end: Optional[bool] = None, lastname='last', lastname_format=''):
         self.CHECKPOINT_NAME_LAST = lastname_format + lastname # this line it should be before super.init | Example: lastname_format='{epoch}-{step}'
         super().__init__(dirpath, filename, monitor, verbose, save_last, save_top_k, save_weights_only, mode, auto_insert_metric_name, every_n_train_steps, train_time_interval, every_n_epochs, save_on_train_epoch_end)
-        self.select_storage = select_storage
-        self.filepath_for_last_ckpt_fn = lambda fp: fp.replace(self.dirpath, join(getenv(self.select_storage), getenv('GENIE_ML_APP')))
 
-    # def _save_last_checkpoint(self, trainer: "pl.Trainer", monitor_candidates: Dict[str, Tensor]) -> None:
-    #     """only one modification to orginal code"""
-        
-    #     if not self.save_last:
-    #         return
-
-    #     logger.critical('0 self.last_model_path={}'.format(self.last_model_path))
-        
-    #     filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
-    #     filepath = self.filepath_for_last_ckpt_fn(filepath)
-
-    #     version_cnt = self.STARTING_VERSION
-    #     while self.file_exists(filepath, trainer) and filepath != self.last_model_path:
-    #         filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST, ver=version_cnt)
-    #         logger.critical('filepath:before={}'.format(filepath))
-    #         filepath = self.filepath_for_last_ckpt_fn(filepath)
-    #         logger.critical('filepath:after={}'.format(filepath))
-    #         version_cnt += 1
-
-    #     # set the last model path before saving because it will be part of the state.
-    #     previous, self.last_model_path = self.last_model_path, filepath
-    #     logger.critical('self.last_model_path={}'.format(self.last_model_path))
-    #     self._save_checkpoint(trainer, filepath)
-    #     if previous and previous != filepath:
-    #         trainer.strategy.remove_checkpoint(previous)
 
 class SetupCallbackBase(Callback):
     def __init__(self, resume, now, logdir, ckptdir, cfgdir, config, lightning_config):
@@ -83,13 +57,19 @@ class SetupCallbackBase(Callback):
                 except FileNotFoundError:
                     pass
 
+
 class CustomProgressBarBase(TQDMProgressBar):
+    def init_validation_tqdm(self):
+        bar = tqdm(disable=True)
+        return bar
+
     def get_metrics(self, *args, **kwargs):
         # don't show the version number
         items = super().get_metrics(*args, **kwargs)
         items.pop('v_num', None)
         # logger.debug('items={}'.format(items))
         return items
+
 
 class ImageLoggerBase(Callback):
     def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, use_log_local_fn=True, opt_params=None):
