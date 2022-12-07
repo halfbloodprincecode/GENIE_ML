@@ -58,7 +58,7 @@ class GenieLoggerBase(Logger):
         self.table_numbers = self.table_numbers + 1
         ord_number = self.inflect_engine.ordinal(self.table_numbers)
         new_table_name = 'tbl_' + self._name + f'_{ord_number}' # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
-        logger.info('metric table `{}` was created.'.format(new_table_name))
+        # logger.info('metric table `{}` was created.'.format(new_table_name))
         return Metrics(
             self.db_path_dir,
             self.db_fname,
