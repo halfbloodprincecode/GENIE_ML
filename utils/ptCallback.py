@@ -28,18 +28,19 @@ class ModelCheckpointBase(ModelCheckpointBasic):
             return
 
         filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
-        filepath2 = self.filepath_for_last_ckpt_fn(filepath)
-        logger.critical('self.dirpath={}'.format(self.dirpath))
-        logger.critical('_save_last_checkpoint:filepath={}'.format(filepath, type(filepath)))
-        logger.critical('_save_last_checkpoint:filepath2={}'.format(filepath2, type(filepath2)))
+        filepath = self.filepath_for_last_ckpt_fn(filepath)
 
         version_cnt = self.STARTING_VERSION
         while self.file_exists(filepath, trainer) and filepath != self.last_model_path:
             filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST, ver=version_cnt)
+            logger.critical('filepath:before={}'.format(filepath))
+            filepath = self.filepath_for_last_ckpt_fn(filepath)
+            logger.critical('filepath:after={}'.format(filepath))
             version_cnt += 1
 
         # set the last model path before saving because it will be part of the state.
         previous, self.last_model_path = self.last_model_path, filepath
+        logger.critical('self.last_model_path={}'.format(self.last_model_path))
         self._save_checkpoint(trainer, filepath)
         if previous and previous != filepath:
             trainer.strategy.remove_checkpoint(previous)
@@ -196,11 +197,11 @@ class ImageLoggerBase(Callback):
         return False
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
-        logger.warning('ImageLoggerBase | on_train_batch_end | batch_idx={}'.format(batch_idx))
+        # logger.warning('ImageLoggerBase | on_train_batch_end | batch_idx={}'.format(batch_idx))
         self.log_img(pl_module, batch, batch_idx, split='train')
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
-        logger.warning('ImageLoggerBase | on_validation_batch_end | batch_idx={}'.format(batch_idx))
+        # logger.warning('ImageLoggerBase | on_validation_batch_end | batch_idx={}'.format(batch_idx))
         self.log_img(pl_module, batch, batch_idx, split='val')
 
 

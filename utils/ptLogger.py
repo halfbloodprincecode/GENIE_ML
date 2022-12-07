@@ -95,7 +95,7 @@ class GenieLoggerBase(Logger):
         M = {str(m).replace('/', '__'): v for m, v in metrics.items()}
         tbl.add({**M, 'step': step})
 
-        logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
+        # logger.critical('log_metrics | step={} | metrics={}'.format(step, metrics))
 
     @rank_zero_only
     def save(self):

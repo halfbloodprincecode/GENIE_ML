@@ -84,9 +84,9 @@ class VQModel(pl.LightningModule):
         return x.float()
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        logger.error(
-            'training_step | gs={} | batch_idx={}, optimizer_idx={}'.format(
-                self.global_step, batch_idx, optimizer_idx))
+        # logger.error(
+        #     'training_step | gs={} | batch_idx={}, optimizer_idx={}'.format(
+        #         self.global_step, batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
 
@@ -114,7 +114,7 @@ class VQModel(pl.LightningModule):
             return discloss
         
     def validation_step(self, batch, batch_idx):
-        logger.warning('---------validation_step----------')
+        # logger.warning('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         xrec, qloss = self(x)
         aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
