@@ -23,6 +23,8 @@ class ModelCheckpointBase(ModelCheckpointBasic):
         self.filepath_for_last_ckpt_fn = lambda fp: fp.replace(self.dirpath, join(getenv(self.select_storage), getenv('GENIE_ML_APP')))
 
     def _save_last_checkpoint(self, trainer: "pl.Trainer", monitor_candidates: Dict[str, Tensor]) -> None:
+        """only one modification to orginal code"""
+        
         if not self.save_last:
             return
 
