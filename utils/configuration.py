@@ -1,5 +1,6 @@
 import argparse
 from os import environ
+from os.path import join
 from loguru import logger
 from omegaconf import OmegaConf
 from libs.dyimport import Import
@@ -116,8 +117,8 @@ class ConfigBase:
         # modelcheckpoint - use TrainResult/EvalResult(checkpoint_on=metric) to
         # specify which metric is used to determine best models
         default_modelckpt_cfg = {
-            # 'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
-            'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
+            'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+            # 'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
             'params': {
                 'monitor': 'val/total_loss_epoch', #val/total_loss_epoch # this line maybe had changed!!
                 'mode': 'max',
@@ -128,7 +129,7 @@ class ConfigBase:
             }
         }
         if hasattr(model, 'monitor'):
-            logger.error(f'||||Monitoring {model.monitor} as checkpoint metric.')
+            logger.critical(f'||||Monitoring {model.monitor} as checkpoint metric.')
             default_modelckpt_cfg['params']['monitor'] = model.monitor
             default_modelckpt_cfg['params']['save_top_k'] = 3
 
@@ -136,7 +137,8 @@ class ConfigBase:
         modelckpt_cfg = OmegaConf.merge(default_modelckpt_cfg, modelckpt_cfg)
         _checkpoint_callback = cls.instantiate_from_config(modelckpt_cfg)
         # trainer_kwargs['checkpoint_callback'] = cls.instantiate_from_config(modelckpt_cfg)
-
+        logger.warning('lightning_config.modelcheckpoint={}'.format( lightning_config.get('modelcheckpoint',{}) ))
+        logger.warning('modelckpt_cfg={}'.format(modelckpt_cfg))
 
         # *****************[sets up log directory]*****************
         # add callback which sets up log directory
@@ -176,6 +178,14 @@ class ConfigBase:
                 'target': 'apps.VQGAN.modules.callback.CB',
                 'params': {}
             },
+            'UnconditionalCheckpointing': {
+                'target': 'pytorch_lightning.callbacks.ModelCheckpoint',
+                'params': {
+                    'dirpath': join(ckptdir, 'unconditional'),
+                    'save_last': False,
+                    'verbose': True
+                }
+            }
         }
         callbacks_cfg = lightning_config.get('callbacks', OmegaConf.create()) # lightning_config.callbacks or OmegaConf.create()
         callbacks_cfg = OmegaConf.merge(default_callbacks_cfg, callbacks_cfg)

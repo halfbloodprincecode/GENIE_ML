@@ -21,31 +21,31 @@ class ModelCheckpointBase(ModelCheckpointBasic):
         self.select_storage = select_storage
         self.filepath_for_last_ckpt_fn = lambda fp: fp.replace(self.dirpath, join(getenv(self.select_storage), getenv('GENIE_ML_APP')))
 
-    def _save_last_checkpoint(self, trainer: "pl.Trainer", monitor_candidates: Dict[str, Tensor]) -> None:
-        """only one modification to orginal code"""
+    # def _save_last_checkpoint(self, trainer: "pl.Trainer", monitor_candidates: Dict[str, Tensor]) -> None:
+    #     """only one modification to orginal code"""
         
-        if not self.save_last:
-            return
+    #     if not self.save_last:
+    #         return
 
-        logger.critical('0 self.last_model_path={}'.format(self.last_model_path))
+    #     logger.critical('0 self.last_model_path={}'.format(self.last_model_path))
         
-        filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
-        filepath = self.filepath_for_last_ckpt_fn(filepath)
+    #     filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST)
+    #     filepath = self.filepath_for_last_ckpt_fn(filepath)
 
-        version_cnt = self.STARTING_VERSION
-        while self.file_exists(filepath, trainer) and filepath != self.last_model_path:
-            filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST, ver=version_cnt)
-            logger.critical('filepath:before={}'.format(filepath))
-            filepath = self.filepath_for_last_ckpt_fn(filepath)
-            logger.critical('filepath:after={}'.format(filepath))
-            version_cnt += 1
+    #     version_cnt = self.STARTING_VERSION
+    #     while self.file_exists(filepath, trainer) and filepath != self.last_model_path:
+    #         filepath = self.format_checkpoint_name(monitor_candidates, self.CHECKPOINT_NAME_LAST, ver=version_cnt)
+    #         logger.critical('filepath:before={}'.format(filepath))
+    #         filepath = self.filepath_for_last_ckpt_fn(filepath)
+    #         logger.critical('filepath:after={}'.format(filepath))
+    #         version_cnt += 1
 
-        # set the last model path before saving because it will be part of the state.
-        previous, self.last_model_path = self.last_model_path, filepath
-        logger.critical('self.last_model_path={}'.format(self.last_model_path))
-        self._save_checkpoint(trainer, filepath)
-        if previous and previous != filepath:
-            trainer.strategy.remove_checkpoint(previous)
+    #     # set the last model path before saving because it will be part of the state.
+    #     previous, self.last_model_path = self.last_model_path, filepath
+    #     logger.critical('self.last_model_path={}'.format(self.last_model_path))
+    #     self._save_checkpoint(trainer, filepath)
+    #     if previous and previous != filepath:
+    #         trainer.strategy.remove_checkpoint(previous)
 
 class SetupCallbackBase(Callback):
     def __init__(self, resume, now, logdir, ckptdir, cfgdir, config, lightning_config):

@@ -139,8 +139,8 @@ def _ctl_parser_(opt, unknown, **kwargs):
         nowname = now + name + opt.postfix
         logdir = join(pathBIO(getenv('GENIE_ML_LOGDIR')), nowname)
 
-    ckptdir = join(logdir, 'checkpoints')
-    cfgdir = join(logdir, 'configs')
+    ckptdir = getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints')
+    cfgdir = getenv('GENIE_ML_CFGDIR') or join(logdir, 'configs')
     seed_everything(opt.seed)
     return ckptdir, cfgdir, logdir, nowname
 
