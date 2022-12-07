@@ -21,11 +21,13 @@ class ModelCheckpointBase(ModelCheckpointBasic):
         self.CHECKPOINT_NAME_LAST = lastname_format + lastname # this line it should be before super.init | Example: lastname_format='{epoch}-{step}'
         super().__init__(dirpath, filename, monitor, verbose, save_last, save_top_k, save_weights_only, mode, auto_insert_metric_name, every_n_train_steps, train_time_interval, every_n_epochs, save_on_train_epoch_end)
 
-    def on_save_checkpoint(self, checkpoint, *args, **kwargs):
+
+class CheckpointHandlerBase(Callback):
+    def on_save_checkpoint(self, checkpoint):
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
         logger.warning('checkpoint.keys={}'.format(list(checkpoint.keys())))
 
-    def on_load_checkpoint(self, checkpoint, *args, **kwargs):
+    def on_load_checkpoint(self, checkpoint):
         # my_cool_pickable_object = checkpoint['something_cool_i_want_to_save']
         pass
 

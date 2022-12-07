@@ -1,9 +1,12 @@
 from loguru import logger
-from utils.ptCallback import ModelCheckpointBase, SetupCallbackBase, CustomProgressBarBase, ImageLoggerBase, CBBase
+from utils.ptCallback import ModelCheckpointBase, CheckpointHandlerBase, SetupCallbackBase, CustomProgressBarBase, ImageLoggerBase, CBBase
 # from pytorch_lightning.callbacks import ModelCheckpoint as ModelCheckpointBase, Callback, LearningRateMonitor
 
 
 class ModelCheckpoint(ModelCheckpointBase):
+    pass
+
+class CheckpointHandler(CheckpointHandlerBase):
     pass
 
 class SetupCallback(SetupCallbackBase):

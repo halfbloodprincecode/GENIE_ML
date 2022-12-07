@@ -187,6 +187,10 @@ class ConfigBase:
                     'save_last': True,
                     'verbose': True
                 }
+            },
+            'checkpoint_handler': {
+                'target': 'apps.VQGAN.modules.callback.CheckpointHandler',
+                'params': {}
             }
         }
         callbacks_cfg = lightning_config.get('callbacks', OmegaConf.create()) # lightning_config.callbacks or OmegaConf.create()
