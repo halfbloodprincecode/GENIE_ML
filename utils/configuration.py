@@ -120,7 +120,7 @@ class ConfigBase:
             'target': 'apps.VQGAN.modules.callback.ModelCheckpoint',
             'params': {
                 'monitor': 'val/total_loss_epoch', #val/total_loss_epoch # this line maybe had changed!!
-                'mode': 'max',
+                'mode': 'min',
                 'lastname': 'best',
                 'every_n_epochs': 0,
                 'dirpath': ckptdir,
