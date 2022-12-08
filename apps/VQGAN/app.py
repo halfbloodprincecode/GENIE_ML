@@ -26,8 +26,8 @@ def main():
                 SignalHandler.melk()
                 raise
         if not opt.no_test and not trainer.interrupted:
-            print('trainer.test is called', data.keys())
-            trainer.test(model, data)
+            print('trainer.test is called', data.val_dataloader)
+            trainer.test(model, data.val_dataloader)
     except Exception as e:
         if opt.debug and trainer.global_rank==0:
             EHR(e)
