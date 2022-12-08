@@ -25,9 +25,12 @@ def main():
             except Exception:
                 SignalHandler.melk()
                 raise
+        if not opt.no_validate and not trainer.interrupted:
+            print('trainer.validate is called')
+            trainer.validate(model, data)
         if not opt.no_test and not trainer.interrupted:
-            print('trainer.test is called', data.val_dataloader)
-            trainer.test(model, data.val_dataloader)
+            print('trainer.test is called', data)
+            trainer.test(model, data)
     except Exception as e:
         if opt.debug and trainer.global_rank==0:
             EHR(e)
