@@ -26,6 +26,8 @@ class VQModel(pl.LightningModule):
                  sane_index_shape=False,  # tell vector quantizer to return indices as bhw
                  ):
         super().__init__()
+        m = VQModel.load_from_checkpoint(checkpoint_path='/content/drive/MyDrive/Genie-ML/VQGAN/checkpoints/best.ckpt')
+        print(dir(m))
         self.image_key = image_key
         self.encoder = Encoder(**ddconfig)
         self.decoder = Decoder(**ddconfig)
@@ -166,9 +168,6 @@ class VQModel(pl.LightningModule):
         x = 2.*(x-x.min())/(x.max()-x.min()) - 1.
         return x
 
-
-m = VQModel.load_from_checkpoint(checkpoint_path='/content/drive/MyDrive/Genie-ML/VQGAN/checkpoints/best.ckpt')
-print(dir(m))
 
 class VQSegmentationModel(VQModel):
     def __init__(self, n_labels, *args, **kwargs):
