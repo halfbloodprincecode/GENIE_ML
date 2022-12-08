@@ -22,9 +22,9 @@ class ModelCheckpointBase(ModelCheckpointBasic):
         super().__init__(dirpath, filename, monitor, verbose, save_last, save_top_k, save_weights_only, mode, auto_insert_metric_name, every_n_train_steps, train_time_interval, every_n_epochs, save_on_train_epoch_end)
 
     def on_save_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
-        logger.error('mon={} | {}'.format(self.monitor, self.best_model_score))
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
-        # checkpoint['genie'] = dict(monitor=self.monitor, score=self.best_model_score)
+        checkpoint['genie'] = checkpoint.get('genie', {}) 
+        checkpoint['genie']['best_of_{}'.format(str(self.monitor))] = self.best_model_score
 
     def on_load_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
         # my_cool_pickable_object = checkpoint['something_cool_i_want_to_save']
