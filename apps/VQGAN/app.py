@@ -19,6 +19,8 @@ def main():
         SignalHandler(trainer, ckptdir)
 
         # run
+        if not opt.no_validate and not trainer.interrupted:
+            trainer.validate(model, data)
         if opt.train:
             try:
                 trainer.fit(model, data)
@@ -26,10 +28,8 @@ def main():
                 SignalHandler.melk()
                 raise
         if not opt.no_validate and not trainer.interrupted:
-            print('trainer.validate is called')
             trainer.validate(model, data)
         if not opt.no_test and not trainer.interrupted:
-            print('trainer.test is called', data)
             trainer.test(model, data)
     except Exception as e:
         if opt.debug and trainer.global_rank==0:
