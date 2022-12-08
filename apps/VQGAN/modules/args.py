@@ -63,6 +63,15 @@ def _get_parser_(**parser_kwargs):
         nargs='?',
         help='disable test',
     )
+    parser.add_argument(
+        '--no-validate',
+        type=str2bool,
+        const=True,
+        default=False,
+        nargs='?',
+        help='disable validate',
+    )
+    
     parser.add_argument('-p', '--project', help='name of new or path to existing project')
     parser.add_argument(
         '-d',
