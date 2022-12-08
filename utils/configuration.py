@@ -162,7 +162,7 @@ class ConfigBase:
             'image_logger': {
                 'target': 'apps.VQGAN.modules.callback.ImageLogger',
                 'params': {
-                    'batch_frequency': 1,# 750,
+                    'batch_frequency': 500,# 750,
                     'max_images': 4,
                     'clamp': True
                 }

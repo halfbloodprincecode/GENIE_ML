@@ -109,7 +109,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
         else: # logdir address
             assert isdir(opt.resume), opt.resume
             logdir = opt.resume.rstrip('/')
-            ckpt = join(logdir, 'checkpoints', 'last.ckpt')
+            ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), 'last.ckpt')
 
         opt.resume_from_checkpoint = ckpt
         base_configs = sorted(
@@ -122,7 +122,6 @@ def _ctl_parser_(opt, unknown, **kwargs):
         print('*'*30)
         print('aa', aa)
         print('bb', bb)
-        input()
 
         opt.base = base_configs + opt.base
         _tmp = logdir.split('/')
