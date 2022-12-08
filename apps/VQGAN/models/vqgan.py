@@ -167,6 +167,9 @@ class VQModel(pl.LightningModule):
         return x
 
 
+m = VQModel.load_from_checkpoint(checkpoint_path='/content/drive/MyDrive/Genie-ML/VQGAN/checkpoints/best.ckpt')
+print(dir(m))
+
 class VQSegmentationModel(VQModel):
     def __init__(self, n_labels, *args, **kwargs):
         super().__init__(*args, **kwargs)
