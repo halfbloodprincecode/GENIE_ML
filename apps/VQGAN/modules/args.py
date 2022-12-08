@@ -1,5 +1,5 @@
 import os
-from os import getenv
+from os import getenv, makedirs
 from libs.basicIO import ls, pathBIO
 from omegaconf import OmegaConf
 from libs.args import ParserBasic
@@ -100,7 +100,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
         )
     if opt.resume:
         if not exists(opt.resume):
-            raise ValueError('Cannot find {}'.format(opt.resume))
+            makedirs(opt.resume, exist_ok=True)
         if isfile(opt.resume): # ckpt address
             paths = opt.resume.split('/')
             idx = len(paths)-paths[::-1].index('logs')+1 # this can produce error if `logs` is not in list.
