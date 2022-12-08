@@ -34,6 +34,9 @@ parser.add_argument(
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
+for k, v in environ.items():
+    environ[k] = v.replace('{GENIE_ML_APP}', opt.app)
+
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
