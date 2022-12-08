@@ -24,7 +24,8 @@ class ModelCheckpointBase(ModelCheckpointBasic):
     def on_save_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
         # checkpoint['something_cool_i_want_to_save'] = my_cool_pickable_object
         checkpoint['genie'] = checkpoint.get('genie', {}) 
-        checkpoint['genie']['best_of_{}'.format(str(self.monitor))] = self.best_model_score
+        key = 'best_of_{}'.format(str(self.monitor))
+        checkpoint['genie'][key] = self.current_score
 
     def on_load_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
         # my_cool_pickable_object = checkpoint['something_cool_i_want_to_save']
