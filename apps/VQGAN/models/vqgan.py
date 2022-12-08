@@ -26,7 +26,7 @@ class VQModel(pl.LightningModule):
                  sane_index_shape=False,  # tell vector quantizer to return indices as bhw
                  ):
         super().__init__()
-        m = VQModel.load_from_checkpoint(checkpoint_path='/content/drive/MyDrive/Genie-ML/VQGAN/checkpoints/best.ckpt')
+        m = self.load_from_checkpoint(checkpoint_path='/content/drive/MyDrive/Genie-ML/VQGAN/checkpoints/best.ckpt')
         print(dir(m))
         self.image_key = image_key
         self.encoder = Encoder(**ddconfig)
