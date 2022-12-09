@@ -38,7 +38,7 @@ class GenieLoggerBase(Logger):
         logger.critical('INIT END')
 
     def load_state_dict(self, state_dict):
-        logger.critical('LOADING')
+        print('*********** LOADING *****************************')
         self.table_numbers = state_dict['table_numbers']
         self.all_metrics_tbls = state_dict['all_metrics_tbls']
 
