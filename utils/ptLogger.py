@@ -22,7 +22,7 @@ class GenieLoggerBase(Logger):
     ):
         super().__init__(**kwargs)
         self._save_dir = save_dir
-        self._name = name.replace(' ', '_').replace('-', '_')
+        self._name = name.lower().strip().replace(' ', '_').replace('-', '_')
         self._fn_name = fn_name
         self._version = version
         self.select_storage = select_storage
