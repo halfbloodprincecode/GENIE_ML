@@ -52,7 +52,7 @@ class VQModel(pl.LightningModule):
                     del sd[k]
         logger.error('TODO!! where is it? self.load_state_dict={}'.format(self.load_state_dict))
         self.load_state_dict(sd, strict=False)
-        print(f"Restored from {path}")
+        logger.error(f"Restored from {path}")
 
     def encode(self, x):
         h = self.encoder(x)
