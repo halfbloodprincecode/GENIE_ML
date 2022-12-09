@@ -44,6 +44,8 @@ class SetupCallbackBase(Callback):
         self.config = config
         self.lightning_config = lightning_config
 
+        logger.warning('[super class] -> ***on_fit_start***')
+
     def on_fit_start(self, trainer, pl_module):
         if trainer.global_rank == 0:
             # Create logdirs and save configs
@@ -51,8 +53,10 @@ class SetupCallbackBase(Callback):
             makedirs(self.ckptdir, exist_ok=True)
             makedirs(self.cfgdir, exist_ok=True)
 
-            OmegaConf.save(self.config, join(self.cfgdir, '{}-project.yaml'.format(self.now)))
-            OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
+            OmegaConf.save(self.config, join(self.cfgdir, 'project.yaml'))
+            OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, 'lightning.yaml'))
+            # OmegaConf.save(self.config, join(self.cfgdir, '{}-project.yaml'.format(self.now)))
+            # OmegaConf.save(OmegaConf.create({'lightning': self.lightning_config}), join(self.cfgdir, '{}-lightning.yaml'.format(self.now)))
             logger.info('Project config: {}'.format(self.config))
             logger.info('Lightning config: {}'.format(self.lightning_config))
         else:

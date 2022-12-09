@@ -7,9 +7,7 @@ class ModelCheckpoint(ModelCheckpointBase):
     pass
 
 class SetupCallback(SetupCallbackBase):
-    def on_fit_start(self, trainer, pl_module):
-        logger.warning('[child class] -> ***on_fit_start***')
-        super().on_fit_start(trainer, pl_module)
+    pass
 
 class CustomProgressBar(CustomProgressBarBase):
     pass

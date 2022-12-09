@@ -38,6 +38,12 @@ def _get_parser_(**parser_kwargs):
         help='resume from logdir or checkpoint in logdir',
     )
     parser.add_argument(
+        '--ckpt-fname',
+        type=str,
+        default='last',
+        help='ckpt fname',
+    )
+    parser.add_argument(
         '-b',
         '--base',
         nargs='*',
@@ -120,7 +126,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
         else: # logdir address
             assert isdir(opt.resume), opt.resume
             logdir = opt.resume.rstrip('/')
-            ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), 'last.ckpt')
+            ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
 
         opt.resume_from_checkpoint = ckpt
         base_configs = sorted(
