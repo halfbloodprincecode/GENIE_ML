@@ -35,6 +35,8 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 for k, v in environ.items():
+    if not k.startswith('GENIE_'):
+        continue
     new_v = []
     for vi in v.split(sep):
         if vi.startswith('@'):
