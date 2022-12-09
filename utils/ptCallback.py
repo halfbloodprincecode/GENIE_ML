@@ -207,16 +207,24 @@ class ImageLoggerBase(Callback):
 
 class CBBase(Callback):
     """this callback defiend only for handling some BUGs of lightning and give more control to user"""
-    # def setter_handiCall(self)
-
+    def __init__(self):
+        super().__init__()
+        self.my_state = dict()
+    
+    def setter_handiCall(self, key, value):
+        self.my_state[key] = value
+    
+    def getter_handiCall(self, key):
+        return self.my_state[key]
     
     def load_state_dict(self, state_dict):
+        self.my_state = state_dict
         print('*********** LOADING *****************************', state_dict)
         # self.table_numbers = state_dict['logger_table_numbers']
         # self.all_metrics_tbls = state_dict['logger_all_metrics_tbls']
 
     def state_dict(self):
-        return {'a': 'aaaaaa'}
+        return self.my_state
         # return {
         #     'logger_table_numbers': self.table_numbers,
         #     'logger_all_metrics_tbls': self.all_metrics_tbls

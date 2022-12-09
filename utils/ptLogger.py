@@ -3,6 +3,7 @@ import inflect
 from os.path import join
 from loguru import logger
 from libs.coding import sha1
+import pytorch_lightning as pl
 from utils.metrics import Metrics
 from libs.dbms.sqlite_dbms import SqliteDBMS
 from pytorch_lightning.loggers.logger import Logger, rank_zero_experiment
@@ -37,6 +38,9 @@ class GenieLoggerBase(Logger):
         self.inflect_engine = inflect.engine()
         logger.critical('INIT END')
 
+    def on_save_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
+        logger.critical('HHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
+    
     @property
     def name(self):
         return self._name
