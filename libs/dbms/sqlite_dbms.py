@@ -10,9 +10,10 @@ class SqliteDBMS:
         self.cursor = self.con.cursor()
 
     def get_colnames(self, table_name):
-        self.cursor.execute('select * from {}'.format(table_name))
-        res = self.cursor.fetchall()
+        res = self.con.execute('select * from {}'.format(table_name))
         print('@@@@@@@@@@@@', res)
+        res = res.description
+        print('@@@@@@@@@@@@2', res)
 
 
     def get_tables(self):
