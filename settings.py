@@ -35,7 +35,6 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 KEYS_LIST = environ['GENIE_ML_KEYS'].split(',')
-print(KEYS_LIST)
 
 for k, v in environ.items():
     flag = False
@@ -47,8 +46,6 @@ for k, v in environ.items():
     if not flag:
         continue
     
-    print(k)
-
     new_v = []
     for vi in v.split(sep):
         if vi.startswith('@'):

@@ -27,6 +27,8 @@ class ConfigBase:
         logdir = kwargs['logdir']
         ckptdir = kwargs['ckptdir']
         nowname = kwargs['nowname']
+        if environ['GENIE_ML_ADD_TAG_TO_CACHEDIR'] == 'True':
+            environ['GENIE_ML_CACHEDIR'] = join(environ['GENIE_ML_CACHEDIR'], nowname)
         nondefault_trainer_args = kwargs['nondefault_trainer_args']
 
         # configure model&trainer ##########################################

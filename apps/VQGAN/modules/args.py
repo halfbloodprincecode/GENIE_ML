@@ -108,6 +108,8 @@ def _ctl_parser_(opt, unknown, **kwargs):
             'use -n/--name in combination with --resume_from_checkpoint'
         )
     if opt.resume:
+        if str(opt.resume).startswith('@'):
+            opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])
         if not exists(opt.resume):
             makedirs(opt.resume, exist_ok=True)
         if isfile(opt.resume): # ckpt address
@@ -149,10 +151,6 @@ def _ctl_parser_(opt, unknown, **kwargs):
 
     ckptdir = getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints')
     cfgdir = getenv('GENIE_ML_CFGDIR') or join(logdir, 'configs')
-    
-    print('logdir={}'.format(logdir))
-    print('ckptdir={}'.format(ckptdir))
-    print('cfgdir={}'.format(cfgdir))
     
     seed_everything(opt.seed)
     return ckptdir, cfgdir, logdir, nowname
