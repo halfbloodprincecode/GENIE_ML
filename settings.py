@@ -41,6 +41,7 @@ for k, v in environ.items():
         continue
     new_v = []
     for vi in v.split(sep):
+        print(vi)
         if vi.startswith('@'):
             new_v.append(environ[vi[1:]])
         else:
