@@ -47,7 +47,9 @@ for k, v in environ.items():
             new_v.append(environ[vi[1:]])
         else:
             new_v.append(vi)
+    print(new_v)
     new_v = sep.join(new_v)
+    print(new_v)
     environ[k] = new_v
     print('k={} | getenv={} | environ={}'.format(k, getenv(k), environ[k]))
 
