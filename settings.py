@@ -37,6 +37,8 @@ environ['GENIE_ML_APP'] = opt.app
 for k, v in environ.items():
     if not k.startswith('GENIE_'):
         continue
+    if not k == 'GENIE_ML_LOGDIR':
+        continue
     new_v = []
     for vi in v.split(sep):
         if vi.startswith('@'):
