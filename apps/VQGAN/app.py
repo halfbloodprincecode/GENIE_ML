@@ -2,10 +2,9 @@ import os
 from libs.basicHR import EHR 
 from libs.basicTime import getTimeHR_V0
 from apps.VQGAN.modules.args import Parser
+from utils.pl.plApp import validate, fit, test
 from apps.VQGAN.modules.configuration import Config
 from apps.VQGAN.modules.handler import SignalHandler
-from utils.pl.pl_app_functions import validate, fit, test
-
 
 def main():
     now = getTimeHR_V0()

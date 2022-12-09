@@ -103,7 +103,6 @@ class GenieLoggerBase(Logger):
     def log_metrics(self, metrics, step):
         if self.flag_lock:
             return
-        logger.critical('logs -> {}'.format(metrics))
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:

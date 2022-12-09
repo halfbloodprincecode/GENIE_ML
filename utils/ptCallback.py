@@ -44,8 +44,6 @@ class SetupCallbackBase(Callback):
         self.config = config
         self.lightning_config = lightning_config
 
-        logger.warning('[super class] -> ***on_fit_start***')
-
     def on_fit_start(self, trainer, pl_module):
         if trainer.global_rank == 0:
             # Create logdirs and save configs
