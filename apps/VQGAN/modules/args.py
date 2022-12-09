@@ -149,6 +149,11 @@ def _ctl_parser_(opt, unknown, **kwargs):
 
     ckptdir = getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints')
     cfgdir = getenv('GENIE_ML_CFGDIR') or join(logdir, 'configs')
+    
+    print('logdir={}'.format(logdir))
+    print('ckptdir={}'.format(ckptdir))
+    print('cfgdir={}'.format(cfgdir))
+    
     seed_everything(opt.seed)
     return ckptdir, cfgdir, logdir, nowname
 
