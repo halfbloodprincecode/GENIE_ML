@@ -1,4 +1,5 @@
 import sqlite3
+from loguru import logger
 from libs.basicIO import pathBIO
 
 class SqliteDBMS:
@@ -11,9 +12,9 @@ class SqliteDBMS:
 
     def get_colnames(self, table_name):
         res = self.con.execute('select * from {}'.format(table_name))
-        print('@@@@@@@@@@@@', res)
+        logger.critical('@@@@@@@@@@@@ ={}'.format(res))
         res = res.description
-        print('@@@@@@@@@@@@2', res)
+        logger.critical('@@@@@@@@@@@@2 ={}'.format(res))
 
 
     def get_tables(self):
