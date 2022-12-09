@@ -35,6 +35,8 @@ class GenieLoggerBase(Logger):
         table_names = self.sqlite_dbms.get_tables()
         self.table_numbers = sum([1 for t in table_names if self._name in t])
         self.table_information = [t for t in table_names if self._name in t]
+        
+        logger.critical('######## ={}'.format(self.table_information))
         for tn_inf in self.table_information:
             self.sqlite_dbms.get_colnames(tn_inf)
             
