@@ -172,7 +172,8 @@ class ImageLoggerBase(Callback):
                         images[k] = torch.clamp(images[k], -1., 1.) # it garanty that signal is in range [-1, +1]
 
             if self.use_log_local_fn:
-                self.log_local(pl_module.logger.save_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx) # save images on disk.
+                save_to_dir = join(getenv('GENIE_ML_ROOT'), 'ImageLogger') #pl_module.logger.save_dir
+                self.log_local(save_to_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx) # save images on disk.
             
             _logger = getattr(pl_module.logger, 'fn_name', '_tb')
             logger_log_images_fn = getattr(self, _logger, lambda *args, **kwargs: None) 
