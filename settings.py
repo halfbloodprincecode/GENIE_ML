@@ -38,7 +38,7 @@ for k, v in environ.items():
     new_k = []
     for key in k.split(sep):
         if key.startswith('@'):
-            new_k.append(environ[key])
+            new_k.append(environ[key[1:]])
         else:
             new_k.append(key)
     new_k = sep.join(new_k)
