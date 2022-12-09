@@ -34,13 +34,13 @@ class GenieLoggerBase(Logger):
         self.sqlite_dbms = SqliteDBMS(join(self.db_path_dir, self.db_fname))
         table_names = self.sqlite_dbms.get_tables()
         self.table_numbers = sum([1 for t in table_names if self._name in t])
-
+        self.table_information = [t for t in table_names if self._name in t]
+        for tn_inf in self.table_information:
+            self.sqlite_dbms.get_colnames(tn_inf)
+            
         self.inflect_engine = inflect.engine()
         logger.critical('INIT END')
 
-    def on_save_checkpoint(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule", checkpoint: Dict[str, Any]):
-        logger.critical('HHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
-    
     @property
     def name(self):
         return self._name

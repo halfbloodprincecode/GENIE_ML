@@ -9,6 +9,12 @@ class SqliteDBMS:
         self.con = sqlite3.connect(self.fullpath)
         self.cursor = self.con.cursor()
 
+    def get_colnames(self, table_name):
+        self.cursor.execute('select * from {}'.format(table_name))
+        res = self.cursor.fetchall()
+        print('@@@@@@@@@@@@', res)
+
+
     def get_tables(self):
         self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
         res = self.cursor.fetchall()

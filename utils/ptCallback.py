@@ -224,6 +224,7 @@ class CBBase(Callback):
         # self.all_metrics_tbls = state_dict['logger_all_metrics_tbls']
 
     def state_dict(self):
+        # self.my_state['']
         return self.my_state
         # return {
         #     'logger_table_numbers': self.table_numbers,
