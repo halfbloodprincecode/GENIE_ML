@@ -34,24 +34,29 @@ parser.add_argument(
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
+KEYS_LIST = environ['GENIE_ML_KEYS'].split(',')
+print(KEYS_LIST)
+
 for k, v in environ.items():
-    if not k.startswith('GENIE_'):
+    flag = False
+    for valid_prefix in KEYS_LIST:
+        if k.startswith(valid_prefix):
+            flag = True
+            break
+    
+    if not flag:
         continue
-    if not k == 'GENIE_ML_LOGDIR':
-        continue
+    
+    print(k)
+
     new_v = []
-    print(v, sep, v.split(sep))
     for vi in v.split(sep):
-        print(vi)
         if vi.startswith('@'):
             new_v.append(environ[vi[1:]])
         else:
             new_v.append(vi)
-    print(new_v)
     new_v = sep.join(new_v)
-    print(new_v)
     environ[k] = new_v
-    print('k={} | getenv={} | environ={}'.format(k, getenv(k), environ[k]))
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
