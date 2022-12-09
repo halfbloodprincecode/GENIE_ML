@@ -66,7 +66,12 @@ class ConfigBase:
         lightning_config.trainer = trainer_config
 
         # model
-        model = cls.instantiate_from_config(config.model)
+        logger.critical('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
+        if opt.resume_from_checkpoint:
+            model = cls.instantiate_from_config(config.model)
+            model.init_from_ckpt(opt.resume_from_checkpoint)  #MyLightningModule.load_from_checkpoint("/path/to/checkpoint.ckpt")
+        else:
+            model = cls.instantiate_from_config(config.model)
 
         # trainer and callbacks
         trainer_kwargs = dict()
@@ -221,7 +226,5 @@ class ConfigBase:
         model.learning_rate = accumulate_grad_batches * ngpu * bs * base_lr
         logger.info('Setting learning rate to {:.2e} = {} (accumulate_grad_batches) * {} (num_gpus) * {} (batchsize) * {:.2e} (base_lr)'.format(
             model.learning_rate, accumulate_grad_batches, ngpu, bs, base_lr))
-        
-        logger.critical('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
         
         return model, trainer, data

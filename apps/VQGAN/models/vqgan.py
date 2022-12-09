@@ -50,9 +50,8 @@ class VQModel(pl.LightningModule):
                 if k.startswith(ik):
                     print("Deleting key {} from state_dict.".format(k))
                     del sd[k]
-        logger.error('TODO!! where is it? self.load_state_dict={}'.format(self.load_state_dict))
         self.load_state_dict(sd, strict=False)
-        logger.error(f"Restored from {path}")
+        logger.critical(f"Restored from {path}")
 
     def encode(self, x):
         h = self.encoder(x)
