@@ -18,8 +18,6 @@ class Metrics():
         self.db_path = join(pathBIO(db_path_dir), f'{fname}.db')
         self.DB = orm_sqlite.Database(self.db_path)
         
-        logger.critical(self._processed_items)
-
         Metric = type(
             self.tableName,
             (orm_sqlite.Model,),

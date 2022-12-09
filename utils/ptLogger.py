@@ -43,11 +43,8 @@ class GenieLoggerBase(Logger):
             cols = self.sqlite_dbms.get_colnames(tn_inf)
             for di in ['step', 'timestamp']:
                 cols.remove(di)
-            logger.critical(cols)
             reconstructrd_hash = sha1(' | '.join(set(list(cols))))
             self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
-
-        
 
     @property
     def name(self):
