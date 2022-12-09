@@ -4,6 +4,8 @@ from libs.basicTime import getTimeHR_V0
 from apps.VQGAN.modules.args import Parser
 from apps.VQGAN.modules.configuration import Config
 from apps.VQGAN.modules.handler import SignalHandler
+from utils.pl.pl_app_functions import validate, fit, test
+
 
 def main():
     now = getTimeHR_V0()
@@ -19,18 +21,14 @@ def main():
         SignalHandler(trainer, ckptdir)
 
         # run
-        if not opt.no_validate and not trainer.interrupted:
-            trainer.validate(model, data)
-        if opt.train:
-            try:
-                trainer.fit(model, data)
-            except Exception:
-                SignalHandler.melk()
-                raise
-        if not opt.no_validate and not trainer.interrupted:
-            trainer.validate(model, data)
-        if not opt.no_test and not trainer.interrupted:
-            trainer.test(model, data)
+        validate(opt, trainer, model, data)
+        try:
+            fit(opt, trainer, model, data)
+        except Exception:
+            SignalHandler.melk()
+            raise
+        validate(opt, trainer, model, data)
+        test(opt, trainer, model, data)
     except Exception as e:
         if opt.debug and trainer.global_rank==0:
             EHR(e)

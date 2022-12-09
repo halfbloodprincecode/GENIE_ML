@@ -44,6 +44,7 @@ class GenieLoggerBase(Logger):
                 # self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols))
 
         self.inflect_engine = inflect.engine()
+        self.flag_lock = True
 
     @property
     def name(self):
@@ -82,6 +83,14 @@ class GenieLoggerBase(Logger):
         logger.critical('log_hyperparams | params={}'.format(params))
 
     @rank_zero_only
+    def unlockFlag(self):
+        self.flag_lock = False
+    
+    @rank_zero_only
+    def lockFlag(self):
+        self.flag_lock = True
+    
+    @rank_zero_only
     def setter_handiCall(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -92,6 +101,9 @@ class GenieLoggerBase(Logger):
     
     @rank_zero_only
     def log_metrics(self, metrics, step):
+        if self.flag_lock:
+            return
+        logger.critical('logs -> {}'.format(metrics))
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:
