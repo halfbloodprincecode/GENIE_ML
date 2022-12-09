@@ -35,14 +35,14 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 for k, v in environ.items():
-    new_k = []
-    for key in k.split(sep):
-        if key.startswith('@'):
-            new_k.append(environ[key[1:]])
+    new_v = []
+    for vi in v.split(sep):
+        if vi.startswith('@'):
+            new_v.append(environ[vi[1:]])
         else:
-            new_k.append(key)
-    new_k = sep.join(new_k)
-    environ[new_k] = v
+            new_v.append(vi)
+    new_v = sep.join(new_v)
+    environ[k] = new_v
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
