@@ -220,4 +220,6 @@ class ConfigBase:
         logger.info('Setting learning rate to {:.2e} = {} (accumulate_grad_batches) * {} (num_gpus) * {} (batchsize) * {:.2e} (base_lr)'.format(
             model.learning_rate, accumulate_grad_batches, ngpu, bs, base_lr))
         
+        logger.critical('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
+        
         return model, trainer, data
