@@ -45,7 +45,7 @@ class GenieLoggerBase(Logger):
                 cols.remove(di)
             logger.critical(tn_inf)
             reconstructrd_hash = sha1(' | '.join(set(list(cols))))
-            self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols))
+            self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
 
         
 
@@ -67,10 +67,14 @@ class GenieLoggerBase(Logger):
         """Return the root directory where experiment logs get saved, or `None` if the logger does not save data locally."""
         return self._save_dir
     
-    def create_metrics_table(self, metrics_items):
-        self.table_numbers = self.table_numbers + 1
-        ord_number = self.inflect_engine.ordinal(self.table_numbers)
-        new_table_name = 'tbl_' + self._name + f'_{ord_number}' # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+    def create_metrics_table(self, metrics_items, bypass_tblname=None):
+        if bypass_tblname is None:
+            self.table_numbers = self.table_numbers + 1
+            ord_number = self.inflect_engine.ordinal(self.table_numbers)
+            new_table_name = 'tbl_' + self._name + f'_{ord_number}' # this is `nowname`. (one dir after `logs` in `logdir`) Notic: `nowname` is constant when resuming.
+        else:
+            new_table_name = bypass_tblname
+        
         # logger.info('metric table `{}` was created.'.format(new_table_name))
         return Metrics(
             self.db_path_dir,
