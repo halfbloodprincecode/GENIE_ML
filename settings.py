@@ -40,6 +40,7 @@ for k, v in environ.items():
     if not k == 'GENIE_ML_LOGDIR':
         continue
     new_v = []
+    print(v, sep, v.split(sep))
     for vi in v.split(sep):
         print(vi)
         if vi.startswith('@'):
