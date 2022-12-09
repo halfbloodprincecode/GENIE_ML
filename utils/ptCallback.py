@@ -207,6 +207,21 @@ class ImageLoggerBase(Callback):
 
 class CBBase(Callback):
     """this callback defiend only for handling some BUGs of lightning and give more control to user"""
+    # def setter_handiCall(self)
+
+    
+    def load_state_dict(self, state_dict):
+        print('*********** LOADING *****************************', state_dict)
+        # self.table_numbers = state_dict['logger_table_numbers']
+        # self.all_metrics_tbls = state_dict['logger_all_metrics_tbls']
+
+    def state_dict(self):
+        return {'a': 'aaaaaa'}
+        # return {
+        #     'logger_table_numbers': self.table_numbers,
+        #     'logger_all_metrics_tbls': self.all_metrics_tbls
+        # }
+    
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
         # logger.warning(trainer.logged_metrics)
         pass
