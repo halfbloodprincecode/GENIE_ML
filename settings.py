@@ -43,6 +43,7 @@ for k, v in environ.items():
             new_v.append(vi)
     new_v = sep.join(new_v)
     environ[k] = new_v
+    print('k={} | getenv={} | environ={}'.format(k, getenv(k), environ[k]))
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
