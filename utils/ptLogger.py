@@ -37,8 +37,12 @@ class GenieLoggerBase(Logger):
         self.table_information = [t for t in table_names if self._name in t]
         
         for tn_inf in self.table_information:
-            self.sqlite_dbms.get_colnames(tn_inf)
-            
+            cols = self.sqlite_dbms.get_colnames(tn_inf)
+            for di in ['timestamp']:
+                cols.remove(di)
+                reconstructrd_hash = sha1(' | '.join(set(list(cols))))
+                # self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols))
+
         self.inflect_engine = inflect.engine()
         logger.critical('INIT END')
 

@@ -14,7 +14,7 @@ class SqliteDBMS:
         res = self.con.execute('select * from {}'.format(table_name))
         res = res.description
         res = [r[0] for r in res]
-        logger.critical('@@@@@@@@@@@@3 ={}'.format(res))
+        return res
 
 
     def get_tables(self):
