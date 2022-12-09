@@ -1,5 +1,5 @@
 from loguru import logger
-from os import getenv, environ, makedirs, system
+from os import getenv, environ, makedirs, system, sep
 from dotenv import load_dotenv
 from libs.basicDS import dotdict
 from utils.metrics import Metrics
@@ -35,8 +35,14 @@ opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 for k, v in environ.items():
-    environ[k] = v.replace('{GENIE_ML_APP}', opt.app)
-
+    new_k = []
+    for key in k.split(sep):
+        if key.startswith('@'):
+            new_k.append(environ[key])
+        else:
+            new_k.append(key)
+    new_k = sep.join(new_k)
+    environ[new_k] = v
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
