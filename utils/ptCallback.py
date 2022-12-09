@@ -207,35 +207,13 @@ class ImageLoggerBase(Callback):
 
 class CBBase(Callback):
     """this callback defiend only for handling some BUGs of lightning and give more control to user"""
-    def __init__(self):
-        super().__init__()
-        self.my_state = dict()
-    
-    def setter_handiCall(self, key, value):
-        self.my_state[key] = value
-    
-    def getter_handiCall(self, key):
-        return self.my_state[key]
-    
-    def load_state_dict(self, state_dict):
-        self.my_state = state_dict
-        print('*********** LOADING *****************************', state_dict)
-        # self.table_numbers = state_dict['logger_table_numbers']
-        # self.all_metrics_tbls = state_dict['logger_all_metrics_tbls']
-
-    def state_dict(self):
-        # self.my_state['']
-        return self.my_state
-        # return {
-        #     'logger_table_numbers': self.table_numbers,
-        #     'logger_all_metrics_tbls': self.all_metrics_tbls
-        # }
     
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx): # ,dataloader_idx
         # logger.warning(trainer.logged_metrics)
         pass
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx): # in this case outputs is same as pl_module!!
+        logger.critical('logs -> {}'.format(trainer.logged_metrics))
         if False and (batch_idx % trainer.log_every_n_steps == 0):
             S = pl_module.current_epoch * trainer.num_val_batches[dataloader_idx] + batch_idx
             M = {k: v.item() for k, v in trainer.logged_metrics.items()}

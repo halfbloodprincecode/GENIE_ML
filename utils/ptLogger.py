@@ -18,7 +18,6 @@ class GenieLoggerBase(Logger):
         fn_name: Optional[str] = '_genie',
         select_storage: Optional[str] = 'GENIE_ML_STORAGE0',
         version: str = '0.1',
-        flag_ignore = True,
         **kwargs: Any
     ):
         super().__init__(**kwargs)
@@ -45,8 +44,6 @@ class GenieLoggerBase(Logger):
                 # self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols))
 
         self.inflect_engine = inflect.engine()
-        self.flag_ignore = flag_ignore
-        logger.critical('INIT END')
 
     @property
     def name(self):
@@ -95,10 +92,6 @@ class GenieLoggerBase(Logger):
     
     @rank_zero_only
     def log_metrics(self, metrics, step):
-        if self.flag_ignore:
-            logger.critical('step={} | metrics={}'.format(step, metrics))
-            self.flag_ignore = False
-            return
         # metrics is a dictionary of metric names and values
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:
