@@ -45,6 +45,7 @@ class GenieLoggerBase(Logger):
                 cols.remove(di)
             cols = [c.replace('__', '/') for c in cols]
             reconstructrd_hash = sha1(' | '.join(set(list(cols))))
+            logger.critical('{} -> {}'.format(cols, reconstructrd_hash))
             self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
 
     @property
