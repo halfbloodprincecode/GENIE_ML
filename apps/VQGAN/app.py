@@ -21,10 +21,8 @@ def main():
         SignalHandler(trainer, ckptdir)
 
         # run
-        logger.error('gs={} | vs={} | ts={}'.format(trainer.global_step, trainer.validation_step, trainer.test_step))
         validate(opt, trainer, model, data)
         try:
-            logger.error('gs={} | vs={} | ts={}'.format(trainer.global_step, trainer.validation_step, trainer.test_step))
             fit(opt, trainer, model, data)
         except Exception:
             SignalHandler.melk()
