@@ -53,6 +53,12 @@ def _get_parser_(**parser_kwargs):
         default=list(),
     )
     parser.add_argument(
+        '--hash-ignore',
+        nargs='*',
+        help='hash ignore list for plLogger(Geine)',
+        default=list(),
+    )
+    parser.add_argument(
         '-t',
         '--train',
         type=str2bool,

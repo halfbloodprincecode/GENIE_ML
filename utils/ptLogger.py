@@ -18,9 +18,11 @@ class GenieLoggerBase(Logger):
         fn_name: Optional[str] = '_genie',
         select_storage: Optional[str] = 'GENIE_ML_STORAGE0',
         version: str = '0.1',
+        hash_ignore = [],
         **kwargs: Any
     ):
         super().__init__(**kwargs)
+        self.hash_ignore = hash_ignore
         self._save_dir = save_dir
         self._name = name.lower().strip().replace(' ', '_').replace('-', '_')
         self._fn_name = fn_name
@@ -39,6 +41,8 @@ class GenieLoggerBase(Logger):
         self.inflect_engine = inflect.engine()
         self.flag_lock = True
         
+        logger.warning(self.hash_ignore)
+
         for tn_inf in self.table_information:
             cols = self.sqlite_dbms.get_colnames(tn_inf)
             for di in ['step', 'timestamp']:
@@ -46,7 +50,8 @@ class GenieLoggerBase(Logger):
             cols = [c.replace('__', '/') for c in cols]
             reconstructrd_hash = sha1(' | '.join(set(list(cols))))
             logger.critical('{} -> {}'.format(cols, reconstructrd_hash))
-            self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
+            if not (reconstructrd_hash in self.hash_ignore):
+                self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
 
     @property
     def name(self):

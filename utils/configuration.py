@@ -111,6 +111,7 @@ class ConfigBase:
                 'params': {
                     'name': nowname,
                     'save_dir': logdir,
+                    'hash_ignore': opt.hash_ignore
                 }
             },
         }
