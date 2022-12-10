@@ -15,3 +15,5 @@ def fit(opt, trainer, model, data):
 def test(opt, trainer, model, data):
     if not opt.no_test and not trainer.interrupted:
         trainer.test(model, data)
+    
+

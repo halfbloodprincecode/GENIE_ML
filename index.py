@@ -19,19 +19,7 @@ from loader import *
 def main():
     app()
     
-    # from utils.plots.neonGlowing import Neon
-    # neon = Neon(xlabel='epoch', ylabel='validation loss')
-
-    # neon.plot_metrics(
-    #     # hash = '5ee327ab28725a85bb9fcf6bd3a379052b659d9b',
-    #     # col_names = 'val__aeloss_step, step, epoch',
-    #     hash = '7cea1c511ce7e9bab00be269201cc16effa8ad12',
-    #     col_names = 'val__aeloss_epoch, step, epoch',
-    #     db = '/media/alihejrati/3E3009073008C83B/Code/Genie-ML/logs/vqgan/10/metrics2222.db',
-    #     smoothing=True,
-    #     smooth_both=True,
-    #     # label='loss',
-    # )
+    
     
     
     

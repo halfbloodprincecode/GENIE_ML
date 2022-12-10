@@ -6,7 +6,7 @@ import settings
 from libs.dyimport import Import
 
 
-app = Import(f'apps.{getenv("GENIE_ML_APP")}.app.main', embedParams={})
+app = Import(f'apps.{getenv("GENIE_ML_APP")}.app.App', embedParams={})
 
 # from articles.Attention_is_All_You_Need.index import main as atn_main, metrics as atn_metrics
 # from utils.quantizer import veqQuantizerImg
