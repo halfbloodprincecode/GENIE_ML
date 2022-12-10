@@ -119,7 +119,7 @@ class GenieLoggerBase(Logger):
         # your code to record metrics goes here
         if metrics.get('epoch', None) is None:
             metrics['epoch'] = self._trainer_obj.current_epoch
-        hash_metrics_keys = sha1(' | '.join(set(list(metrics.keys()))))
+        hash_metrics_keys = sha1(' | '.join(sorted(list(metrics.keys()))))
         tbl = self.all_metrics_tbls.get(hash_metrics_keys, None)
         if tbl is None:
             self.all_metrics_tbls[hash_metrics_keys] = self.create_metrics_table(list(metrics.keys()))
