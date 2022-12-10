@@ -49,7 +49,8 @@ class GenieLoggerBase(Logger):
             reconstructrd_hash = sha1(' | '.join(set(list(cols))))
             if not (reconstructrd_hash in self.hash_ignore):
                 self.all_metrics_tbls[reconstructrd_hash] = self.create_metrics_table(list(cols), bypass_tblname=tn_inf)
-
+            else:
+                logger.critical('{} is ignored'.format(tn_inf))
     @property
     def name(self):
         return self._name
