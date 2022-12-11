@@ -56,8 +56,8 @@ class App:
             # col_names = 'val__aeloss_step, step, epoch',
             hash = '7cea1c511ce7e9bab00be269201cc16effa8ad12',
             col_names = 'val__aeloss_epoch, step, epoch',
-            db = '/media/alihejrati/3E3009073008C83B/Code/Genie-ML/logs/vqgan/10/metrics2222.db',
+            db = '/media/alihejrati/3E3009073008C83B/Code/Genie-ML/logs/vqgan/11/metrics.db',
             smoothing=True,
-            smooth_both=True,
+            # smooth_both=True,
             # label='loss',
         )
