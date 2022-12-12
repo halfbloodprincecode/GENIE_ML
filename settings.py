@@ -28,6 +28,12 @@ if getenv('SETUP') == 'True':
 # load some of ARGS
 parser = ArgumentParser()
 parser.add_argument(
+    '--stg0',
+    type=str,
+    default='',
+    help='app name',
+)
+parser.add_argument(
     '--app',
     type=str,
     required=True,
@@ -47,6 +53,7 @@ parser.add_argument(
 )
 opt, unknown = parser.parse_known_args()
 
+environ['GENIE_ML_STORAGE0'] = opt.stg0 or environ['GENIE_ML_STORAGE0']
 environ['GENIE_ML_APP'] = opt.app
 environ['GENIE_ML_APP_FN'] = opt.app_fn
 environ['GENIE_ML_APP_DSC'] = opt.app_dsc
