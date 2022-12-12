@@ -40,7 +40,7 @@ class ParserBasic(ABC):
             help='ckpt fname',
         )
         parser.add_argument(
-            '-H'
+            '-H',
             '--hash-ignore',
             nargs='*',
             help='hash ignore list for plLogger(Geine)',
