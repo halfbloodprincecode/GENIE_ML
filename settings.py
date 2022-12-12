@@ -37,10 +37,18 @@ parser.add_argument(
     default='main',
     help='app function name',
 )
+parser.add_argument(
+    '--app-dsc',
+    type=str,
+    default='',
+    help='app discription',
+)
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
 environ['GENIE_ML_APP_FN'] = opt.app_fn
+environ['GENIE_ML_APP_DSC'] = opt.app_dsc
+
 PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
 
 for k, v in environ.items():
