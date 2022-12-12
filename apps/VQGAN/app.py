@@ -9,7 +9,7 @@ from apps.VQGAN.modules.handler import SignalHandler
 class App(AppBase):
     def __new__(cls, **kwargs):
         cls.Parser = Parser
-        return super().__new__(**kwargs)
+        return super().__new__(cls, **kwargs)
 
     @classmethod
     def main(cls):
