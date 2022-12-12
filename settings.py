@@ -31,14 +31,21 @@ parser.add_argument(
     required=True,
     help='app name',
 )
+parser.add_argument(
+    '--app-fn',
+    type=str,
+    default='main',
+    help='app function name',
+)
 opt, unknown = parser.parse_known_args()
 
 environ['GENIE_ML_APP'] = opt.app
-KEYS_LIST = environ['GENIE_ML_KEYS'].split(',')
+environ['GENIE_ML_APP_FN'] = opt.app_fn
+PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
 
 for k, v in environ.items():
     flag = False
-    for valid_prefix in KEYS_LIST:
+    for valid_prefix in PFX_KEYS:
         if k.startswith(valid_prefix):
             flag = True
             break

@@ -12,6 +12,7 @@ class DummyLoss(nn.Module):
 
 
 def adopt_weight(weight, global_step, threshold=0, value=0.):
+    logger.warning('@@@@@@@@@@@@@2 {} | {} | {}'.format(global_step, threshold, value))
     if global_step < threshold:
         weight = value
     return weight
@@ -78,7 +79,7 @@ class VQLPIPSWithDiscriminator(nn.Module):
         rec_loss = torch.abs(inputs.contiguous() - reconstructions.contiguous())
         if self.perceptual_weight > 0:
             p_loss = self.perceptual_loss(inputs.contiguous(), reconstructions.contiguous())
-            rec_loss = rec_loss + self.perceptual_weight * p_loss
+            rec_loss = rec_loss + self.perceptual_weight * p_loss # what is p_loss shape? is scaller?
         else:
             p_loss = torch.tensor([0.0])
 
@@ -96,14 +97,18 @@ class VQLPIPSWithDiscriminator(nn.Module):
                 assert self.disc_conditional
                 logits_fake = self.discriminator(torch.cat((reconstructions.contiguous(), cond), dim=1))
             g_loss = -torch.mean(logits_fake)
+            logger.debug('{} | {}'.format(logits_fake, logits_fake.shape))
 
             try:
                 d_weight = self.calculate_adaptive_weight(nll_loss, g_loss, last_layer=last_layer)
-            except RuntimeError:
+            except RuntimeError as e_RuntimeError:
                 assert not self.training
+                logger.critical('ERROR: @@@@@@@@@@@@@', e_RuntimeError)
                 d_weight = torch.tensor(0.0)
 
-            disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start)
+            logger.warning('d_weight={}'.format(d_weight))
+            disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start) # here value is 0 :|
+            logger.error('disc_factor={}'.format(disc_factor))
             loss = nll_loss + d_weight * disc_factor * g_loss + self.codebook_weight * codebook_loss.mean()
 
             log = {"{}/total_loss".format(split): loss.clone().detach().mean(),
@@ -127,6 +132,7 @@ class VQLPIPSWithDiscriminator(nn.Module):
                 logits_fake = self.discriminator(torch.cat((reconstructions.contiguous().detach(), cond), dim=1))
 
             disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start)
+            logger.error('opt index 1 | disc_factor={}'.format(disc_factor))
             d_loss = disc_factor * self.disc_loss(logits_real, logits_fake)
 
             log = {"{}/disc_loss".format(split): d_loss.clone().detach().mean(),

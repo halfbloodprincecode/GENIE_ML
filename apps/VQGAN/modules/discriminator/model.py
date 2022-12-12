@@ -64,4 +64,4 @@ class NLayerDiscriminator(nn.Module):
 
     def forward(self, input):
         """Standard forward."""
-        return self.main(input)
+        return self.main(input) # I think 3x256x256 -> 1x14x14
