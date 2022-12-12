@@ -38,24 +38,12 @@ def _get_parser_(**parser_kwargs):
         help='resume from logdir or checkpoint in logdir',
     )
     parser.add_argument(
-        '--ckpt-fname',
-        type=str,
-        default='last',
-        help='ckpt fname',
-    )
-    parser.add_argument(
         '-b',
         '--base',
         nargs='*',
         metavar='base_config.yaml',
         help='paths to base configs. Loaded from left-to-right. '
         'Parameters can be overwritten or added with command-line options of the form `--key value`.',
-        default=list(),
-    )
-    parser.add_argument(
-        '--hash-ignore',
-        nargs='*',
-        help='hash ignore list for plLogger(Geine)',
         default=list(),
     )
     parser.add_argument(

@@ -17,18 +17,34 @@ class ParserBasic(ABC):
     @classmethod
     def predefined_args(cls, parser):
         parser.add_argument(
+            '-L',
             '--logger_ml',
             type=str,
             default='genie', #'tensorboard',
             help='default_logger_cfgs key name',
         )
         parser.add_argument(
+            '-M',
             '--metrics_tbl',
             type=str,
             const=True,
             default=None,
             nargs='?',
             help='metrics table name',
+        )
+        parser.add_argument(
+            '-C',
+            '--ckpt-fname',
+            type=str,
+            default='last',
+            help='ckpt fname',
+        )
+        parser.add_argument(
+            '-H'
+            '--hash-ignore',
+            nargs='*',
+            help='hash ignore list for plLogger(Geine)',
+            default=list(),
         )
         return parser
 
