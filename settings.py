@@ -1,9 +1,11 @@
+import os
+import shutil
 from loguru import logger
 from os import getenv, environ, makedirs, system, sep
 from dotenv import load_dotenv
 from libs.basicDS import dotdict
 from utils.metrics import Metrics
-from os.path import dirname, join
+from os.path import dirname, join, exists
 from argparse import ArgumentParser
 from libs.basicTime import getTimeHR
 from setuptools import find_packages, setup
@@ -69,6 +71,9 @@ for k, v in environ.items():
             new_v.append(vi)
     new_v = sep.join(new_v)
     environ[k] = new_v
+
+if bool(environ['GENIE_ML_APP_DSC']) and (not exists(environ['GENIE_ML_STORAGE0'])) and exists(os.path.split(environ['GENIE_ML_STORAGE0'])[0]):
+    shutil.copytree(os.path.split(environ['GENIE_ML_STORAGE0'])[0], environ['GENIE_ML_STORAGE0'])
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
