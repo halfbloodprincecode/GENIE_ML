@@ -31,7 +31,7 @@ parser.add_argument(
     '--stg0',
     type=str,
     default='',
-    help='app name',
+    help='storage0 path',
 )
 parser.add_argument(
     '--app',
@@ -53,10 +53,12 @@ parser.add_argument(
 )
 opt, unknown = parser.parse_known_args()
 
-environ['GENIE_ML_STORAGE0'] = opt.stg0 or environ['GENIE_ML_STORAGE0']
 environ['GENIE_ML_APP'] = opt.app
 environ['GENIE_ML_APP_FN'] = opt.app_fn
 environ['GENIE_ML_APP_DSC'] = opt.app_dsc
+
+if opt.stg0:
+    environ['GENIE_ML_STORAGE0'] = join(opt.stg0, environ['GENIE_ML_APP_DSC']) 
 
 PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
 
