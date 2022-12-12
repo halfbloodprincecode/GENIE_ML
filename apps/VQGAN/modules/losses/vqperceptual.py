@@ -12,8 +12,9 @@ class DummyLoss(nn.Module):
 
 
 def adopt_weight(weight, global_step, threshold=0, value=0.):
-    logger.warning('@@@@@@@@@@@@@2 {} | {} | {}'.format(global_step, threshold, value))
-    if global_step < threshold:
+    if isinstance(threshold, int) and (global_step < threshold):
+        weight = value
+    elif isinstance(threshold, bool) and (not threshold):
         weight = value
     return weight
 
@@ -97,19 +98,17 @@ class VQLPIPSWithDiscriminator(nn.Module):
                 assert self.disc_conditional
                 logits_fake = self.discriminator(torch.cat((reconstructions.contiguous(), cond), dim=1))
             g_loss = -torch.mean(logits_fake)
-            logger.debug('{} | {}'.format(logits_fake, logits_fake.shape))
 
             try:
                 d_weight = self.calculate_adaptive_weight(nll_loss, g_loss, last_layer=last_layer)
             except RuntimeError as e_RuntimeError:
                 assert not self.training
-                logger.critical('ERROR: @@@@@@@@@@@@@', e_RuntimeError)
                 d_weight = torch.tensor(0.0)
 
-            logger.warning('d_weight={}'.format(d_weight))
             disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start) # here value is 0 :|
-            logger.error('disc_factor={}'.format(disc_factor))
             loss = nll_loss + d_weight * disc_factor * g_loss + self.codebook_weight * codebook_loss.mean()
+
+            logger.critical('disc_factor={}'.format(disc_factor))
 
             log = {"{}/total_loss".format(split): loss.clone().detach().mean(),
                    "{}/quant_loss".format(split): codebook_loss.detach().mean(),
@@ -132,8 +131,9 @@ class VQLPIPSWithDiscriminator(nn.Module):
                 logits_fake = self.discriminator(torch.cat((reconstructions.contiguous().detach(), cond), dim=1))
 
             disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start)
-            logger.error('opt index 1 | disc_factor={}'.format(disc_factor))
             d_loss = disc_factor * self.disc_loss(logits_real, logits_fake)
+
+            logger.warning('disc_factor={}'.format(disc_factor))
 
             log = {"{}/disc_loss".format(split): d_loss.clone().detach().mean(),
                    "{}/logits_real".format(split): logits_real.detach().mean(),
