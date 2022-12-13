@@ -135,7 +135,7 @@ def signal_save(s, path, makedirsFlag=True):
     #     ...
 
 def get_all_file_names(pathadr):
-    return glob.iglob(pathadr, recursive=True)
+    return sorted(list(glob.iglob(pathadr, recursive=True)))
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
