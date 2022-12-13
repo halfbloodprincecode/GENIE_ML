@@ -134,13 +134,19 @@ def signal_save(s, path, makedirsFlag=True):
     # if isinstance(s, ...):
     #     ...
 
+def get_all_file_names(pathadr):
+    return glob.iglob(pathadr, recursive=True)
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
-    os.makedirs(dst, exist_ok=True)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
+    logger.warning(get_all_file_names(src))
     if waitFlag:
-        command_str = 'rsync -av "{}" "{}" | tqdm --unit_scale --desc "{}" > /dev/null'.format(src, dst, desc)
-        subprocess.call(command_str)
+        raise ValueError('ok!')
+        # shutil.copytree(src, dst)
+        # while
+        # os.makedirs(dst, exist_ok=True)
+        # command_str = 'rsync -av "{}" "{}" | tqdm --unit_scale --desc "{}" > /dev/null'.format(src, dst, desc)
+        # subprocess.call(command_str)
     else:
         shutil.copytree(src, dst)
