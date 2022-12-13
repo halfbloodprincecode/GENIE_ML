@@ -83,17 +83,25 @@ for k, v in environ.items():
     new_v = sep.join(new_v)
     environ[k] = new_v
 
+src_dir = None
+
 if app_splited_status == 'CODE0' and (not exists(environ['GENIE_ML_STORAGE0'])):
-    shutil.copytree(
-        join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0]), 
-        environ['GENIE_ML_STORAGE0']
-    )
+    src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0])
+    if exists(src_dir):
+        shutil.copytree(
+            src_dir, 
+            environ['GENIE_ML_STORAGE0']
+        )
 
 if app_splited_status == 'CODE1' and (not exists(environ['GENIE_ML_STORAGE0'])):
-    shutil.copytree(
-        join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1]), 
-        environ['GENIE_ML_STORAGE0']
-    )
+    src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1])
+    if exists(src_dir):
+        shutil.copytree(
+            src_dir, 
+            environ['GENIE_ML_STORAGE0']
+        )
+
+src_dir = None
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
