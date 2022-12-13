@@ -122,6 +122,7 @@ def _ctl_parser_(opt, unknown, **kwargs):
             logdir = opt.resume.rstrip('/')
             ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
 
+        assert exists(ckpt), 'ckpt path `{}` does not exist.'.format(ckpt)
         opt.resume_from_checkpoint = ckpt
         base_configs = sorted(
             ls(logdir, 'configs/*.yaml', full_path=True)
