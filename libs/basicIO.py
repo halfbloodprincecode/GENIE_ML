@@ -135,12 +135,12 @@ def signal_save(s, path, makedirsFlag=True):
     #     ...
 
 def get_all_file_names(pathadr):
-    return sorted(list(glob.iglob(pathadr, recursive=True)))
+    return list(glob.iglob(pathadr, recursive=True))
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
-    logger.warning(get_all_file_names(src))
+    logger.warning(get_all_file_names(src + '*'))
     if waitFlag:
         raise ValueError('ok!')
         # shutil.copytree(src, dst)
