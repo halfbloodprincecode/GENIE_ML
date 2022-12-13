@@ -134,13 +134,21 @@ def signal_save(s, path, makedirsFlag=True):
     # if isinstance(s, ...):
     #     ...
 
-def get_all_file_names(pathadr):
-    return list(glob.iglob(pathadr, recursive=True))
+def get_size(start_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+
+    return total_size # bytes
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
-    logger.warning(get_all_file_names(src + '/*'))
+    logger.warning(get_size(src))
     if waitFlag:
         raise ValueError('ok!')
         # shutil.copytree(src, dst)
