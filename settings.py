@@ -15,7 +15,8 @@ from libs.basicIO import pathBIO, readBIO, check_logdir
 load_dotenv(join(dirname(__file__), '.env'))
 
 environ['GENIE_ML_STORAGE0'] = environ['GENIE_ML_STORAGE0'].rstrip().rstrip(sep)
-assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP'), '{} is not valid storage path'.format(environ['GENIE_ML_STORAGE0'])
+assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP'), '{} is not valid for expected storage0 path'.format(environ['GENIE_ML_STORAGE0'])
+stg0 = environ['GENIE_ML_STORAGE0']
 
 # setup the project
 if getenv('SETUP') == 'True':
@@ -47,12 +48,17 @@ opt, unknown = parser.parse_known_args()
 app_splited = opt.app.split(':')
 app_module = app_splited[0]
 
+app_splited_status = None
 if len(app_splited) == 1 and len(app_splited[0]) > 0:
     environ['GENIE_ML_APP'] = app_splited[0]
 elif len(app_splited) == 2 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0:
     environ['GENIE_ML_APP'] = app_splited[1]
+    app_splited_status = 'CODE0'
+elif len(app_splited) == 3 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0 and len(app_splited[2]) > 0:
+    environ['GENIE_ML_APP'] = app_splited[2]
+    app_splited_status = 'CODE1'
 else:
-    raise ValueError('app name `{}` is not valid'.format(opt.app))
+    raise ValueError('app name `{}` is not valid. it should be like (appname | appname:newapp | appname:oldapp:newapp)'.format(opt.app))
 
 environ['GENIE_ML_APP_FN'] = opt.app_fn
 
@@ -77,8 +83,17 @@ for k, v in environ.items():
     new_v = sep.join(new_v)
     environ[k] = new_v
 
-# if bool(environ['GENIE_ML_APP_DSC']) and (not exists(environ['GENIE_ML_STORAGE0'])) and exists(os.path.split(environ['GENIE_ML_STORAGE0'])[0]):
-#     shutil.copytree(os.path.split(environ['GENIE_ML_STORAGE0'])[0], environ['GENIE_ML_STORAGE0'])
+if app_splited_status == 'CODE0' and (not exists(environ['GENIE_ML_STORAGE0'])):
+    shutil.copytree(
+        join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0]), 
+        environ['GENIE_ML_STORAGE0']
+    )
+
+if app_splited_status == 'CODE1' and (not exists(environ['GENIE_ML_STORAGE0'])):
+    shutil.copytree(
+        join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1]), 
+        environ['GENIE_ML_STORAGE0']
+    )
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
