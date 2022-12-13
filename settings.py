@@ -57,7 +57,7 @@ environ['GENIE_ML_APP'] = opt.app
 environ['GENIE_ML_APP_FN'] = opt.app_fn
 environ['GENIE_ML_APP_DSC'] = opt.app_dsc
 
-if opt.stg0:
+if opt.stg:
     environ['GENIE_ML_STORAGE0'] = join(opt.stg, environ['GENIE_ML_APP_DSC']) 
 
 PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
