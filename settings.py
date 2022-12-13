@@ -87,17 +87,17 @@ src_dir = None
 
 if app_splited_status == 'CODE0' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0])
-    if exists(src_dir): # It means user want run app_splited[0] in new version with name app_splited[1]
+    if exists(src_dir):
         shutil.copytree(
             src_dir, 
             environ['GENIE_ML_STORAGE0']
         )
     else:
-        pass # It means user want run app_splited[0] as name app_splited[1]
+        pass # Not Statement
 
 if app_splited_status == 'CODE1' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1])
-    if exists(src_dir): # It means user want run app_splited[0] based on app_splited[1] in new version with name app_splited[2]
+    if exists(src_dir):
         shutil.copytree(
             src_dir, 
             environ['GENIE_ML_STORAGE0']
