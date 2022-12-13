@@ -173,7 +173,8 @@ class ConfigBase:
                 'params': {
                     'batch_frequency': 500,# 750,
                     'max_images': 4,
-                    'clamp': True
+                    'clamp': True,
+                    'nowname': nowname
                 }
             },
             # 'learning_rate_logger': { # it must be uncomment!!!!!!

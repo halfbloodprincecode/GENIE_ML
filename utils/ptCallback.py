@@ -86,8 +86,9 @@ class CustomProgressBarBase(TQDMProgressBar):
 
 
 class ImageLoggerBase(Callback):
-    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, use_log_local_fn=True, opt_params=None):
+    def __init__(self, batch_frequency, max_images, clamp=True, increase_log_steps=True, use_log_local_fn=True, opt_params=None, nowname=''):
         super().__init__()
+        self.nowname = nowname
         self.batch_freq = batch_frequency
         self.max_images = max_images
         self.log_steps = [2 ** n for n in range(int(np.log2(self.batch_freq)) + 1)]
@@ -174,7 +175,7 @@ class ImageLoggerBase(Callback):
                         images[k] = torch.clamp(images[k], -1., 1.) # it garanty that signal is in range [-1, +1]
 
             if self.use_log_local_fn:
-                save_to_dir = join(getenv('GENIE_ML_ROOT'), 'ImageLogger') #pl_module.logger.save_dir
+                save_to_dir = join(getenv('GENIE_ML_ROOT'), self.nowname, 'ImageLogger') #pl_module.logger.save_dir
                 self.log_local(save_to_dir, split, images, pl_module.global_step, pl_module.current_epoch, batch_idx) # save images on disk.
             
             _logger = getattr(pl_module.logger, 'fn_name', '_tb')
