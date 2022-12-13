@@ -83,8 +83,6 @@ for k, v in environ.items():
     
     new_v = []
     for vi in v.split(sep):
-        if vi == '':
-            continue
         if vi.startswith('@'):
             new_v.append(environ[vi[1:]])
         else:
