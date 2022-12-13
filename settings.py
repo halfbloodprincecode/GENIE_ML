@@ -28,7 +28,7 @@ if getenv('SETUP') == 'True':
 # load some of ARGS
 parser = ArgumentParser()
 parser.add_argument(
-    '--stg0',
+    '--stg',
     type=str,
     default='',
     help='storage0 path',
@@ -58,7 +58,7 @@ environ['GENIE_ML_APP_FN'] = opt.app_fn
 environ['GENIE_ML_APP_DSC'] = opt.app_dsc
 
 if opt.stg0:
-    environ['GENIE_ML_STORAGE0'] = opt.stg0 #join(opt.stg0, environ['GENIE_ML_APP_DSC']) 
+    environ['GENIE_ML_STORAGE0'] = join(opt.stg, environ['GENIE_ML_APP_DSC']) 
 
 PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
 
