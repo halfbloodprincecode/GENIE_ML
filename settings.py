@@ -1,5 +1,4 @@
 import os
-import shutil
 from loguru import logger
 from os import getenv, environ, makedirs, system, sep
 from dotenv import load_dotenv
@@ -9,7 +8,7 @@ from os.path import dirname, join, exists
 from argparse import ArgumentParser
 from libs.basicTime import getTimeHR
 from setuptools import find_packages, setup
-from libs.basicIO import pathBIO, readBIO, check_logdir
+from libs.basicIO import pathBIO, readBIO, check_logdir, copy_dir
 
 #load env variables.
 load_dotenv(join(dirname(__file__), '.env'))
@@ -54,7 +53,6 @@ environ['GENIE_ML_APP_MD'] = app_splited[0]
 app_splited_status = None
 if len(app_splited) == 1 and len(app_splited[0]) > 0:
     environ['GENIE_ML_APP'] = app_splited[0]
-    environ['GENIE_ML_STORAGE0'] = join(environ['GENIE_ML_STORAGE0'].replace('@GENIE_ML_APP_MD', ''))
 elif len(app_splited) == 2 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0:
     environ['GENIE_ML_APP'] = app_splited[1]
     app_splited_status = 'CODE0'
@@ -92,20 +90,14 @@ src_dir = None
 if app_splited_status == 'CODE0' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0])
     if exists(src_dir):
-        shutil.copytree(
-            src_dir, 
-            environ['GENIE_ML_STORAGE0']
-        )
+        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], wait_for_complete=True)
     else:
         pass # Not Statement
 
 if app_splited_status == 'CODE1' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1])
     if exists(src_dir):
-        shutil.copytree(
-            src_dir, 
-            environ['GENIE_ML_STORAGE0']
-        )
+        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], wait_for_complete=True)
     else:
         raise ValueError('src dir `{}` is not exist'.format(src_dir))
 

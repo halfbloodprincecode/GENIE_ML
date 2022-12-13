@@ -2,10 +2,12 @@ import os
 import yaml
 import json
 import glob
+import shutil
 import pathlib
 import tarfile
 import zipfile
 import requests
+import subprocess
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
@@ -131,3 +133,13 @@ def signal_save(s, path, makedirsFlag=True):
     
     # if isinstance(s, ...):
     #     ...
+
+
+def copy_dir(_src, _dst, wait_for_complete=False, desc=None):
+    src, dst = join(_src), join(_dst)
+    desc = desc if desc else 'copying from {} to {}'.format(src, dst)
+    if wait_for_complete:
+        command_str = 'rsync -av {} {} | tqdm --unit_scale --desc "{}" | wc -l'.format(src, dst, desc)
+        subprocess.call(command_str)
+    else:
+        shutil.copytree(src, dst)
