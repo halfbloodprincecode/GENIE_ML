@@ -18,6 +18,12 @@ environ['GENIE_ML_STORAGE0'] = environ['GENIE_ML_STORAGE0'].rstrip().rstrip(sep)
 assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP'), 'path `{}` is not valid for expected storage0'.format(environ['GENIE_ML_STORAGE0'])
 stg0 = environ['GENIE_ML_STORAGE0']
 
+environ['GENIE_ML_LOGDIR'] = environ['GENIE_ML_LOGDIR'].rstrip().rstrip(sep)
+assert environ['GENIE_ML_LOGDIR'].endswith(sep + 'logs'), '`GENIE_ML_LOGDIR` it must be ends with `logs` but now is: {}'.format(environ['GENIE_ML_LOGDIR'])
+
+environ['GENIE_ML_CFGDIR'] = environ['GENIE_ML_CFGDIR'] or '@GENIE_ML_LOGDIR/configs'
+environ['GENIE_ML_CKPTDIR'] = environ['GENIE_ML_CKPTDIR'] or '@GENIE_ML_LOGDIR/checkpoints'
+
 # setup the project
 if getenv('SETUP') == 'True':
     setup(
@@ -46,11 +52,12 @@ parser.add_argument(
 opt, unknown = parser.parse_known_args()
 
 app_splited = opt.app.split(':')
-app_module = app_splited[0]
+environ['GENIE_ML_APP_MD'] = app_splited[0]
 
 app_splited_status = None
 if len(app_splited) == 1 and len(app_splited[0]) > 0:
-    environ['GENIE_ML_APP'] = app_splited[0]
+    environ['GENIE_ML_APP'] = 'untitled'
+    app_splited_status = 'CODE0'
 elif len(app_splited) == 2 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0:
     environ['GENIE_ML_APP'] = app_splited[1]
     app_splited_status = 'CODE0'
