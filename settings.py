@@ -21,9 +21,6 @@ stg0 = environ['GENIE_ML_STORAGE0']
 environ['GENIE_ML_LOGDIR'] = environ['GENIE_ML_LOGDIR'].rstrip().rstrip(sep)
 assert environ['GENIE_ML_LOGDIR'].endswith(sep + 'logs'), '`GENIE_ML_LOGDIR` it must be ends with `logs` but now is: {}'.format(environ['GENIE_ML_LOGDIR'])
 
-# environ['GENIE_ML_CFGDIR'] = environ['GENIE_ML_CFGDIR'] or '@GENIE_ML_LOGDIR/configs'
-# environ['GENIE_ML_CKPTDIR'] = environ['GENIE_ML_CKPTDIR'] or '@GENIE_ML_LOGDIR/checkpoints'
-
 # setup the project
 if getenv('SETUP') == 'True':
     setup(
