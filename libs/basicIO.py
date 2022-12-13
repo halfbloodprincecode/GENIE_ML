@@ -11,6 +11,7 @@ import subprocess
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
+from time import sleep
 from loguru import logger
 from libs.coding import md5
 from libs.basicHR import EHR
@@ -147,11 +148,20 @@ def get_size(start_path):
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
+    src_size = get_size(src)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
-    logger.warning(get_size(src))
+    
+    logger.warning(src_size)
     if waitFlag:
-        raise ValueError('ok!')
-        # shutil.copytree(src, dst)
+        shutil.copytree(src, dst)
+        p_bar = tqdm(range(src_size), desc=desc)
+        dst_size = 0
+        while(dst_size != src_size):
+            sleep(1)
+            dst_size = get_size(dst)
+            p_bar.n = dst_size
+            p_bar.refresh()
+            
         # while
         # os.makedirs(dst, exist_ok=True)
         # command_str = 'rsync -av "{}" "{}" | tqdm --unit_scale --desc "{}" > /dev/null'.format(src, dst, desc)
