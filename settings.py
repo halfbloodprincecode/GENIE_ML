@@ -57,7 +57,7 @@ environ['GENIE_ML_APP_MD'] = app_splited[0]
 app_splited_status = None
 if len(app_splited) == 1 and len(app_splited[0]) > 0:
     environ['GENIE_ML_APP'] = app_splited[0]
-    # environ['GENIE_ML_STORAGE0'] = environ['GENIE_ML_STORAGE0'].replace('@GENIE_ML_APP_MD', '')
+    environ['GENIE_ML_STORAGE0'] = environ['GENIE_ML_STORAGE0'].replace('@GENIE_ML_APP_MD', '')
 elif len(app_splited) == 2 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0:
     environ['GENIE_ML_APP'] = app_splited[1]
     app_splited_status = 'CODE0'
@@ -83,6 +83,8 @@ for k, v in environ.items():
     
     new_v = []
     for vi in v.split(sep):
+        if vi == '':
+            continue
         if vi.startswith('@'):
             new_v.append(environ[vi[1:]])
         else:
