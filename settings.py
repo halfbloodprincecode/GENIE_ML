@@ -14,6 +14,8 @@ from libs.basicIO import pathBIO, readBIO, check_logdir
 #load env variables.
 load_dotenv(join(dirname(__file__), '.env'))
 
+assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP')
+
 # setup the project
 if getenv('SETUP') == 'True':
     setup(
@@ -28,13 +30,6 @@ if getenv('SETUP') == 'True':
 # load some of ARGS
 parser = ArgumentParser()
 parser.add_argument(
-    '-S',
-    '--stg',
-    type=str,
-    default='',
-    help='storage0 path',
-)
-parser.add_argument(
     '--app',
     type=str,
     required=True,
@@ -46,20 +41,19 @@ parser.add_argument(
     default='main',
     help='app function name',
 )
-parser.add_argument(
-    '--app-dsc',
-    type=str,
-    default='',
-    help='app discription',
-)
 opt, unknown = parser.parse_known_args()
 
-environ['GENIE_ML_APP'] = opt.app
-environ['GENIE_ML_APP_FN'] = opt.app_fn
-environ['GENIE_ML_APP_DSC'] = opt.app_dsc
+app_splited = opt.app.split(':')
+app_module = app_splited[0]
 
-if opt.stg:
-    environ['GENIE_ML_STORAGE0'] = join(opt.stg, environ['GENIE_ML_APP_DSC']) 
+if len(app_splited) == 1 and len(app_splited[0]) > 0:
+    environ['GENIE_ML_APP'] = app_splited[0]
+elif len(app_splited) == 2 and len(app_splited[0]) > 0 and len(app_splited[1]) > 0:
+    environ['GENIE_ML_APP'] = app_splited[1]
+else:
+    raise ValueError('app name `{}` is not valid'.format(opt.app))
+
+environ['GENIE_ML_APP_FN'] = opt.app_fn
 
 PFX_KEYS = environ['GENIE_ML_PFX'].split(',')
 
@@ -82,8 +76,8 @@ for k, v in environ.items():
     new_v = sep.join(new_v)
     environ[k] = new_v
 
-if bool(environ['GENIE_ML_APP_DSC']) and (not exists(environ['GENIE_ML_STORAGE0'])) and exists(os.path.split(environ['GENIE_ML_STORAGE0'])[0]):
-    shutil.copytree(os.path.split(environ['GENIE_ML_STORAGE0'])[0], environ['GENIE_ML_STORAGE0'])
+# if bool(environ['GENIE_ML_APP_DSC']) and (not exists(environ['GENIE_ML_STORAGE0'])) and exists(os.path.split(environ['GENIE_ML_STORAGE0'])[0]):
+#     shutil.copytree(os.path.split(environ['GENIE_ML_STORAGE0'])[0], environ['GENIE_ML_STORAGE0'])
 
 # https://github.com/Kaggle/kaggle-api
 if getenv('KAGGLE_CHMOD'):
