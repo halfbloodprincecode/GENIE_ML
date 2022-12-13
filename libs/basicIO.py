@@ -135,10 +135,11 @@ def signal_save(s, path, makedirsFlag=True):
     #     ...
 
 
-def copy_dir(_src, _dst, wait_for_complete=False, desc=None):
+def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
+    os.makedirs(dst, exist_ok=True)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
-    if wait_for_complete:
+    if waitFlag:
         command_str = 'rsync -av {} {} | tqdm --unit_scale --desc "{}" | wc -l'.format(src, dst, desc)
         subprocess.call(command_str)
     else:

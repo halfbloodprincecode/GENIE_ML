@@ -90,14 +90,14 @@ src_dir = None
 if app_splited_status == 'CODE0' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[0])
     if exists(src_dir):
-        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], wait_for_complete=True)
+        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], waitFlag=True)
     else:
         pass # Not Statement
 
 if app_splited_status == 'CODE1' and (not exists(environ['GENIE_ML_STORAGE0'])):
     src_dir = join(os.path.split(environ['GENIE_ML_STORAGE0'])[0], app_splited[1])
     if exists(src_dir):
-        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], wait_for_complete=True)
+        copy_dir(src_dir, environ['GENIE_ML_STORAGE0'], waitFlag=True)
     else:
         raise ValueError('src dir `{}` is not exist'.format(src_dir))
 
