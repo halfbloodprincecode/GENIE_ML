@@ -140,7 +140,7 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
     os.makedirs(dst, exist_ok=True)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
     if waitFlag:
-        command_str = 'rsync -av {} {} | tqdm --unit_scale --desc "{}" | wc -l'.format(src, dst, desc)
+        command_str = 'rsync -av "{}" "{}" | tqdm --unit_scale --desc "{}" | wc -l'.format(src, dst, desc)
         subprocess.call(command_str)
     else:
         shutil.copytree(src, dst)
