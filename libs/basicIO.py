@@ -151,7 +151,6 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src_size = get_size(src)
     desc = desc if desc else 'copying from {} to {}'.format(src, dst)
     
-    logger.warning(src_size)
     if waitFlag:
         shutil.copytree(src, dst)
         p_bar = tqdm(range(src_size), desc=desc)
