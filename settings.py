@@ -28,6 +28,7 @@ if getenv('SETUP') == 'True':
 # load some of ARGS
 parser = ArgumentParser()
 parser.add_argument(
+    '-S',
     '--stg',
     type=str,
     default='',

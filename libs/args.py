@@ -46,6 +46,7 @@ class ParserBasic(ABC):
             help='hash ignore list for plLogger(Geine)',
             default=list(),
         )
+        # -S => is reserved in setting.py as `stg` refer to storage0
         return parser
 
     @classmethod
