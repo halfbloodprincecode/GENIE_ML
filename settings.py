@@ -15,7 +15,7 @@ from libs.basicIO import pathBIO, readBIO, check_logdir
 load_dotenv(join(dirname(__file__), '.env'))
 
 environ['GENIE_ML_STORAGE0'] = environ['GENIE_ML_STORAGE0'].rstrip().rstrip(sep)
-assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP'), '{} is not valid for expected storage0 path'.format(environ['GENIE_ML_STORAGE0'])
+assert environ['GENIE_ML_STORAGE0'].endswith(sep + '@GENIE_ML_APP'), 'path `{}` is not valid for expected storage0'.format(environ['GENIE_ML_STORAGE0'])
 stg0 = environ['GENIE_ML_STORAGE0']
 
 # setup the project
