@@ -87,11 +87,12 @@ class VQModel(pl.LightningModule):
         #     'training_step | gs={} | batch_idx={}, optimizer_idx={}'.format(
         #         self.global_step, batch_idx, optimizer_idx))
         x = self.get_input(batch, self.image_key)
+        vasl = self.get_input(batch, 'vasl')
         xrec, qloss = self(x)
 
         if optimizer_idx == 0:
             # autoencode
-            aeloss, log_dict_ae = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
+            aeloss, log_dict_ae = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train", cond=vasl)
 
             # self.log("train/aeloss", aeloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             # self.log_dict(log_dict_ae, prog_bar=True, logger=True, on_step=True, on_epoch=True)
@@ -103,7 +104,7 @@ class VQModel(pl.LightningModule):
 
         if optimizer_idx == 1:
             # discriminator
-            discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train")
+            discloss, log_dict_disc = self.loss(qloss, x, xrec, optimizer_idx, self.global_step, last_layer=self.get_last_layer(), split="train", cond=vasl)
             # self.log("train/discloss", discloss, prog_bar=True, logger=True, on_step=True, on_epoch=True)
             # self.log_dict(log_dict_disc, prog_bar=True, logger=True, on_step=True, on_epoch=True)
 
@@ -116,10 +117,10 @@ class VQModel(pl.LightningModule):
         # logger.warning('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         vasl = self.get_input(batch, 'vasl')
-        logger.warning('{} | {}'.format(vasl.shape, torch.unique(vasl)))
+        # logger.warning('{} | {}'.format(vasl.shape, torch.unique(vasl)))
         xrec, qloss = self(x)
-        aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
-        discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step, last_layer=self.get_last_layer(), split="val")
+        aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val", cond=vasl)
+        discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step, last_layer=self.get_last_layer(), split="val", cond=vasl)
         # rec_loss = log_dict_ae["val/rec_loss"]
 
         # self.log("val/rec_loss", rec_loss, prog_bar=True, logger=True, on_step=True, on_epoch=True, sync_dist=True)
