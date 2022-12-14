@@ -66,5 +66,5 @@ class NLayerDiscriminator(nn.Module):
     def forward(self, input):
         """Standard forward."""
         input = torch.cat([input[:,0:1 ,:,:], input[:,1:2 ,:,:], input[:,3:4 ,:,:]], dim=1)
-        logger.critical(input.shape)
+        # logger.critical(input.shape)
         return self.main(input) # I think 3x256x256 -> 1x30x30
