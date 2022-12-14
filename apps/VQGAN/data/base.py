@@ -60,13 +60,13 @@ class ImagePaths(Dataset):
         example = dict()
         vasl = vaslExtractor(self.labels['file_path_'][i])
         image = self.preprocess_image(self.labels['file_path_'][i]) # file_path_ is abspath of img.
-        logger.critical('{} | {} | {}'.format(np.unique(vasl), vasl.shape, image.shape))
+        # logger.critical('{} | {} | {}'.format(np.unique(vasl), vasl.shape, image.shape))
         T = self.preprocessor(image=image, mask=vasl)
         
         example['vasl'] = (T['mask']/127.5 - 1.0).astype(np.float32)
         example['image'] = (T['image']/127.5 - 1.0).astype(np.float32)
 
-        logger.warning('{} | {} | {}'.format(np.unique(example['vasl']), example['vasl'].shape, example['image'].shape))
+        # logger.warning('{} | {} | {}'.format(np.unique(example['vasl']), example['vasl'].shape, example['image'].shape))
 
         for k in self.labels:
             example[k] = self.labels[k][i]
