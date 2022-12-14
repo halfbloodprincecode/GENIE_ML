@@ -23,7 +23,7 @@ model:
         disc_in_channels: 3 #6 #3
         # disc_start: 250001
         disc_start: True
-        disc_weight: 2.0 #0.8
+        disc_weight: 0.8 #2.0 #0.8
         codebook_weight: 1.0
 
 data:
