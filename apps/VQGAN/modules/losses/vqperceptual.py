@@ -104,7 +104,8 @@ class VQLPIPSWithDiscriminator(nn.Module):
             except RuntimeError as e_RuntimeError:
                 logger.critical(e_RuntimeError)
                 assert not self.training
-                d_weight = torch.tensor(0.0)
+                # d_weight = torch.tensor(0.0)
+                d_weight = torch.tensor(1.0)
 
             disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start) # here value is 0 :|
             loss = nll_loss + d_weight * disc_factor * g_loss + self.codebook_weight * codebook_loss.mean()
