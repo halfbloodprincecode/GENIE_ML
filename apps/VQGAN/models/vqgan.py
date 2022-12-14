@@ -116,7 +116,7 @@ class VQModel(pl.LightningModule):
         # logger.warning('---------validation_step----------')
         x = self.get_input(batch, self.image_key)
         vasl = self.get_input(batch, 'vasl')
-        logger.warning(vasl.shape, torch.unique(vasl))
+        logger.warning('{} | {}'.format(vasl.shape, torch.unique(vasl)))
         xrec, qloss = self(x)
         aeloss, log_dict_ae = self.loss(qloss, x, xrec, 0, self.global_step, last_layer=self.get_last_layer(), split="val")
         discloss, log_dict_disc = self.loss(qloss, x, xrec, 1, self.global_step, last_layer=self.get_last_layer(), split="val")
