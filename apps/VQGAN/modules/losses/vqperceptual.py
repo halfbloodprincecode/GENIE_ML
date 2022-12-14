@@ -102,7 +102,7 @@ class VQLPIPSWithDiscriminator(nn.Module):
             try:
                 d_weight = self.calculate_adaptive_weight(nll_loss, g_loss, last_layer=last_layer)
             except RuntimeError as e_RuntimeError:
-                logger.critical(e_RuntimeError)
+                # logger.critical(e_RuntimeError)
                 assert not self.training
                 # d_weight = torch.tensor(0.0)
                 d_weight = torch.tensor(1.0)
