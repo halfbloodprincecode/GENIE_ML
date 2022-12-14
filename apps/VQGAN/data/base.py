@@ -3,6 +3,7 @@ import numpy as np
 import albumentations
 from PIL import Image
 from loguru import logger
+from utils.preprocessing.image.example.fundus.eyepacs_vasl_extraction import vaslExtractor
 from torch.utils.data import Dataset, ConcatDataset
 
 
@@ -51,15 +52,22 @@ class ImagePaths(Dataset):
         if not image.mode == 'RGB':
             image = image.convert('RGB')
         image = np.array(image).astype(np.uint8)
-        image = self.preprocessor(image=image)['image']
-        image = (image/127.5 - 1.0).astype(np.float32)
 
         # logger.info('image!! {}'.format(image))
         return image
 
     def __getitem__(self, i):
         example = dict()
-        example['image'] = self.preprocess_image(self.labels['file_path_'][i]) # file_path_ is abspath of img.
+        vasl = vaslExtractor(self.labels['file_path_'][i])
+        image = self.preprocess_image(self.labels['file_path_'][i]) # file_path_ is abspath of img.
+        logger.critical(np.unique(vasl))
+        T = self.preprocessor(image=image, image2=vasl)
+        
+        example['vasl'] = (T['image2']/127.5 - 1.0).astype(np.float32)
+        example['image'] = (T['image']/127.5 - 1.0).astype(np.float32)
+
+        logger.critical(np.unique(example['vasl']))
+
         for k in self.labels:
             example[k] = self.labels[k][i]
         return example
