@@ -113,14 +113,18 @@ def _ctl_parser_(opt, unknown, **kwargs):
         if not exists(opt.resume):
             makedirs(opt.resume, exist_ok=True)
         if isfile(opt.resume): # ckpt address
-            paths = opt.resume.split('/')
-            idx = len(paths)-paths[::-1].index('logs')+1 # this can produce error if `logs` is not in list.
-            logdir = '/'.join(paths[:idx])
-            ckpt = opt.resume
+            raise ValueError('opt.resume must be refer to logdir but now refer to a file. | opt.resume={}'.format(opt.resume))
+            # paths = opt.resume.split('/')
+            # idx = len(paths)-paths[::-1].index('logs')+1 # this can produce error if `logs` is not in list.
+            # logdir = '/'.join(paths[:idx])
+            # ckpt = opt.resume
         else: # logdir address
-            assert isdir(opt.resume), opt.resume
+            assert isdir(opt.resume), '{} is must be directory'.format(opt.resume)
             logdir = opt.resume.rstrip('/')
-            ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
+            if str(opt.ckpt_fname).endswith('.ckpt'):
+                ckpt = opt.ckpt_fname
+            else:
+                ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
 
         assert exists(ckpt), 'ckpt path `{}` does not exist.'.format(ckpt)
         opt.resume_from_checkpoint = ckpt
