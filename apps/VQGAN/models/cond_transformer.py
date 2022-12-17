@@ -83,19 +83,22 @@ class Net2NetTransformer(pl.LightningModule):
 
     def forward(self, x, c):
         # one step to produce the logits
-        _, z_indices = self.encode_to_z(x)
-        _, c_indices = self.encode_to_c(c)
+        # Notic: we peresent each point By its index that is a scaler number in range(number of clusters=1024)
+        _, z_indices = self.encode_to_z(x) # z_indices.shape: [B, dim] == [2, 256] -> totally has 512 point in latent space(d=256) | here we present each point By its index which is a scaler number in range(1024) that is the number of clusters! # Note that if we wont present each point By its complete values thus z_indices.shape: [B, number of points, latent dim]==[2,256,256]
+        _, c_indices = self.encode_to_c(c) # c_indices.shape: [B, 1] its column vector with dtype=int of label classes.
 
         if self.training and self.pkeep < 1.0:
             mask = torch.bernoulli(self.pkeep*torch.ones(z_indices.shape,
                                                          device=z_indices.device))
             mask = mask.round().to(dtype=torch.int64)
-            r_indices = torch.randint_like(z_indices, self.transformer.config.vocab_size)
+            r_indices = torch.randint_like(z_indices, self.transformer.config.vocab_size) # eyepacs.transformer.transformer_config.params.vocab_size
             a_indices = mask*z_indices+(1-mask)*r_indices
         else:
             a_indices = z_indices
 
-        cz_indices = torch.cat((c_indices, a_indices), dim=1)
+        cz_indices = torch.cat((c_indices, a_indices), dim=1) # cz_indices.shape: [B, 257] It is class scaler label folowed By 256= 2^4 x 2^4 point. (per box!)
+
+        print('hhhhhhhhhhhhhhhhh', cz_indices.shape)
 
         # target includes all sequence elements (no need to handle first one
         # differently because we are conditioning)
@@ -186,7 +189,7 @@ class Net2NetTransformer(pl.LightningModule):
         if self.downsample_cond_size > -1:
             c = F.interpolate(c, size=(self.downsample_cond_size, self.downsample_cond_size))
         quant_c, _, [_,_,indices] = self.cond_stage_model.encode(c)
-        print('JJJJJJJJJJJJJJJJJ', c, indices, indices.shape, len(indices.shape) > 2)
+        # print('(NOTE: indices is [column and long] versian of c) JJJJJJJJJJJJJJJJJ', c, indices, indices.shape, len(indices.shape) > 2)
         if len(indices.shape) > 2:
             indices = indices.view(c.shape[0], -1)
         return quant_c, indices
