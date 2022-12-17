@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import make_interp_spline, BSpline
+from utils.preprocessing.timeseries.basicTS import smoothing as smoothing_function
 
 class Neon:
     def __init__(self, xlabel='x', ylabel='y', color='#D9D9D9', font='Purisa', title_fontdict=None, labels_fontdict=None, grid_args_dict=None):
@@ -20,7 +20,7 @@ class Neon:
         plt.xticks(fontname=font)
         plt.yticks(fontname=font)
     
-    def plot_metrics(self, db, hash, col_names, index=0, label='', plt_show=True, smoothing=True, smooth_dpi=300, smooth_k=3, smooth_both=False):
+    def plot_metrics(self, db, hash, col_names, index=0, label='', tbl='', plt_show=True, smoothing=True, smooth_dpi=300, smooth_k=3, smooth_both=False):
         from libs.coding import sha1
         from libs.dbms.sqlite_dbms import SqliteDBMS
         sqlite_dbms = SqliteDBMS(db)
@@ -34,11 +34,11 @@ class Neon:
                     cols.remove(di)
             cols = [c.replace('__', '/') for c in cols]
             reconstructrd_hash = sha1(' | '.join(sorted(list(cols))))
-            if reconstructrd_hash == hash:
+            # print(tbl, tbl_name, tbl.lower() in tbl_name.lower())
+            if (reconstructrd_hash == hash) and (tbl.lower() in tbl_name.lower()):
                 partial_data = sqlite_dbms.select('select {} from {}'.format(col_names, tbl_name))
                 data = data + partial_data
 
-        sqlite_dbms
         D = list(map(list, zip(*data)))
         X, Y = range(len(D[index])), D[index]
         if smoothing and smooth_both:
@@ -65,10 +65,7 @@ class Neon:
         x = np.array(x)
         y = np.array(y)
         if smoothing:
-            xnew = np.linspace(x.min(), x.max(), smooth_dpi) # smooth_dpi represents number of points to make between T.min and T.max
-            spl = make_interp_spline(x, y, k=smooth_k)  # type: BSpline
-            y = spl(xnew)
-            x = xnew
+            x, y = smoothing_function(x, y, smooth_dpi=smooth_dpi, smooth_k=smooth_k)
         
         line, = ax.plot(x, y, lw=1, zorder=6, label=label)
         for cont in range(6, 1, -1):

@@ -214,8 +214,8 @@ class Net2NetTransformer(pl.LightningModule):
         
         quant_z = self.first_stage_model.quantize.get_codebook_entry(
             index.reshape(-1), shape=bhwc)
-        x = self.first_stage_model.decode(quant_z)
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@ decode', x.shape)
+        x = self.first_stage_model.decode(quant_z) # x.shape: torch.Size([2, 3, 256, 256])
+        # print('@@@@@@@@@@@@@@@@@@@@@@@@@@@ decode', x.shape)
         return x
 
     @torch.no_grad()
@@ -319,7 +319,8 @@ class Net2NetTransformer(pl.LightningModule):
 
     def shared_step(self, batch, batch_idx):
         x, c = self.get_xc(batch)
-        logits, target = self(x, c)
+        logits, target = self(x, c) # logits is now not a probibility and softmax in F.crossentropy applied to it
+        
         logger.critical('{} | {}'.format(logits.shape, target.shape))
         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), target.reshape(-1))
         return loss

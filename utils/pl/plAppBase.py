@@ -8,7 +8,7 @@ class AppBase:
         cls.now = getattr(cls, 'now_function', getTimeHR_V0)()
         cls.opt, cls.unknown, (cls.ckptdir, cls.cfgdir, cls.logdir, cls.nowname) = cls.Parser(now=cls.now)
         return getattr(cls, getenv('GENIE_ML_APP_FN'))(**kwargs)
-    
+
     @classmethod
     def main(cls):
         raise NotImplementedError()
@@ -36,17 +36,18 @@ class AppBase:
         
     @classmethod
     def plot(cls, **kwargs):
-        col_names = kwargs.get('col_names', 'val__aeloss_epoch, step, epoch')
+        col_names = kwargs.get('col_names', 'val__discloss_epoch, step, epoch')
         index = kwargs.get('index', 0)
         y_name = col_names.split(',')[index].strip()
 
         from utils.plots.neonGlowing import Neon
         neon = Neon(xlabel=kwargs.get('xlabel', 'epoch'), ylabel=kwargs.get('ylabel', y_name))
         neon.plot_metrics(
+            tbl = kwargs.get('tbl', '2022_12_14t19_46_35_eyepacs_vqgan'),
             hash = kwargs.get('hash', '7cea1c511ce7e9bab00be269201cc16effa8ad12'),
             col_names = col_names,
             # col_names = 'val__discloss_epoch, step, epoch',
-            db = kwargs['db'],
+            db = kwargs.get('db', '/media/alihejrati/3E3009073008C83B/Code/Genie-ML/logs/vqgan/13/metrics.db'),
             smoothing=kwargs.get('smoothing', True),
             # smooth_both=kwargs.get('smooth_both', True),
             # label=smooth_both.get('label', 'loss'),
