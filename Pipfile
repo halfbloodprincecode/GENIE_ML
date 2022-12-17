@@ -26,6 +26,7 @@ academictorrents = "*"
 kaggle = "*"
 matplotlib = "*"
 inflect = "*"
+transformers = "*"
 
 [dev-packages]
 
