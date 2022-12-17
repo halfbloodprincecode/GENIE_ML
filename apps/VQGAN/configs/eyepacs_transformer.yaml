@@ -39,7 +39,10 @@ model:
     cond_stage_config:
       target: apps.VQGAN.modules.util.Labelator
       params:
-        n_classes: 1000 # MY MODEL HAVE 5 CLASS!!
+        n_classes: 5 #1000 # MY MODEL HAVE 5 CLASS!!
+
+
+
 data:
   target: apps.VQGAN.modules.dataset.DataModuleFromConfig
   params:

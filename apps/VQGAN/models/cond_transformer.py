@@ -75,6 +75,7 @@ class Net2NetTransformer(pl.LightningModule):
             self.cond_stage_key = self.first_stage_key
             self.cond_stage_model = SOSProvider(self.sos_token)
         else:
+            print('$$$$$$$$$$$$$$$$$$$$$$$$')
             model = instantiate_from_config(config)
             model = model.eval()
             model.train = disabled_train
@@ -177,7 +178,7 @@ class Net2NetTransformer(pl.LightningModule):
 
     @torch.no_grad()
     def encode_to_c(self, c):
-        print(c, c.dtype, c.shape)
+        # print(c, c.dtype, c.shape)
         if self.downsample_cond_size > -1:
             c = F.interpolate(c, size=(self.downsample_cond_size, self.downsample_cond_size))
         quant_c, _, [_,_,indices] = self.cond_stage_model.encode(c)
