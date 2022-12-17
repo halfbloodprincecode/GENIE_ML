@@ -112,8 +112,6 @@ class Net2NetTransformer(pl.LightningModule):
         # cut off conditioning outputs - output i corresponds to p(z_i | z_{<i}, c)
         logits = logits[:, c_indices.shape[1]-1:]
 
-        print('@@@@@@@@@@@@@@@@@@@', logits.shape)
-
         return logits, target
 
     def top_k_logits(self, logits, k):
@@ -205,14 +203,14 @@ class Net2NetTransformer(pl.LightningModule):
         index = self.permuter(index, reverse=True)
         bhwc = (zshape[0],zshape[2],zshape[3],zshape[1])
         
-        # print(
-        #     '++++++++++++++',
-        #     index, index.shape
-        # )
-        # print(
-        #     '++++++++++++++ 2',
-        #     index.reshape(-1), index.reshape(-1).shape
-        # )
+        print(
+            '++++++++++++++',
+            index, index.shape
+        )
+        print(
+            '++++++++++++++ 2',
+            index.reshape(-1), index.reshape(-1).shape
+        )
         
         quant_z = self.first_stage_model.quantize.get_codebook_entry(
             index.reshape(-1), shape=bhwc)
