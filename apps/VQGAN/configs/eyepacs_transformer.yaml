@@ -44,6 +44,7 @@ data:
   target: apps.VQGAN.modules.dataset.DataModuleFromConfig
   params:
     batch_size: 2
+    num_workers: 2
     wrap: false
     train:
       target: apps.VQGAN.data.eyepacs.eyepacsTrain
