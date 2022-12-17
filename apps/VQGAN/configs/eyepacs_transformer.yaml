@@ -49,9 +49,30 @@ data:
       target: apps.VQGAN.data.eyepacs.eyepacsTrain
       params:
         config:
-          size: 256
+          MODE_VAL: 25 #(asli) # optianal
+          EXT: jpeg
+          SIZE: 256
+          HOST_DIR: $KAGGLE_PATH
+          NAME: eyepacs_all
+          URL:
+            synset: //data/config/eyepacs/synset_human.txt
+            iSynset: //data/config/eyepacs/index_synset.yaml
+            iSynsetTest: //data/config/eyepacs/index_synsetTest.yaml
+          FILES:
+            - eyepacs.zip
+
     validation:
       target: apps.VQGAN.data.eyepacs.eyepacsValidation
       params:
         config:
-          size: 256
+          MODE_VAL: 10 #(asli) # optianal
+          EXT: jpeg
+          SIZE: 256
+          HOST_DIR: $KAGGLE_PATH
+          NAME: eyepacs_all
+          URL:
+            synset: //data/config/eyepacs/synset_human.txt
+            iSynset: //data/config/eyepacs/index_synset.yaml
+            iSynsetTest: //data/config/eyepacs/index_synsetTest.yaml
+          FILES:
+            - eyepacs.zip
