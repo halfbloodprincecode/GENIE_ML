@@ -281,11 +281,11 @@ class VectorQuantizer2(nn.Module):
             torch.sum(self.embedding.weight**2, dim=1) - 2 * \
             torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
 
-        print(
-            '@@@@@@@@@@@@@@@@@@@@@@',
-            torch.sum(z_flattened ** 2, dim=1, keepdim=True).shape,
-            torch.sum(self.embedding.weight**2, dim=1).shape
-        )
+        # print(
+        #     '@@@@@@@@@@@@@@@@@@@@@@',
+        #     torch.sum(z_flattened ** 2, dim=1, keepdim=True).shape,
+        #     torch.sum(self.embedding.weight**2, dim=1).shape
+        # )
 
         min_encoding_indices = torch.argmin(d, dim=1)
         z_q = self.embedding(min_encoding_indices).view(z.shape)
