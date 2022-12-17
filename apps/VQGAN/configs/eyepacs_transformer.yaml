@@ -16,7 +16,7 @@ model:
       target: apps.VQGAN.models.vqgan.VQModel
       params:
         embed_dim: 256
-        n_embed: 16384 # my model have 1024!!
+        n_embed: 1024 #16384 (default) # my model have 1024!!
         ddconfig:
           double_z: false
           z_channels: 256
