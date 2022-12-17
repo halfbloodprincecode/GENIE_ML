@@ -108,9 +108,9 @@ class Labelator(AbstractEncoder):
         self.quantize_interface = quantize_interface
 
     def encode(self, c):
-        print('EEEEEEEEEEEEEEE', c, c.shape, c.dtype)
+        # print('EEEEEEEEEEEEEEE', c, c.shape, c.dtype)
         c = c[:,None]
-        print('EEEEEEEEEEEEEEE 2', c, c.shape, c.dtype)
+        # print('EEEEEEEEEEEEEEE 2', c, c.shape, c.dtype)
         if self.quantize_interface:
             return c, None, [None, None, c.long()]
         return c
