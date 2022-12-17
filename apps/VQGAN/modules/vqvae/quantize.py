@@ -327,21 +327,12 @@ class VectorQuantizer2(nn.Module):
         # get quantized latent vectors
         z_q = self.embedding(indices)
 
-        print(
-            shape,
-            '*******************',
-            indices, z_q, z_q.shape
-        )
 
         if shape is not None:
             z_q = z_q.view(shape)
             # reshape back to match original input shape
             z_q = z_q.permute(0, 3, 1, 2).contiguous()
 
-        print(
-            '******************* 2',
-            z_q, z_q.shape
-        )
 
         return z_q
 
