@@ -98,13 +98,16 @@ class Net2NetTransformer(pl.LightningModule):
 
         cz_indices = torch.cat((c_indices, a_indices), dim=1) # cz_indices.shape: [B, 257] It is class scaler label folowed By 256= 2^4 x 2^4 point. (per box!)
 
-        print('hhhhhhhhhhhhhhhhh', cz_indices.shape)
+        # print('hhhhhhhhhhhhhhhhh', cz_indices.shape)
 
         # target includes all sequence elements (no need to handle first one
         # differently because we are conditioning)
         target = z_indices
         # make the prediction
         logits, _ = self.transformer(cz_indices[:, :-1])
+
+        print('LLLLLLLLLLLLLLL', logits.shape)
+
         # cut off conditioning outputs - output i corresponds to p(z_i | z_{<i}, c)
         logits = logits[:, c_indices.shape[1]-1:]
 
