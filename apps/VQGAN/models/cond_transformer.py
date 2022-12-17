@@ -106,7 +106,7 @@ class Net2NetTransformer(pl.LightningModule):
         # make the prediction
         logits, _ = self.transformer(cz_indices[:, :-1])
         # logits.shape: torch.Size([B, (number of points)256, (number of clusters)16384]) -> each value is probibility of belonging to certain cluster
-        print('LLLLLLLLLLLLLLL', logits[0, 0] logits.shape)
+        print('LLLLLLLLLLLLLLL', logits[0, 0], logits[0, 0].sum().item(), logits.shape)
 
         # cut off conditioning outputs - output i corresponds to p(z_i | z_{<i}, c)
         logits = logits[:, c_indices.shape[1]-1:]
