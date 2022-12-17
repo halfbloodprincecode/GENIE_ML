@@ -288,13 +288,13 @@ class VectorQuantizer2(nn.Module):
         # )
 
         min_encoding_indices = torch.argmin(d, dim=1)
-        print(
-            z.shape,
-            '---------------------',
-            min_encoding_indices.shape, 
-            self.embedding(min_encoding_indices).shape,
-            self.embedding(min_encoding_indices).view(z.shape).shape
-        )
+        # print(
+        #     z.shape,
+        #     '---------------------',
+        #     min_encoding_indices.shape, 
+        #     self.embedding(min_encoding_indices).shape,
+        #     self.embedding(min_encoding_indices).view(z.shape).shape
+        # )
         z_q = self.embedding(min_encoding_indices).view(z.shape)
         perplexity = None
         min_encodings = None
