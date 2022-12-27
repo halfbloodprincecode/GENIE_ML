@@ -321,8 +321,11 @@ class Net2NetTransformer(pl.LightningModule):
         x, c = self.get_xc(batch)
         logits, target = self(x, c) # logits is now not a probibility and softmax in F.crossentropy applied to it
         
-        logger.critical('{} | {}'.format(logits.shape, target.shape))
+        # logger.critical('{} | {}'.format(logits.shape, target.shape))
+        # torch.Size([2, 256, 16384]) | torch.Size([2, 256])
         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), target.reshape(-1))
+        logger.critical(loss.shape)
+        
         return loss
 
     def training_step(self, batch, batch_idx):
