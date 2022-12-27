@@ -220,6 +220,7 @@ class Net2NetTransformer(pl.LightningModule):
 
     @torch.no_grad()
     def log_images(self, batch, temperature=None, top_k=None, callback=None, lr_interface=False, **kwargs):
+        logger.warning(kwargs.keys())
         log = dict()
 
         N = 4
@@ -324,8 +325,8 @@ class Net2NetTransformer(pl.LightningModule):
         # logger.critical('{} | {}'.format(logits.shape, target.shape))
         # torch.Size([2, 256, 16384]) | torch.Size([2, 256])
         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), target.reshape(-1))
-        logger.critical(loss.shape)
-        
+        # logger.critical(loss.shape)
+        # torch.Size([])
         return loss
 
     def training_step(self, batch, batch_idx):
