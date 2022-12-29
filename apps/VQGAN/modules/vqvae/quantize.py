@@ -275,9 +275,11 @@ class VectorQuantizer2(nn.Module):
         assert rescale_logits==False, "Only for interface compatible with Gumbel"
         assert return_logits==False, "Only for interface compatible with Gumbel"
         # reshape z -> (batch, height, width, channel) and flatten
-        logger.critical(z.shape)
+        # logger.critical(z.shape) # torch.Size([2, 256, 16, 16])
         z = rearrange(z, 'b c h w -> b h w c').contiguous()
+        logger.critical(z.shape)
         z_flattened = z.view(-1, self.e_dim)
+        logger.critical(z_flattened.shape)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
 
         d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
