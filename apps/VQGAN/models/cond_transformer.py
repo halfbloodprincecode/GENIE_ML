@@ -180,8 +180,8 @@ class Net2NetTransformer(pl.LightningModule):
     def encode_to_z(self, x):
         quant_z, _, info = self.first_stage_model.encode(x) # quant_z.shape -> torch.Size([2, 256, 16, 16])
         indices = info[2].view(quant_z.shape[0], -1) # info[2] is (512 -> number of points B2xH16xW16) dim vector corspand with nearst cluster
-        logger.critical(info[2].shape)
-        logger.warning(indices.shape)
+        # logger.critical(info[2].shape) # torch.Size([512])
+        # logger.warning(indices.shape) # torch.Size([2, 256]) ->becuse each index is scaller not a real vector
         # print('kkkkkkkkkkkkkk', 
         #     quant_z.shape, # torch.Size([2, 256, 16, 16])
         #     indices.shape # torch.Size([2, 256]) # totally 512
@@ -196,6 +196,8 @@ class Net2NetTransformer(pl.LightningModule):
             c = F.interpolate(c, size=(self.downsample_cond_size, self.downsample_cond_size))
         quant_c, _, [_,_,indices] = self.cond_stage_model.encode(c)
         # print('(NOTE: indices is [column and long] versian of c) JJJJJJJJJJJJJJJJJ', c, indices, indices.shape, len(indices.shape) > 2)
+        logger.critical(len(indices.shape))
+        
         if len(indices.shape) > 2:
             indices = indices.view(c.shape[0], -1)
         return quant_c, indices
