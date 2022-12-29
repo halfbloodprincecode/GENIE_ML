@@ -15,6 +15,7 @@ model:
     first_stage_config:
       target: apps.VQGAN.models.vqgan.VQModel
       params:
+        # ckpt_path: /content/drive/MyDrive/storage/Genie_ML/D_V/logs/2022-12-14T19-46-35_eyepacs_vqgan/checkpoints/last.ckpt
         embed_dim: 256
         n_embed: 16384 #1024 #16384 (default) # my model have 1024!!
         ddconfig:

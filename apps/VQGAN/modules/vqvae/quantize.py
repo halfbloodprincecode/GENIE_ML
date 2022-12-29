@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch import einsum
 from einops import rearrange
+from loguru import logger
 
 
 class VectorQuantizer(nn.Module):
@@ -42,6 +43,7 @@ class VectorQuantizer(nn.Module):
             2. flatten input to (B*H*W,C)
         """
         # reshape z -> (batch, height, width, channel) and flatten
+        logger.critical(z.shape)
         z = z.permute(0, 2, 3, 1).contiguous()
         z_flattened = z.view(-1, self.e_dim)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
