@@ -43,7 +43,6 @@ class VectorQuantizer(nn.Module):
             2. flatten input to (B*H*W,C)
         """
         # reshape z -> (batch, height, width, channel) and flatten
-        logger.critical(z.shape)
         z = z.permute(0, 2, 3, 1).contiguous()
         z_flattened = z.view(-1, self.e_dim)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
@@ -277,9 +276,9 @@ class VectorQuantizer2(nn.Module):
         # reshape z -> (batch, height, width, channel) and flatten
         # logger.critical(z.shape) # torch.Size([2, 256, 16, 16])
         z = rearrange(z, 'b c h w -> b h w c').contiguous()
-        logger.critical(z.shape)
+        # logger.critical(z.shape) # torch.Size([2, 16, 16, 256])
         z_flattened = z.view(-1, self.e_dim)
-        logger.critical(z_flattened.shape)
+        # logger.critical(z_flattened.shape) # torch.Size([512, 256])
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
 
         d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \

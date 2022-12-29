@@ -178,8 +178,10 @@ class Net2NetTransformer(pl.LightningModule):
 
     @torch.no_grad()
     def encode_to_z(self, x):
-        quant_z, _, info = self.first_stage_model.encode(x)
-        indices = info[2].view(quant_z.shape[0], -1)
+        quant_z, _, info = self.first_stage_model.encode(x) # quant_z.shape -> torch.Size([2, 256, 16, 16])
+        indices = info[2].view(quant_z.shape[0], -1) # info[2] is (512 -> number of points B2xH16xW16) dim vector corspand with nearst cluster
+        logger.critical(info[2].shape)
+        logger.warning(indices.shape)
         # print('kkkkkkkkkkkkkk', 
         #     quant_z.shape, # torch.Size([2, 256, 16, 16])
         #     indices.shape # torch.Size([2, 256]) # totally 512
