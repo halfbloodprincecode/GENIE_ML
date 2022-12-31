@@ -271,9 +271,9 @@ class Net2NetTransformer(pl.LightningModule):
                                    callback=callback if callback is not None else lambda k: None)
         x_sample_nopix = self.decode_to_img(index_sample, quant_z.shape)
 
-        logger.critical(z_start_indices.shape)
-        logger.warning(index_sample.shape)
-        logger.error(x_sample_nopix.shape)
+        # logger.critical(z_start_indices.shape) # torch.Size([2, 0])
+        # logger.warning(index_sample.shape) # torch.Size([2, 256])
+        # logger.error(x_sample_nopix.shape) # torch.Size([2, 3, 256, 256])
         
         # det sample
         z_start_indices = z_indices[:, :0]
@@ -282,6 +282,10 @@ class Net2NetTransformer(pl.LightningModule):
                                    sample=False,
                                    callback=callback if callback is not None else lambda k: None)
         x_sample_det = self.decode_to_img(index_sample, quant_z.shape)
+
+        logger.critical(z_start_indices.shape)
+        logger.error(index_sample.shape)
+        logger.warning(x_sample_det.shape)
 
         # reconstruction
         x_rec = self.decode_to_img(z_indices, quant_z.shape)
