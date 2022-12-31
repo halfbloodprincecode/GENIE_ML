@@ -308,9 +308,11 @@ class Net2NetTransformer(pl.LightningModule):
             log["conditioning_rec"] = log["conditioning"]
         elif self.cond_stage_key != "image":
             # logger.critical(self.cond_stage_key) # class_label
-            logger.critical(quant_c)
-            logger.warning(quant_c.shape)
+            # logger.critical(quant_c) # tensor([[1],[0]], device='cuda:0')
+            # logger.warning(quant_c.shape) # torch.Size([2, 1])
+            logger.critical('1111111111111111111111')
             cond_rec = self.cond_stage_model.decode(quant_c)
+            logger.critical('2222222222222222222222')
             if self.cond_stage_key == "segmentation":
                 # get image from segmentation mask
                 num_classes = cond_rec.shape[1]
