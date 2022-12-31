@@ -284,8 +284,8 @@ class Net2NetTransformer(pl.LightningModule):
         x_sample_det = self.decode_to_img(index_sample, quant_z.shape)
 
         logger.critical(z_start_indices.shape)
-        logger.error(index_sample.shape)
-        logger.warning(x_sample_det.shape)
+        logger.warning(index_sample.shape)
+        logger.error(x_sample_det.shape)
 
         # reconstruction
         x_rec = self.decode_to_img(z_indices, quant_z.shape)
