@@ -239,19 +239,27 @@ class Net2NetTransformer(pl.LightningModule):
         quant_z, z_indices = self.encode_to_z(x)
         quant_c, c_indices = self.encode_to_c(c)
         
-        logger.warning('{} | {} | {} | {} | {} | {}'.format(
-            x.shape, c.shape, quant_z.shape, quant_c.shape, z_indices.shape, c_indices.shape 
-        ))
+        # logger.warning('{} | {} | {} | {} | {} | {}'.format(
+        #     x.shape, c.shape, quant_z.shape, quant_c.shape, z_indices.shape, c_indices.shape 
+        # )) 
+        # torch.Size([2, 3, 256, 256]) | torch.Size([2]) | torch.Size([2, 256, 16, 16]) | torch.Size([2, 1]) | torch.Size([2, 256]) | torch.Size([2, 1])
 
         # create a "half"" sample
         z_start_indices = z_indices[:,:z_indices.shape[1]//2]
+
+        logger.critical(z_start_indices.shape)
+
         index_sample = self.sample(z_start_indices, c_indices,
                                    steps=z_indices.shape[1]-z_start_indices.shape[1],
                                    temperature=temperature if temperature is not None else 1.0,
                                    sample=True,
                                    top_k=top_k if top_k is not None else 100,
                                    callback=callback if callback is not None else lambda k: None)
+        
+        logger.warning(index_sample.shape)
         x_sample = self.decode_to_img(index_sample, quant_z.shape)
+        logger.error(x_sample.shape)
+
 
         # sample
         z_start_indices = z_indices[:, :0]
