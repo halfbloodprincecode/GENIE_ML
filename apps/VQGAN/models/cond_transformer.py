@@ -247,7 +247,7 @@ class Net2NetTransformer(pl.LightningModule):
         # create a "half"" sample
         z_start_indices = z_indices[:,:z_indices.shape[1]//2]
 
-        logger.critical(z_start_indices.shape)
+        # logger.critical(z_start_indices.shape) # torch.Size([2, 128])
 
         index_sample = self.sample(z_start_indices, c_indices,
                                    steps=z_indices.shape[1]-z_start_indices.shape[1],
@@ -256,9 +256,9 @@ class Net2NetTransformer(pl.LightningModule):
                                    top_k=top_k if top_k is not None else 100,
                                    callback=callback if callback is not None else lambda k: None)
         
-        logger.warning(index_sample.shape)
+        # logger.warning(index_sample.shape) # torch.Size([2, 256])
         x_sample = self.decode_to_img(index_sample, quant_z.shape)
-        logger.error(x_sample.shape)
+        # logger.error(x_sample.shape) # torch.Size([2, 3, 256, 256])
 
 
         # sample
@@ -271,6 +271,10 @@ class Net2NetTransformer(pl.LightningModule):
                                    callback=callback if callback is not None else lambda k: None)
         x_sample_nopix = self.decode_to_img(index_sample, quant_z.shape)
 
+        logger.critical(z_start_indices.shape)
+        logger.warning(index_sample.shape)
+        logger.error(x_sample_nopix.shape)
+        
         # det sample
         z_start_indices = z_indices[:, :0]
         index_sample = self.sample(z_start_indices, c_indices,
