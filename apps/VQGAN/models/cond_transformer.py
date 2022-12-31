@@ -290,9 +290,9 @@ class Net2NetTransformer(pl.LightningModule):
         # reconstruction
         x_rec = self.decode_to_img(z_indices, quant_z.shape)
         
-        logger.critical(z_indices.shape)
-        logger.warning(quant_z.shape)
-        logger.error(x_rec.shape)
+        # logger.critical(z_indices.shape) # torch.Size([2, 256])
+        # logger.warning(quant_z.shape) # torch.Size([2, 256, 16, 16])
+        # logger.error(x_rec.shape) # torch.Size([2, 3, 256, 256])
 
         log["inputs"] = x
         log["reconstructions"] = x_rec
@@ -307,6 +307,7 @@ class Net2NetTransformer(pl.LightningModule):
                 log["conditioning"][i] = plotter(quant_c[i], label_for_category_no, figure_size)
             log["conditioning_rec"] = log["conditioning"]
         elif self.cond_stage_key != "image":
+            logger.critical(self.cond_stage_key)
             cond_rec = self.cond_stage_model.decode(quant_c)
             if self.cond_stage_key == "segmentation":
                 # get image from segmentation mask
