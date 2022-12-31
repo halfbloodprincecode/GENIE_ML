@@ -84,8 +84,8 @@ class Net2NetTransformer(pl.LightningModule):
     def forward(self, x, c):
         # one step to produce the logits
         # Notic: we peresent each point By its index that is a scaler number in range(number of clusters=1024)
-        _, z_indices = self.encode_to_z(x) # z_indices.shape: [B, dim] == [2, 256] -> totally has 512 point in latent space(d=256) | here we present each point By its index which is a scaler number in range(1024) that is the number of clusters! # Note that if we wont present each point By its complete values thus z_indices.shape: [B, number of points, latent dim]==[2,256,256]
-        _, c_indices = self.encode_to_c(c) # c_indices.shape: [B, 1] its column vector with dtype=int of label classes.
+        _, z_indices = self.encode_to_z(x) # z_indices.shape: [B, 16x16] == [2, 256] -> totally has 512 point in latent space(d=256) | here we present each point By its index which is a scaler number in range(1024) that is the number of clusters! # Note that if we wont present each point By its complete values thus z_indices.shape: [B, number of points, latent dim]==[2,256,256]
+        _, c_indices = self.encode_to_c(c) # c_indices.shape: [B, 1] == [2,1] its column vector with dtype=int64 of label classes.
 
         if self.training and self.pkeep < 1.0:
             mask = torch.bernoulli(self.pkeep*torch.ones(z_indices.shape,
@@ -96,7 +96,7 @@ class Net2NetTransformer(pl.LightningModule):
         else:
             a_indices = z_indices
 
-        cz_indices = torch.cat((c_indices, a_indices), dim=1) # cz_indices.shape: [B, 257] It is class scaler label folowed By 256= 2^4 x 2^4 point. (per box!)
+        cz_indices = torch.cat((c_indices, a_indices), dim=1) # cz_indices.shape: [B, 257] == [2, 257] It is class scaler label folowed By 256= 2^4 x 2^4 point. (per box!)
 
         # print('hhhhhhhhhhhhhhhhh', cz_indices.shape)
 
@@ -105,7 +105,7 @@ class Net2NetTransformer(pl.LightningModule):
         target = z_indices
         # make the prediction
         logits, _ = self.transformer(cz_indices[:, :-1])
-        # logits.shape: torch.Size([B, (number of points)256, (number of clusters)16384]) -> each value is probibility of belonging to certain cluster
+        # logits.shape: torch.Size([B, (number of points)256, (number of clusters)16384]) -> each value is logit of belonging to certain cluster
         # Notic: now logits is not probibility distribution and needs to apply softmax on it. softmax applied in F.crossentropy loss function
         # print('LLLLLLLLLLLLLLL', logits[0, 0], logits[0, 0].sum().item(), logits.shape)
 
@@ -238,6 +238,10 @@ class Net2NetTransformer(pl.LightningModule):
 
         quant_z, z_indices = self.encode_to_z(x)
         quant_c, c_indices = self.encode_to_c(c)
+        
+        logger.warning('{} | {} | {} | {} | {} | {}'.format(
+            x.shape, c.shape, quant_z.shape, quant_c.shape, z_indices.shape, c_indices.shape 
+        ))
 
         # create a "half"" sample
         z_start_indices = z_indices[:,:z_indices.shape[1]//2]
@@ -326,7 +330,7 @@ class Net2NetTransformer(pl.LightningModule):
     def shared_step(self, batch, batch_idx):
         x, c = self.get_xc(batch)
         logits, target = self(x, c) # logits is now not a probibility and softmax in F.crossentropy applied to it
-        
+        # logits is [2, 256, NC] # target==indecies [2, 16x16=256]
         # logger.critical('{} | {}'.format(logits.shape, target.shape))
         # torch.Size([2, 256, 16384]) | torch.Size([2, 256])
         loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), target.reshape(-1))
