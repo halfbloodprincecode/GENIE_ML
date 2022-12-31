@@ -167,6 +167,8 @@ class ImageLoggerBase(Callback):
                 images = pl_module.log_images(batch, split=split, pl_module=pl_module)
 
             for k in images:
+                logger.critical(k)
+                logger.warning(images[k].shape)
                 N = min(images[k].shape[0], self.max_images)
                 images[k] = images[k][:N]
                 if isinstance(images[k], torch.Tensor):
