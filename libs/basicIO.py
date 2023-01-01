@@ -169,7 +169,7 @@ def merge_files(src, dst, waitFlag=False, desc=None):
             desc = desc if desc else 'merging from {} to {}'.format(src, dst)
             src_size = get_size(src)
             p_bar = tqdm(range(src_size), desc=desc)
-            os.system('cat {}/* > {}'.format(src, dst))
+            os.system('cat {}/* > {} &'.format(src, dst))
             dst_size = 0
             while(dst_size != src_size):
                 dst_size = get_size(dst)
@@ -177,4 +177,4 @@ def merge_files(src, dst, waitFlag=False, desc=None):
                 p_bar.refresh()
                 sleep(1)
         else:
-            os.system('cat {}/* > {}'.format(src, dst))
+            os.system('cat {}/* > {} &'.format(src, dst))
