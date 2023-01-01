@@ -172,7 +172,7 @@ def merge_files(src, dst, waitFlag=False, desc=None):
             os.system('cat {}/* > {} &'.format(src, dst))
             dst_size = 0
             while(dst_size != src_size):
-                dst_size = get_size(dst)
+                dst_size = os.path.getsize(dst)
                 print(dst_size)
                 p_bar.n = dst_size
                 p_bar.refresh()
