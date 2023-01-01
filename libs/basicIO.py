@@ -162,7 +162,7 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
             sleep(1)
             
 def merge_files(src, dst, waitFlag=False, desc=None):
-    print(exists(src), (not exists(dst)))
+    print(exists(src), (not exists(dst)), dst)
     if exists(src) and (not exists(dst)):
         desc = desc if desc else 'merging from {} to {}'.format(src, dst)
         src_size = get_size(src)
