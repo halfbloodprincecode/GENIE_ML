@@ -120,8 +120,8 @@ def _ctl_parser_(opt, unknown, **kwargs):
         if str(opt.resume).startswith('@'):
             opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])
         
-        if not exists(opt.resume):
-            makedirs(opt.resume, exist_ok=True)
+        # if not exists(opt.resume):
+        #     makedirs(opt.resume, exist_ok=True)
         
         if isfile(opt.resume): # ckpt address
             raise ValueError('opt.resume must be refer to `logdir` but now refer to a file. | opt.resume={}'.format(opt.resume))
