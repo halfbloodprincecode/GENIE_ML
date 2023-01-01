@@ -1,7 +1,8 @@
 import os
 from loguru import logger
 from os import getenv, makedirs
-from libs.basicIO import ls, pathBIO
+from libs.basicIO import ls, pathBIO, merge_files
+from libs.coding import sha1
 from omegaconf import OmegaConf
 from libs.args import ParserBasic
 from pytorch_lightning import seed_everything
@@ -111,27 +112,27 @@ def _ctl_parser_(opt, unknown, **kwargs):
     if opt.resume:
         logger.error(opt.ckpt_fname)
         if isdir(opt.ckpt_fname):
-            logger.warning('ok!!!!!!!!!!!!!!1')
-        else:
-            logger.warning('no')
+            opt.ckpt_fname = join(getenv('GENIE_ML_CACHEDIR', '{}__merged.ckpt'.format(sha1(opt.ckpt_fname))))
+            merge_files(src=opt.ckpt_fname, dst=opt.ckpt_fname, waitFlag=True)
 
+        logger.critical('hoooooooooooooooo!!')
+        
         if str(opt.resume).startswith('@'):
             opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])
+        
         if not exists(opt.resume):
             makedirs(opt.resume, exist_ok=True)
+        
         if isfile(opt.resume): # ckpt address
-            raise ValueError('opt.resume must be refer to logdir but now refer to a file. | opt.resume={}'.format(opt.resume))
-            # paths = opt.resume.split('/')
-            # idx = len(paths)-paths[::-1].index('logs')+1 # this can produce error if `logs` is not in list.
-            # logdir = '/'.join(paths[:idx])
-            # ckpt = opt.resume
+            raise ValueError('opt.resume must be refer to `logdir` but now refer to a file. | opt.resume={}'.format(opt.resume))
         else: # logdir address
             assert isdir(opt.resume), '{} is must be directory'.format(opt.resume)
             logdir = opt.resume.rstrip('/')
-            if str(opt.ckpt_fname).endswith('.ckpt'):
-                ckpt = opt.ckpt_fname
-            else:
-                ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
+        
+        if str(opt.ckpt_fname).endswith('.ckpt'): # absolute path
+            ckpt = opt.ckpt_fname
+        else:
+            ckpt = join(getenv('GENIE_ML_CKPTDIR') or join(logdir, 'checkpoints'), opt.ckpt_fname + '.ckpt')
 
         assert exists(ckpt), 'ckpt path `{}` does not exist.'.format(ckpt)
         opt.resume_from_checkpoint = ckpt

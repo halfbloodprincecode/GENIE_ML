@@ -167,3 +167,19 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
         # subprocess.call(command_str)
     else:
         shutil.copytree(src, dst)
+
+
+def merge_files(src, dst, waitFlag=False, desc=None):
+    if exists(src) and (not exists(dst)):
+        desc = desc if desc else 'merging from {} to {}'.format(src, dst)
+        src_size = get_size(src)
+
+        os.system('cat {}/* > {}'.format(src, dst))
+        if waitFlag:
+            p_bar = tqdm(range(src_size), desc=desc)
+            dst_size = 0
+            while(dst_size != src_size):
+                sleep(1)
+                dst_size = get_size(dst)
+                p_bar.n = dst_size
+                p_bar.refresh()
