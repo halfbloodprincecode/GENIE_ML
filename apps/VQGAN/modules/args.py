@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 from os import getenv, makedirs
 from libs.basicIO import ls, pathBIO
 from omegaconf import OmegaConf
@@ -108,6 +109,12 @@ def _ctl_parser_(opt, unknown, **kwargs):
             'use -n/--name in combination with --resume_from_checkpoint'
         )
     if opt.resume:
+        logger.error(opt.ckpt_fname)
+        if isdir(opt.ckpt_fname):
+            logger.warning('ok!!!!!!!!!!!!!!1')
+        else:
+            logger.warning('no')
+
         if str(opt.resume).startswith('@'):
             opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])
         if not exists(opt.resume):
