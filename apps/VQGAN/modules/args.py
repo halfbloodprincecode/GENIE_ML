@@ -110,14 +110,11 @@ def _ctl_parser_(opt, unknown, **kwargs):
             'use -n/--name in combination with --resume_from_checkpoint'
         )
     if opt.resume:
-        logger.error(opt.ckpt_fname)
         if isdir(opt.ckpt_fname):
             src_of_opt_ckpt_fname = opt.ckpt_fname
             opt.ckpt_fname = join(getenv('GENIE_ML_CACHEDIR'), '{}__merged.ckpt'.format(sha1(opt.ckpt_fname))) # must be ends with `.ckpt` becuse it considred as absolute path.
             merge_files(src=src_of_opt_ckpt_fname, dst=opt.ckpt_fname, waitFlag=True)
 
-        logger.critical('hoooooooooooooooo!!')
-        
         if str(opt.resume).startswith('@'):
             opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])
         
