@@ -112,8 +112,9 @@ def _ctl_parser_(opt, unknown, **kwargs):
     if opt.resume:
         logger.error(opt.ckpt_fname)
         if isdir(opt.ckpt_fname):
-            opt.ckpt_fname = join(getenv('GENIE_ML_CACHEDIR'), '{}__merged.ckpt'.format(sha1(opt.ckpt_fname)))
-            merge_files(src=opt.ckpt_fname, dst=opt.ckpt_fname, waitFlag=True)
+            src_of_opt_ckpt_fname = opt.ckpt_fname
+            opt.ckpt_fname = join(getenv('GENIE_ML_CACHEDIR'), '{}__merged.ckpt'.format(sha1(opt.ckpt_fname))) # must be ends with `.ckpt` becuse it considred as absolute path.
+            merge_files(src=src_of_opt_ckpt_fname, dst=opt.ckpt_fname, waitFlag=True)
 
         logger.critical('hoooooooooooooooo!!')
         
