@@ -162,8 +162,8 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
             sleep(1)
             
 def merge_files(src, dst, waitFlag=False, desc=None):
+    print(exists(src), (not exists(dst)))
     if exists(src) and (not exists(dst)):
-        logger.error('11111111111111111111111111111')
         desc = desc if desc else 'merging from {} to {}'.format(src, dst)
         src_size = get_size(src)
 
@@ -176,5 +176,3 @@ def merge_files(src, dst, waitFlag=False, desc=None):
                 p_bar.n = dst_size
                 p_bar.refresh()
                 sleep(1)
-    else:
-        logger.error('2222222222222222222222222222')
