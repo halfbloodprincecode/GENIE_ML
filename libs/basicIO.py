@@ -148,31 +148,33 @@ def get_size(start_path):
 
 def copy_dir(_src, _dst, waitFlag=False, desc=None):
     src, dst = join(_src), join(_dst)
-    src_size = get_size(src)
-    desc = desc if desc else 'copying from {} to {}'.format(src, dst)
     
-    shutil.copytree(src, dst)
     if waitFlag:
+        src_size = get_size(src)
+        desc = desc if desc else 'copying from {} to {}'.format(src, dst)
         p_bar = tqdm(range(src_size), desc=desc)
+        shutil.copytree(src, dst)
         dst_size = 0
         while(dst_size != src_size):
             dst_size = get_size(dst)
             p_bar.n = dst_size
             p_bar.refresh()
             sleep(1)
+    else:
+        shutil.copytree(src, dst)
             
 def merge_files(src, dst, waitFlag=False, desc=None):
-    print(exists(src), (not exists(dst)), dst)
     if exists(src) and (not exists(dst)):
-        desc = desc if desc else 'merging from {} to {}'.format(src, dst)
-        src_size = get_size(src)
-
-        os.system('cat {}/* > {}'.format(src, dst))
         if waitFlag:
+            desc = desc if desc else 'merging from {} to {}'.format(src, dst)
+            src_size = get_size(src)
             p_bar = tqdm(range(src_size), desc=desc)
+            os.system('cat {}/* > {}'.format(src, dst))
             dst_size = 0
             while(dst_size != src_size):
                 dst_size = get_size(dst)
                 p_bar.n = dst_size
                 p_bar.refresh()
                 sleep(1)
+        else:
+            os.system('cat {}/* > {}'.format(src, dst))
