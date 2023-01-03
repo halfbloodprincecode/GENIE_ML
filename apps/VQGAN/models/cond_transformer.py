@@ -57,7 +57,7 @@ class Net2NetTransformer(pl.LightningModule):
                     self.print("Deleting key {} from state_dict.".format(k))
                     del sd[k]
         self.load_state_dict(sd, strict=False)
-        print(f"Restored from {path}")
+        logger.info(f"Restored from {path}")
 
     def init_first_stage_from_ckpt(self, config):
         model = instantiate_from_config(config)

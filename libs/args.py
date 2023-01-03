@@ -180,8 +180,12 @@ class ParserBasic(ABC):
         if opt.resume:
             if isdir(opt.ckpt_fname):
                 src_of_opt_ckpt_fname = opt.ckpt_fname
-                opt.ckpt_fname = join(getenv('GENIE_ML_CACHEDIR'), '{}__merged.ckpt'.format(sha1(opt.ckpt_fname))) # must be ends with `.ckpt` becuse it considred as absolute path.
-                merge_files(src=src_of_opt_ckpt_fname, dst=opt.ckpt_fname, waitFlag=True)
+                dst_of_opt_ckpt_fname = join(getenv('GENIE_ML_CACHEDIR'), '{}__merged'.format(sha1(opt.ckpt_fname)))
+                dst_unzipped_dir = merge_files(src=src_of_opt_ckpt_fname, dst=dst_of_opt_ckpt_fname, waitFlag=True, unzipFlag=True)
+                dst_unzipped_dir_items = ls(dst_unzipped_dir, '*.ckpt', full_path=True)
+                logger.critical(dst_unzipped_dir_items)
+                assert isinstance(dst_unzipped_dir_items, list) and len(dst_unzipped_dir_items) == 1 and str(dst_unzipped_dir_items[0]).endswith('.ckpt'), 'dst_unzipped_dir_items is not valid it must be have exact one item with `.ckpt` extention but now is -> {}'.format(dst_unzipped_dir_items)
+                opt.ckpt_fname = dst_unzipped_dir_items[0] # must be ends with `.ckpt` becuse it considred as absolute path.
 
             if str(opt.resume).startswith('@'):
                 opt.resume = join(getenv('GENIE_ML_LOGDIR'), opt.resume[1:])

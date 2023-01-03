@@ -61,7 +61,7 @@ class ConfigBase:
             cpu = False
         
         trainer_config['num_sanity_val_steps'] = trainer_config.get('num_sanity_val_steps', 0) # num validation batch that run befor training. default 2 I set to 0 as default.
-        logger.warning('trainer_config={}'.format(trainer_config))
+        logger.info('trainer_config={}'.format(trainer_config))
         
         trainer_opt = argparse.Namespace(**trainer_config)
         lightning_config.trainer = trainer_config

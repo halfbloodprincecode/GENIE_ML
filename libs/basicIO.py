@@ -4,6 +4,7 @@ import json
 import glob
 import shutil
 import pathlib
+import zipfile
 import tarfile
 import zipfile
 import requests
@@ -163,7 +164,7 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
     else:
         shutil.copytree(src, dst)
             
-def merge_files(src, dst, waitFlag=False, desc=None):
+def merge_files(src, dst, waitFlag=False, unzipFlag=False, desc=None):
     if exists(src) and (not exists(dst)):
         os.makedirs(os.path.split(dst)[0], exist_ok=True)
         if waitFlag:
@@ -180,5 +181,11 @@ def merge_files(src, dst, waitFlag=False, desc=None):
                 p_bar.n = dst_size
                 p_bar.refresh()
                 sleep(1)
+            if unzipFlag:
+                dst_unzipped_dir = join(os.path.split(dst)[0], str(os.path.split(dst)[1]).replace('.', '__'))
+                os.makedirs(dst_unzipped_dir, exist_ok=True)
+                extractor(dst, dst_unzipped_dir, mode='zip')
+                return dst_unzipped_dir
         else:
             os.system('cat {}/* > {} &'.format(src, dst))
+        
