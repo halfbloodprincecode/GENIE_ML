@@ -69,7 +69,7 @@ class ConfigBase:
         # model
         logger.critical('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
         if opt.resume_from_checkpoint:
-            logger.critical(config.model.keys())
+            logger.critical(config.model.params.keys())
             model = cls.instantiate_from_config(config.model)
             model.init_from_ckpt(opt.resume_from_checkpoint)  #MyLightningModule.load_from_checkpoint("/path/to/checkpoint.ckpt")
         else:
