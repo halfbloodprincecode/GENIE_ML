@@ -165,6 +165,7 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
             
 def merge_files(src, dst, waitFlag=False, desc=None):
     if exists(src) and (not exists(dst)):
+        os.makedirs(os.path.split(dst)[0], exist_ok=True)
         if waitFlag:
             desc = desc if desc else 'merging from {} to {}'.format(src, dst)
             src_size = get_size(src)
