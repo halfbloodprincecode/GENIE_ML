@@ -35,10 +35,6 @@ class ConfigBase:
         # init and save configs
         configs = [OmegaConf.load(cfg) for cfg in opt.base]
         cli = OmegaConf.from_dotlist(unknown)
-
-        logger.warning(opt.base)
-        logger.warning(cli)
-
         config = OmegaConf.merge(*configs, cli)
         lightning_config = config.pop('lightning', OmegaConf.create())
         
@@ -71,9 +67,8 @@ class ConfigBase:
         lightning_config.trainer = trainer_config
 
         # model
-        logger.critical('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
+        logger.info('resume_from_checkpoint={}'.format(opt.resume_from_checkpoint))
         if opt.resume_from_checkpoint:
-            logger.critical(config.model.params.keys())
             model = cls.instantiate_from_config(config.model)
             model.init_from_ckpt(opt.resume_from_checkpoint)  #MyLightningModule.load_from_checkpoint("/path/to/checkpoint.ckpt")
         else:

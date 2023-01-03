@@ -30,8 +30,7 @@ class Net2NetTransformer(pl.LightningModule):
                  pkeep=1.0,
                  sos_token=0,
                  unconditional=False,
-                 embed_dim=None, # It only used for preventing error when loading pretrain weights.
-                 n_embed=None # It only used for preventing error when loading pretrain weights.
+                 **unused_kwargs
                  ):
         super().__init__()
         self.be_unconditional = unconditional
