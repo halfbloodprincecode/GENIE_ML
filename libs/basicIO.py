@@ -165,6 +165,7 @@ def copy_dir(_src, _dst, waitFlag=False, desc=None):
         shutil.copytree(src, dst)
             
 def merge_files(src, dst, waitFlag=False, unzipFlag=False, desc=None):
+    dst_unzipped_dir = join(os.path.split(dst)[0], str(os.path.split(dst)[1]).replace('.', '__') + '__dir')
     if exists(src) and (not exists(dst)):
         os.makedirs(os.path.split(dst)[0], exist_ok=True)
         if waitFlag:
@@ -182,10 +183,11 @@ def merge_files(src, dst, waitFlag=False, unzipFlag=False, desc=None):
                 p_bar.refresh()
                 sleep(1)
             if unzipFlag:
-                dst_unzipped_dir = join(os.path.split(dst)[0], str(os.path.split(dst)[1]).replace('.', '__') + '_dir')
                 os.makedirs(dst_unzipped_dir, exist_ok=True)
                 extractor(dst, dst_unzipped_dir, mode='zip')
                 return dst_unzipped_dir
         else:
             os.system('cat {}/* > {} &'.format(src, dst))
-        
+    else:
+        if waitFlag and unzipFlag:
+            return dst_unzipped_dir
