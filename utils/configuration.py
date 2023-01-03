@@ -35,6 +35,10 @@ class ConfigBase:
         # init and save configs
         configs = [OmegaConf.load(cfg) for cfg in opt.base]
         cli = OmegaConf.from_dotlist(unknown)
+
+        logger.warning(opt.base)
+        logger.warning(cli)
+
         config = OmegaConf.merge(*configs, cli)
         lightning_config = config.pop('lightning', OmegaConf.create())
         
