@@ -182,7 +182,7 @@ def merge_files(src, dst, waitFlag=False, unzipFlag=False, desc=None):
                 p_bar.refresh()
                 sleep(1)
             if unzipFlag:
-                dst_unzipped_dir = join(os.path.split(dst)[0], str(os.path.split(dst)[1]).replace('.', '__'))
+                dst_unzipped_dir = join(os.path.split(dst)[0], str(os.path.split(dst)[1]).replace('.', '__') + '_dir')
                 os.makedirs(dst_unzipped_dir, exist_ok=True)
                 extractor(dst, dst_unzipped_dir, mode='zip')
                 return dst_unzipped_dir
