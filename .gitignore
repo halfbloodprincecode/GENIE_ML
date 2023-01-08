@@ -92,5 +92,5 @@ target/
 articles
 projects
 logs
-configs
-data
+# configs
+# data
